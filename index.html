@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Question Bank - Units 3-5</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #e74c3c;
+            --light-color: #f9f9f9;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: #eee;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            margin-right: 5px;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            background: #ddd;
+        }
+
+        .tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .question-section {
+            margin-bottom: 30px;
+        }
+
+        .question-type {
+            background: var(--light-color);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .question-type h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .question {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .question:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-number {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+
+        .answer {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f4fc;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+        }
+
+        .answer-label {
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-right: 10px;
+        }
+
+        .correct-option {
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        .unit-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .unit-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: #eee;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .unit-tab:hover {
+            background: #ddd;
+        }
+
+        .unit-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .unit-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .unit-content.active {
+            display: block;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            
+            .unit-tabs {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>IoT Question Bank</h1>
+            <p class="subtitle">Units 3-5: Python, Physical Devices, and Cloud Offerings</p>
+        </header>
+
+        <div class="unit-tabs">
+            <button class="unit-tab active" onclick="openUnit(event, 'unit3')">Unit III: Python</button>
+            <button class="unit-tab" onclick="openUnit(event, 'unit4')">Unit IV: Physical Devices</button>
+            <button class="unit-tab" onclick="openUnit(event, 'unit5')">Unit V: Cloud Offerings</button>
+        </div>
+
+        <!-- Unit III: Introduction to Python -->
+        <div id="unit3" class="unit-content active">
+            <div class="tabs">
+                <button class="tab active" onclick="openTab(event, 'mcq3')">Multiple Choice Questions</button>
+                <button class="tab" onclick="openTab(event, 'fill3')">Fill in the Blanks</button>
+            </div>
+
+            <div id="mcq3" class="tab-content active">
+                <div class="question-section">
+                    <div class="question-type">
+                        <h2>Multiple Choice Questions</h2>
+                    </div>
+                    
+                    <div class="question">
+                        <span class="question-number">1.</span>
+                        <span>The various benefits of Python include:</span>
+                        <ul>
+                            <li>a) Extendable</li>
+                            <li>b) Scalable</li>
+                            <li>c) Portable</li>
+                            <li>d) All of the above</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">d) All of the above</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">2.</span>
+                        <span>The following type which does not fall under the Python numbers category is?</span>
+                        <ul>
+                            <li>a) Integers</li>
+                            <li>b) Double</li>
+                            <li>c) Floating-point numbers</li>
+                            <li>d) Complex numbers</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">b) Double</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">3.</span>
+                        <span>A floating point number is accurate up-to?</span>
+                        <ul>
+                            <li>a) 14</li>
+                            <li>b) 15</li>
+                            <li>c) 16</li>
+                            <li>d) 17</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">b) 15</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">4.</span>
+                        <span>All elements in a list are separated by?</span>
+                        <ul>
+                            <li>a) Full stops (.)</li>
+                            <li>b) Hyphen (-)</li>
+                            <li>c) Commas (,)</li>
+                            <li>d) Semi-Colons (;)</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">c) Commas (,)</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">5.</span>
+                        <span>Which sequences of elements are consisted in a Tuple?</span>
+                        <ul>
+                            <li>a) Ordered</li>
+                            <li>b) Random</li>
+                            <li>c) Unordered</li>
+                            <li>d) None of the above</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">c) Unordered</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">6.</span>
+                        <span>We can represent strings using which of the following ways?</span>
+                        <ul>
+                            <li>a) Single quotes</li>
+                            <li>b) Double quotes</li>
+                            <li>c) A or B</li>
+                            <li>d) None</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">c) A or B</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">7.</span>
+                        <span>A set in python contains?</span>
+                        <ul>
+                            <li>a) Same values</li>
+                            <li>b) Random values</li>
+                            <li>c) Unique values</li>
+                            <li>d) Cannot be determined</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">c) Unique values</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">8.</span>
+                        <span>The file mode 'b' in python is used to open the file in?</span>
+                        <ul>
+                            <li>a) Binary mode</li>
+                            <li>b) Byte mode</li>
+                            <li>c) Text mode</li>
+                            <li>d) Character mode</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">a) Binary mode</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">9.</span>
+                        <span>The file mode which returns the current file location.</span>
+                        <ul>
+                            <li>a) get File ()</li>
+                            <li>b) get Location()</li>
+                            <li>c) tell()</li>
+                            <li>d) return File()</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">c) tell()</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">10.</span>
+                        <span>The file mode which is used to open the file in text mode?</span>
+                        <ul>
+                            <li>a) tm</li>
+                            <li>b) b</li>
+                            <li>c) t</li>
+                            <li>d) a</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">c) t</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="fill3" class="tab-content">
+                <div class="question-section">
+                    <div class="question-type">
+                        <h2>Fill in the Blanks</h2>
+                    </div>
+                    
+                    <div class="question">
+                        <span class="question-number">1.</span>
+                        <span>Python is a general purpose___________ level programming language.</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>high</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">2.</span>
+                        <span>We can use the ___________function to know which class a variable or a value belongs to.</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>type()</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">3.</span>
+                        <span>List is a __________sequence of items and one of the most used data type in Python.</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>ordered</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">4.</span>
+                        <span>Python supports both ___________oriented programming.</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>Object and procedure</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">5.</span>
+                        <span>Tuple is defined within ____________where items are separated by commas.</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>parentheses ()</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">6.</span>
+                        <span>A file containing a set of functions you want to include in the application is called ___________</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>Module</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">7.</span>
+                        <span>The dir () function is used to list all the function names (or variable names) in a module By: _______</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>import platform x = dir(platform) print(x)</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">8.</span>
+                        <span>We can import modules from packages using the _______________</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>dot (.) operator</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">9.</span>
+                        <span>The file mode 'a' is used to: _____________________</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>Open for appending at the end of the file without truncating it/Creates a new file if it does not exist.</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">10.</span>
+                        <span>The syntax for opening a file is: ____________________________</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>f=open("test.txt") /f = open("C:/Python33/README.txt")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unit IV: IoT Physical Devices and Endpoints -->
+        <div id="unit4" class="unit-content">
+            <div class="tabs">
+                <button class="tab active" onclick="openTab(event, 'mcq4')">Multiple Choice Questions</button>
+                <button class="tab" onclick="openTab(event, 'fill4')">Fill in the Blanks</button>
+            </div>
+
+            <div id="mcq4" class="tab-content active">
+                <div class="question-section">
+                    <div class="question-type">
+                        <h2>Multiple Choice Questions</h2>
+                    </div>
+                    
+                    <div class="question">
+                        <span class="question-number">1.</span>
+                        <span>The Raspberry Pi is defined as the?</span>
+                        <ul>
+                            <li>a) Minicomputer</li>
+                            <li>b) Micro Computer</li>
+                            <li>c) Mega Computer</li>
+                            <li>d) Nano Computer</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">a) Minicomputer</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">2.</span>
+                        <span>Raspberry Pi consists of a _______ quad-core processor or microprocessor.</span>
+                        <ul>
+                            <li>a) 16-bit</li>
+                            <li>b) 32-bit</li>
+                            <li>c) 64-bit</li>
+                            <li>d) 128-bit</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">c) 64-bit</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">3.</span>
+                        <span>How much RAM, the Raspberry Pi has</span>
+                        <ul>
+                            <li>a) 2GiB of RAM</li>
+                            <li>b) 1GiB of RAM</li>
+                            <li>c) 4GiB of RAM</li>
+                            <li>d) 8GiB of RAM</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">b) 1GiB of RAM</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">4.</span>
+                        <span>How many Input/output pins on board Raspberry Pi3 has?</span>
+                        <ul>
+                            <li>a) 20</li>
+                            <li>b) 30</li>
+                            <li>c) 40</li>
+                            <li>d) 50</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">c) 40</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">5.</span>
+                        <span>Which operating system Raspberry Pi has?</span>
+                        <ul>
+                            <li>a) Linux</li>
+                            <li>b) Open BSD</li>
+                            <li>c) Net BSD</li>
+                            <li>d) All of the above</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">d) All of the above</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">6.</span>
+                        <span>How Power supply is done to Raspberry Pi?</span>
+                        <ul>
+                            <li>a) USB Charger</li>
+                            <li>b) Internal battery</li>
+                            <li>c) Chargers</li>
+                            <li>d) Adapter</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">a) USB Charger</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">7.</span>
+                        <span>What is the Ethernet/LAN cabel used in Raspberry Pi?</span>
+                        <ul>
+                            <li>a) Cat5</li>
+                            <li>b) cat5e</li>
+                            <li>c) cat6</li>
+                            <li>d) RJ45</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">d) RJ45</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">8.</span>
+                        <span>Which Instruction set Architecture used in Raspberry Pi?</span>
+                        <ul>
+                            <li>a) X86</li>
+                            <li>b) MSP</li>
+                            <li>c) AVR</li>
+                            <li>d) ARM</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">d) ARM</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">9.</span>
+                        <span>What is the default user in Debain on Raspberry Pi?</span>
+                        <ul>
+                            <li>a) Default</li>
+                            <li>b) User</li>
+                            <li>c) Pi</li>
+                            <li>d) Root</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">c) Pi</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">10.</span>
+                        <span>What are distributions are supported by raspberry Pi?</span>
+                        <ul>
+                            <li>a) Arch Linux</li>
+                            <li>b) Debain</li>
+                            <li>c) Fedora Re</li>
+                            <li>d) Arch Linux, Debain, and Fedora Remix</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">d) Arch Linux, Debain, and Fedora Remix</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="fill4" class="tab-content">
+                <div class="question-section">
+                    <div class="question-type">
+                        <h2>Fill in the Blanks</h2>
+                    </div>
+                    
+                    <div class="question">
+                        <span class="question-number">1.</span>
+                        <span>SPI stands for _____________________</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>Serial Peripheral Interface</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">2.</span>
+                        <span>I2C stands for ____________________</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>Inter Integrated Circuit</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">3.</span>
+                        <span>Two wired interface is also called as ___________________</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>I2C</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">4.</span>
+                        <span>Inter Integrated Circuit is ________________________</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>Multi master, multi slave</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">5.</span>
+                        <span>___________is speed of I2C bus</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>100kbits/s & 10kbits/s</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">6.</span>
+                        <span>__________ many types of addressing structures are there in I2C?</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>2</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">7.</span>
+                        <span>How does SPI differs from I2C ________________</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>I2C is half duplex communication and SPI is full duplex communication</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">8.</span>
+                        <span>_____________signal is used to select the slave in the serial peripheral interfacing?</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>Slave Select</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">9.</span>
+                        <span>______________are the two lines used in the I2C</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>SDA and SCL</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">10.</span>
+                        <span>_________________performs the start signal?</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>Master</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unit V: IoT Physical Servers and Cloud Offerings -->
+        <div id="unit5" class="unit-content">
+            <div class="tabs">
+                <button class="tab active" onclick="openTab(event, 'mcq5')">Multiple Choice Questions</button>
+                <button class="tab" onclick="openTab(event, 'fill5')">Fill in the Blanks</button>
+            </div>
+
+            <div id="mcq5" class="tab-content active">
+                <div class="question-section">
+                    <div class="question-type">
+                        <h2>Multiple Choice Questions</h2>
+                    </div>
+                    
+                    <div class="question">
+                        <span class="question-number">1.</span>
+                        <span>What is Cloud Computing?</span>
+                        <ul>
+                            <li>a) Cloud Computing means providing services like storage, servers, database, networking, etc</li>
+                            <li>b) Cloud Computing means storing data in a database</li>
+                            <li>c) Cloud computing is a tool used to create an application</li>
+                            <li>d) None of the above</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">a) Cloud Computing means providing services like storage, servers, database, networking, etc</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">2.</span>
+                        <span>Which of the following is python package?</span>
+                        <ul>
+                            <li>a) Pandas</li>
+                            <li>b) Numpy</li>
+                            <li>c) Both a and b</li>
+                            <li>d) None of the above</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">c) Both a and b</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">3.</span>
+                        <span>Which of the following are not network types?</span>
+                        <ul>
+                            <li>a) WAN</li>
+                            <li>b) UNIX</li>
+                            <li>c) MAN</li>
+                            <li>d) LAN</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">b) UNIX</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">4.</span>
+                        <span>What are the communication protocols in IoT?</span>
+                        <ul>
+                            <li>a) ZigBee</li>
+                            <li>b) Bluetooth</li>
+                            <li>c) WIFI</li>
+                            <li>d) All of the above</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">d) All of the above</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">5.</span>
+                        <span>Choose the applications of the cloud computing?</span>
+                        <ul>
+                            <li>a) Object storage</li>
+                            <li>b) Network</li>
+                            <li>c) Compute</li>
+                            <li>d) Collaboration</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">d) Collaboration</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">6.</span>
+                        <span>What are the three basic types of API'S?</span>
+                        <ul>
+                            <li>a) Local APIs</li>
+                            <li>b) Web APIs</li>
+                            <li>c) Program APIs</li>
+                            <li>d) All of the above</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">d) All of the above</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">7.</span>
+                        <span>Which of the following is true about numpy?</span>
+                        <ul>
+                            <li>a) Numpy is python library</li>
+                            <li>b) Numpy is a data format for structured document</li>
+                            <li>c) Numpy provides support for large multi-dimensional array and matrices</li>
+                            <li>d) Numpy provider support for large single-dimensional array and matrices</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">c) Numpy provides support for large multi-dimensional array and matrices</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">8.</span>
+                        <span>Cloud storage API is an_____________</span>
+                        <ul>
+                            <li>a) Application program interface that connect a locally-based application to cloud based storage</li>
+                            <li>b) Is created for open use by general storage</li>
+                            <li>c) A smart city can benefit from cloud-based deployment of IoT system.</li>
+                            <li>d) All of the above</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">a) Application program interface that connect a locally-based application to cloud based storage</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">9.</span>
+                        <span>WAMP for IoT.</span>
+                        <ul>
+                            <li>a) WAMP is a sub-protocol of web socket</li>
+                            <li>b) Which provides publish-subscribe and remote procedure call (RPC) messaging patterns</li>
+                            <li>c) Both a and b</li>
+                            <li>d) None of the above</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">a) WAMP is a sub-protocol of web socket</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">10.</span>
+                        <span>Which of the following are objectives of the IoT based smart environment taxonomy.</span>
+                        <ul>
+                            <li>a) Sensing technology</li>
+                            <li>b) Prediction Capabilities</li>
+                            <li>c) Proactive Maintenance</li>
+                            <li>d) None</li>
+                        </ul>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span class="correct-option">c) Proactive Maintenance</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="fill5" class="tab-content">
+                <div class="question-section">
+                    <div class="question-type">
+                        <h2>Fill in the Blanks</h2>
+                    </div>
+                    
+                    <div class="question">
+                        <span class="question-number">1.</span>
+                        <span>WAMP stands for ___________________________</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>Web Application Messaging Protocol</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">2.</span>
+                        <span>Transport is channel that connects________ peers.</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>Two</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">3.</span>
+                        <span>Boto is a Python package that provides interfaces to ______________.</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>Amazon Web Services</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">4.</span>
+                        <span>The key wireless Internet technologies are ___________</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>WiFi, 3G, 4G, and satellite</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">5.</span>
+                        <span>The commonly used local area wireless standards in IoT-based smart environments are ________________</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>IEEE 802.11, IEEE 802.15.1</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">6.</span>
+                        <span>Internet-of-Things can benefit from the_____________________.</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>Scalability</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">7.</span>
+                        <span>How types of API's are there ____________________.</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>3</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">8.</span>
+                        <span>Deployment in cloud computing comprises _________________ deployment models.</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>four</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">9.</span>
+                        <span>SOA stands for _________________.</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>Service Oriented Architecture</span>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <span class="question-number">10.</span>
+                        <span>JSON stands for ________________.</span>
+                        <div class="answer">
+                            <span class="answer-label">Answer:</span>
+                            <span>JavaScript Object Notation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>IoT Question Bank - Department of Computer Science and Engineering (Data Science)</p>
+            <p>© 2024-25 Academic Year</p>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            
+            // Get all elements with class="tab-content" and hide them
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            
+            // Get all elements with class="tab" and remove the class "active"
+            tablinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        function openUnit(evt, unitName) {
+            var i, unitcontent, unitlinks;
+            
+            // Get all elements with class="unit-content" and hide them
+            unitcontent = document.getElementsByClassName("unit-content");
+            for (i = 0; i < unitcontent.length; i++) {
+                unitcontent[i].style.display = "none";
+            }
+            
+            // Get all elements with class="unit-tab" and remove the class "active"
+            unitlinks = document.getElementsByClassName("unit-tab");
+            for (i = 0; i < unitlinks.length; i++) {
+                unitlinks[i].className = unitlinks[i].className.replace(" active", "");
+            }
+            
+            // Show the current unit, and add an "active" class to the button that opened the unit
+            document.getElementById(unitName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // Initialize the first tab of the first unit to be shown
+        document.getElementById("mcq3").style.display = "block";
+    </script>
+</body>
+</html>
