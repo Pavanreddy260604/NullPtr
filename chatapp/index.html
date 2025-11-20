@@ -1,0 +1,1913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT and Python Learning Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #f8f9fa;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --border-color: #e9ecef;
+            --code-bg: #2d2d2d;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --info-color: #3498db;
+            --python-color: #3776ab;
+            --iot-color: #ff9800;
+            --cloud-color: #4caf50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            color: var(--secondary-color);
+            font-size: 2rem;
+        }
+
+        /* Navigation Styles */
+        .main-nav {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-unit {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-unit:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-unit.active {
+            background-color: var(--secondary-color);
+        }
+
+        .nav-unit.python {
+            border-left: 4px solid var(--python-color);
+        }
+
+        .nav-unit.iot {
+            border-left: 4px solid var(--iot-color);
+        }
+
+        .nav-unit.cloud {
+            border-left: 4px solid var(--cloud-color);
+        }
+
+        .nav-unit a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Layout Styles */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 20px;
+            display: flex;
+            flex: 1;
+            gap: 2rem;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: var(--light-color);
+        }
+
+        .sidebar a.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+
+        .unit-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .unit-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 2.2rem;
+        }
+
+        .unit-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Question Styles */
+        .question {
+            margin-bottom: 2.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background-color: var(--light-color);
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .question.python {
+            border-left-color: var(--python-color);
+        }
+
+        .question.iot {
+            border-left-color: var(--iot-color);
+        }
+
+        .question.cloud {
+            border-left-color: var(--cloud-color);
+        }
+
+        .question-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .question-content {
+            margin-top: 1rem;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--light-color);
+        }
+
+        tr:hover {
+            background-color: #e9f7fe;
+        }
+
+        /* Code Block Styles */
+        .code-block {
+            background-color: var(--code-bg);
+            color: #f8f8f2;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: "Python";
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-bottom-left-radius: 8px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .code-block code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            line-height: 1.5;
+        }
+
+        /* List Styles */
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Alert/Note Styles */
+        .alert {
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .alert i {
+            font-size: 1.5rem;
+            margin-top: 0.2rem;
+        }
+
+        .alert-info {
+            background-color: #e1f5fe;
+            color: #0277bd;
+            border-left: 4px solid var(--info-color);
+        }
+
+        .alert-warning {
+            background-color: #fff8e1;
+            color: #ff8f00;
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .alert-success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid var(--success-color);
+        }
+
+        /* Subsection Styles */
+        .subsection {
+            margin-bottom: 2rem;
+        }
+
+        .subsection-title {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .footer-section ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .footer-section a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: var(--secondary-color);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .main-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .unit-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Collapsible Content */
+        .collapsible {
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            padding: 12px 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .collapsible:hover {
+            background-color: #1a252f;
+        }
+
+        .collapsible::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            transition: transform 0.3s;
+        }
+
+        .active::after {
+            transform: rotate(180deg);
+        }
+
+        .content {
+            padding: 0 18px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: white;
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* Tab Navigation */
+        .tab-container {
+            margin-bottom: 2rem;
+        }
+
+        .tab-nav {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-color);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-button:hover {
+            color: var(--secondary-color);
+        }
+
+        .tab-button.active {
+            color: var(--secondary-color);
+            border-bottom: 3px solid var(--secondary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Hidden class for JavaScript */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>IoT and Python Learning Portal</span>
+            </div>
+            <nav class="main-nav">
+                <div class="nav-unit python active" data-unit="python">
+                    <a href="#"><i class="fab fa-python"></i> Unit III: Python</a>
+                </div>
+                <div class="nav-unit iot" data-unit="iot">
+                    <a href="#"><i class="fas fa-microchip"></i> Unit IV: IoT Devices</a>
+                </div>
+                <div class="nav-unit cloud" data-unit="cloud">
+                    <a href="#"><i class="fas fa-cloud"></i> Unit V: Cloud Services</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div id="python-sidebar" class="unit-sidebar">
+                <h3>Unit III: Python</h3>
+                <ul>
+                    <li><a href="#q1-c" class="sidebar-link active">Question 1.c</a></li>
+                    <li><a href="#q2-c" class="sidebar-link">Question 2.c</a></li>
+                    <li><a href="#q3-c" class="sidebar-link">Question 3.c</a></li>
+                    <li><a href="#q3-d" class="sidebar-link">Question 3.d</a></li>
+                    <li><a href="#q4-c" class="sidebar-link">Question 4.c</a></li>
+                    <li><a href="#q4-d" class="sidebar-link">Question 4.d</a></li>
+                    <li><a href="#q5-c" class="sidebar-link">Question 5.c</a></li>
+                    <li><a href="#q5-d" class="sidebar-link">Question 5.d</a></li>
+                    <li><a href="#q6-c" class="sidebar-link">Question 6.c</a></li>
+                </ul>
+            </div>
+            
+            <div id="iot-sidebar" class="unit-sidebar hidden">
+                <h3>Unit IV: IoT Devices</h3>
+                <ul>
+                    <li><a href="#iot-q1-c" class="sidebar-link active">Question 1.c</a></li>
+                    <li><a href="#iot-q1-d" class="sidebar-link">Question 1.d</a></li>
+                    <li><a href="#iot-q2-c" class="sidebar-link">Question 2.c</a></li>
+                    <li><a href="#iot-q2-d" class="sidebar-link">Question 2.d</a></li>
+                    <li><a href="#iot-q3-c" class="sidebar-link">Question 3.c</a></li>
+                    <li><a href="#iot-q4-c" class="sidebar-link">Question 4.c</a></li>
+                    <li><a href="#iot-q4-d" class="sidebar-link">Question 4.d</a></li>
+                    <li><a href="#iot-q5-c" class="sidebar-link">Question 5.c</a></li>
+                    <li><a href="#iot-q6-c" class="sidebar-link">Question 6.c</a></li>
+                </ul>
+            </div>
+            
+            <div id="cloud-sidebar" class="unit-sidebar hidden">
+                <h3>Unit V: Cloud Services</h3>
+                <ul>
+                    <li><a href="#cloud-q1-c" class="sidebar-link active">Question 1.c</a></li>
+                    <li><a href="#cloud-q1-d" class="sidebar-link">Question 1.d</a></li>
+                    <li><a href="#cloud-q2-c" class="sidebar-link">Question 2.c</a></li>
+                    <li><a href="#cloud-q2-d" class="sidebar-link">Question 2.d</a></li>
+                    <li><a href="#cloud-q3-c" class="sidebar-link">Question 3.c</a></li>
+                    <li><a href="#cloud-q3-d" class="sidebar-link">Question 3.d</a></li>
+                    <li><a href="#cloud-q4-c" class="sidebar-link">Question 4.c</a></li>
+                    <li><a href="#cloud-q5-c" class="sidebar-link">Question 5.c</a></li>
+                    <li><a href="#cloud-q6-c" class="sidebar-link">Question 6.c</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Unit III: Python Content -->
+            <div id="python-content" class="unit-content">
+                <div class="unit-header">
+                    <h1>Unit-III: Introduction to Python</h1>
+                    <p>Comprehensive guide to Python fundamentals including data types, file operations, control flow, exception handling, and standard libraries.</p>
+                </div>
+
+                <!-- Question 1.c -->
+                <div id="q1-c" class="question python">
+                    <h3 class="question-title">Question 1. c) i) Discuss about the data types in Python with examples. ii) What are benefits of python? How to setup python?</h3>
+                    
+                    <div class="question-content">
+                        <div class="tab-container">
+                            <div class="tab-nav">
+                                <button class="tab-button active" data-tab="data-types">Data Types</button>
+                                <button class="tab-button" data-tab="python-benefits">Benefits & Setup</button>
+                            </div>
+                            
+                            <div id="data-types" class="tab-content active">
+                                <h4 class="subsection-title">Data Types in Python</h4>
+                                <p>Python has several built-in data types used to classify the type of data a variable holds. Since Python is dynamically typed, you do not need to declare the type explicitly.</p>
+                                
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i>
+                                    <div>Python is dynamically typed, which means you don't need to declare variable types explicitly. The type is inferred at runtime.</div>
+                                </div>
+                                
+                                <h5>Numeric Types:</h5>
+                                <ul>
+                                    <li><strong>Integer (int):</strong> Whole numbers without a fractional part.<br>
+                                        <div class="code-block"><code>Example: x = 10</code></div>
+                                    </li>
+                                    <li><strong>Float (float):</strong> Numbers with decimal points.<br>
+                                        <div class="code-block"><code>Example: y = 10.5</code></div>
+                                    </li>
+                                    <li><strong>Complex (complex):</strong> Numbers with a real and imaginary part (a+bj).<br>
+                                        <div class="code-block"><code>Example: z = 2 + 3j</code></div>
+                                    </li>
+                                </ul>
+                                
+                                <h5>Sequence Types:</h5>
+                                <ul>
+                                    <li><strong>String (str):</strong> Ordered sequence of characters enclosed in quotes.<br>
+                                        <div class="code-block"><code>Example: name = "IoT"</code></div>
+                                    </li>
+                                    <li><strong>List (list):</strong> Ordered, mutable collection of items.<br>
+                                        <div class="code-block"><code>Example: fruits = ["apple", "banana", "cherry"]</code></div>
+                                    </li>
+                                    <li><strong>Tuple (tuple):</strong> Ordered, immutable collection of items.<br>
+                                        <div class="code-block"><code>Example: coordinates = (10.0, 20.0)</code></div>
+                                    </li>
+                                </ul>
+                                
+                                <h5>Mapping Type:</h5>
+                                <ul>
+                                    <li><strong>Dictionary (dict):</strong> Unordered collection of key-value pairs.<br>
+                                        <div class="code-block"><code>Example: student = {"name": "John", "age": 20}</code></div>
+                                    </li>
+                                </ul>
+                                
+                                <h5>Boolean Type:</h5>
+                                <ul>
+                                    <li><strong>Boolean (bool):</strong> Represents True or False.<br>
+                                        <div class="code-block"><code>Example: is_active = True</code></div>
+                                    </li>
+                                </ul>
+                                
+                                <h5>Set Type:</h5>
+                                <ul>
+                                    <li><strong>Set (set):</strong> Unordered collection of unique items.<br>
+                                        <div class="code-block"><code>Example: unique_ids = {1, 2, 3}</code></div>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div id="python-benefits" class="tab-content">
+                                <h4 class="subsection-title">Benefits of Python</h4>
+                                <ul>
+                                    <li><strong>Simple and Easy to Learn:</strong> Python has a clean syntax similar to English.</li>
+                                    <li><strong>Interpreted Language:</strong> Code is executed line by line, making debugging easier.</li>
+                                    <li><strong>Portable/Platform Independent:</strong> Python code can run on Windows, macOS, and Linux without modification.</li>
+                                    <li><strong>Rich Standard Library:</strong> Extensive libraries for web development, data science (NumPy, Pandas), and IoT.</li>
+                                </ul>
+                                
+                                <div class="alert alert-success">
+                                    <i class="fas fa-check-circle"></i>
+                                    <div>Python's simplicity and extensive libraries make it one of the most popular programming languages for beginners and experts alike.</div>
+                                </div>
+                                
+                                <h4 class="subsection-title">How to Setup Python</h4>
+                                <ol>
+                                    <li><strong>Download:</strong> Visit the official website python.org and download the latest version for your OS.</li>
+                                    <li><strong>Install:</strong> Run the installer. Crucial Step: Check the box that says "Add Python to PATH" during installation to run Python from the command line.</li>
+                                    <li><strong>Verify:</strong> Open a terminal (Command Prompt) and type <code>python --version</code> to verify the installation.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 2.c -->
+                <div id="q2-c" class="question python">
+                    <h3 class="question-title">Question 2. c) i) Describe different access modes of the files with an example. ii) List different operators in python, in the order of precedence.</h3>
+                    
+                    <div class="question-content">
+                        <div class="tab-container">
+                            <div class="tab-nav">
+                                <button class="tab-button active" data-tab="file-modes">File Access Modes</button>
+                                <button class="tab-button" data-tab="operators">Operators Precedence</button>
+                            </div>
+                            
+                            <div id="file-modes" class="tab-content active">
+                                <h4 class="subsection-title">File Access Modes</h4>
+                                <p>When opening a file using open(), you must specify the mode.</p>
+                                
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Mode</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>'r'</td>
+                                            <td>Read Only. Default mode. Pointer at the beginning. Error if file doesn't exist.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>'w'</td>
+                                            <td>Write Only. Overwrites file if it exists. Creates a new file if it doesn't.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>'a'</td>
+                                            <td>Append. Writes data to the end of the file. Creates a new file if it doesn't exist.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>'r+'</td>
+                                            <td>Read and Write. Pointer at the beginning.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>'w+'</td>
+                                            <td>Write and Read. Overwrites existing file.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>'b'</td>
+                                            <td>Binary Mode. Used for non-text files (images, audio) e.g., 'wb', 'rb'.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <div>Be careful with 'w' mode as it will overwrite the entire file if it already exists.</div>
+                                </div>
+                                
+                                <h5>Example:</h5>
+                                <div class="code-block"><code># Opening a file in write mode
+file = open("example.txt", "w")
+file.write("Hello IoT")
+file.close()</code></div>
+                            </div>
+                            
+                            <div id="operators" class="tab-content">
+                                <h4 class="subsection-title">Operators in Order of Precedence (Highest to Lowest)</h4>
+                                <p>Operator precedence determines which operation is performed first in an expression.</p>
+                                
+                                <ol>
+                                    <li><strong>Parentheses:</strong> ()</li>
+                                    <li><strong>Exponentiation:</strong> **</li>
+                                    <li><strong>Unary plus/minus, Bitwise NOT:</strong> +x, -x, ~x</li>
+                                    <li><strong>Multiplication, Division, Floor Division, Modulus:</strong> *, /, //, %</li>
+                                    <li><strong>Addition, Subtraction:</strong> +, -</li>
+                                    <li><strong>Bitwise Shifts:</strong> <<, >></li>
+                                    <li><strong>Bitwise AND:</strong> &</li>
+                                    <li><strong>Bitwise XOR:</strong> ^</li>
+                                    <li><strong>Bitwise OR:</strong> |</li>
+                                    <li><strong>Comparison Operators:</strong> ==, !=, >, >=, <, <=</li>
+                                    <li><strong>Logical NOT:</strong> not</li>
+                                    <li><strong>Logical AND:</strong> and</li>
+                                    <li><strong>Logical OR:</strong> or</li>
+                                </ol>
+                                
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i>
+                                    <div>When in doubt about operator precedence, use parentheses to make your code more readable and ensure the correct order of operations.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3.c -->
+                <div id="q3-c" class="question python">
+                    <h3 class="question-title">Question 3. c) Explain list and tuple and demonstrate with example program?</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">List</h4>
+                        <ul>
+                            <li>Defined using square brackets []</li>
+                            <li><strong>Mutable:</strong> Elements can be changed, added, or removed after creation</li>
+                            <li>Generally used for homogeneous data (items of the same type), though they can hold mixed types</li>
+                        </ul>
+                        
+                        <h4 class="subsection-title">Tuple</h4>
+                        <ul>
+                            <li>Defined using parentheses ()</li>
+                            <li><strong>Immutable:</strong> Once created, elements cannot be changed</li>
+                            <li>Generally used for heterogeneous data or ensuring data integrity (constants)</li>
+                        </ul>
+                        
+                        <h4 class="subsection-title">Example Program</h4>
+                        <div class="code-block"><code># --- List Example ---
+my_list = [1, 2, 3]
+print("Original List:", my_list)
+
+# Modifying the list (Allowed)
+my_list[0] = 99
+print("Modified List:", my_list)
+
+# --- Tuple Example ---
+my_tuple = (1, 2, 3)
+print("Original Tuple:", my_tuple)
+
+# Modifying the tuple (Not Allowed - causes error)
+# my_tuple[0] = 99  <-- This would raise a TypeError</code></div>
+                    </div>
+                </div>
+
+                <!-- Question 3.d -->
+                <div id="q3-d" class="question python">
+                    <h3 class="question-title">Question 3. d) Write a python program to find any given string is palindrome or not, don't use built in functions?</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Palindrome Checker</h4>
+                        <p>A palindrome is a string that reads the same forward and backward (e.g., "madam").</p>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>Detailed Logic:
+                                <ol>
+                                    <li>Take input from the user</li>
+                                    <li>Calculate the length of the string</li>
+                                    <li>Use a loop to compare the character at index i with the character at index length - 1 - i</li>
+                                    <li>If any mismatch is found, it is not a palindrome</li>
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <button class="collapsible">View Solution Code</button>
+                        <div class="content">
+                            <div class="code-block"><code>def check_palindrome(string):
+    # Calculate length manually without len() if strictly avoiding all built-ins,
+    # but usually len() is permitted. Here is the manual logic:
+    
+    length = 0
+    for char in string:
+        length += 1
+
+    is_palindrome = True
+    
+    # Loop to compare characters
+    for i in range(length // 2):
+        if string[i] != string[length - 1 - i]:
+            is_palindrome = False
+            break
+            
+    if is_palindrome:
+        print(f"{string} is a Palindrome")
+    else:
+        print(f"{string} is NOT a Palindrome")
+
+# Test the function
+user_input = input("Enter a string: ")
+check_palindrome(user_input)</code></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 4.c -->
+                <div id="q4-c" class="question python">
+                    <h3 class="question-title">Question 4. c) Explain How exception handling is done in python?</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Exception Handling in Python</h4>
+                        <p>Exception handling allows a program to respond to runtime errors (like dividing by zero or file not found) without crashing. Python uses the try, except, else, and finally blocks.</p>
+                        
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i>
+                            <div>Proper exception handling makes your programs more robust and user-friendly by gracefully handling errors instead of crashing.</div>
+                        </div>
+                        
+                        <h5>Structure:</h5>
+                        <ul>
+                            <li><strong>try block:</strong> Contains the code that might raise an exception</li>
+                            <li><strong>except block:</strong> Contains the code to handle the error if one occurs in the try block</li>
+                            <li><strong>else block (optional):</strong> Executed only if no exceptions were raised</li>
+                            <li><strong>finally block (optional):</strong> Executed always, regardless of whether an exception occurred (useful for cleanup like closing files)</li>
+                        </ul>
+                        
+                        <h5>Example:</h5>
+                        <div class="code-block"><code>try:
+    numerator = 10
+    denominator = 0
+    result = numerator / denominator
+except ZeroDivisionError:
+    print("Error: You cannot divide by zero.")
+else:
+    print("Division successful:", result)
+finally:
+    print("Execution completed.")</code></div>
+                    </div>
+                </div>
+
+                <!-- Question 4.d -->
+                <div id="q4-d" class="question python">
+                    <h3 class="question-title">Question 4. d) Illustrate the different types of control flow statements in python with flow charts?</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Control Flow Statements</h4>
+                        <p>Control flow statements determine the order in which code is executed.</p>
+                        
+                        <h5>1. Conditional Statements (Decision Making)</h5>
+                        <p>Used to execute code based on conditions.</p>
+                        <ul>
+                            <li><strong>if statement:</strong> Executes if condition is true</li>
+                            <li><strong>if...else statement:</strong> Executes one block if true, another if false</li>
+                            <li><strong>elif:</strong> Used to check multiple conditions</li>
+                        </ul>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>Concept: Diamond shape represents the decision. If True → Path A. If False → Path B.</div>
+                        </div>
+                        
+                        <h5>2. Iterative Statements (Loops)</h5>
+                        <p>Used to repeat a block of code.</p>
+                        <ul>
+                            <li><strong>for loop:</strong> Iterates over a sequence (list, string, range)</li>
+                            <li><strong>while loop:</strong> Repeats as long as a condition is true</li>
+                        </ul>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>Concept: Check Condition → If True, Execute Body and Loop back → If False, Exit.</div>
+                        </div>
+                        
+                        <h5>3. Transfer Statements</h5>
+                        <ul>
+                            <li><strong>break:</strong> Exits the loop immediately</li>
+                            <li><strong>continue:</strong> Skips the current iteration and moves to the next</li>
+                            <li><strong>pass:</strong> A null operation (placeholder)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Question 5.c -->
+                <div id="q5-c" class="question python">
+                    <h3 class="question-title">Question 5. c) Explain python strings with an example program.</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Python Strings</h4>
+                        <p>A string is a sequence of characters enclosed in single ('), double ("), or triple (""") quotes. Strings in Python are immutable (cannot be changed once created).</p>
+                        
+                        <h5>Key Features:</h5>
+                        <ul>
+                            <li><strong>Indexing:</strong> Accessing characters using position (starts at 0)</li>
+                            <li><strong>Slicing:</strong> Extracting a substring using [start:end]</li>
+                            <li><strong>Concatenation:</strong> Joining strings using +</li>
+                            <li><strong>Repetition:</strong> Repeating strings using *</li>
+                        </ul>
+                        
+                        <h5>Example Program:</h5>
+                        <div class="code-block"><code># String Creation
+str1 = "Hello"
+str2 = "World"
+
+# Concatenation
+message = str1 + " " + str2  # Result: "Hello World"
+
+# Slicing
+substring = message[0:5]     # Result: "Hello"
+
+# String Methods
+upper_msg = message.upper()  # Result: "HELLO WORLD"
+
+print("Full Message:", message)
+print("First word:", substring)
+print("Uppercase:", upper_msg)</code></div>
+                    </div>
+                </div>
+
+                <!-- Question 5.d -->
+                <div id="q5-d" class="question python">
+                    <h3 class="question-title">Question 5. d) Explain modules and packages in python? Write advantages in python language?</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Modules</h4>
+                        <p>A module is simply a Python file (with a .py extension) containing definitions and statements (functions, variables, classes).</p>
+                        <p><strong>Usage:</strong> You use the import keyword to use a module.</p>
+                        <p><strong>Example:</strong> <code>import math</code> allows you to use <code>math.sqrt()</code>.</p>
+                        
+                        <h4 class="subsection-title">Packages</h4>
+                        <p>A package is a directory (folder) that contains multiple Python modules.</p>
+                        <p>It must contain a special file called <code>__init__.py</code> (can be empty) to be recognized as a Python package.</p>
+                        <p>Packages allow for a hierarchical structuring of the module namespace.</p>
+                        
+                        <h5>Structure Example:</h5>
+                        <div class="code-block"><code>MyPackage/
+    __init__.py
+    module1.py
+    module2.py</code></div>
+                        
+                        <h4 class="subsection-title">Advantages in Python Language</h4>
+                        <ul>
+                            <li><strong>Code Reusability:</strong> Write code once in a module and import it into multiple programs</li>
+                            <li><strong>Organization:</strong> Helps organize large codebases into manageable, logical sections (files and folders)</li>
+                            <li><strong>Namespace Management:</strong> Avoids variable name clashes (e.g., moduleA.func() vs moduleB.func())</li>
+                            <li><strong>Maintainability:</strong> Easier to debug and update specific parts of the system without affecting the whole program</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Question 6.c -->
+                <div id="q6-c" class="question python">
+                    <h3 class="question-title">Question 6. c) Explain following: 1. HTTP Lib 2. URL Lib 3. SMTP Lib</h3>
+                    
+                    <div class="question-content">
+                        <p>These are standard Python libraries used for networking and internet protocols.</p>
+                        
+                        <h4 class="subsection-title">1. HTTP Lib (http.client in Python 3)</h4>
+                        <ul>
+                            <li>This module defines classes which implement the client side of the HTTP and HTTPS protocols</li>
+                            <li>It is rarely used directly; most developers use higher-level libraries like requests or urllib</li>
+                            <li><strong>Function:</strong> It is used to open connections to web servers and send GET/POST requests manually</li>
+                        </ul>
+                        
+                        <h4 class="subsection-title">2. URL Lib (urllib)</h4>
+                        <ul>
+                            <li>urllib is a package that collects several modules for working with URLs. It is more high-level than http.client</li>
+                            <li><strong>Key components:</strong>
+                                <ul>
+                                    <li>urllib.request: For opening and reading URLs (fetching data)</li>
+                                    <li>urllib.parse: For parsing URLs into components (scheme, netloc, path)</li>
+                                    <li>urllib.error: For containing the exceptions raised by urllib.request</li>
+                                </ul>
+                            </li>
+                            <li><strong>Use Case:</strong> Downloading a file from the web or scraping a webpage</li>
+                        </ul>
+                        
+                        <h4 class="subsection-title">3. SMTP Lib (smtplib)</h4>
+                        <ul>
+                            <li>SMTP stands for Simple Mail Transfer Protocol</li>
+                            <li>The smtplib module defines an SMTP client session object that can be used to send mail to any Internet machine with an SMTP or ESMTP listener daemon</li>
+                            <li><strong>Use Case:</strong> Sending emails (including attachments) programmatically from a Python script (e.g., sending an alert when an IoT sensor detects a fire)</li>
+                        </ul>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>These libraries provide the foundation for many network operations in Python, though developers often use higher-level libraries built on top of them for simpler interfaces.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unit IV: IoT Devices Content -->
+            <div id="iot-content" class="unit-content hidden">
+                <div class="unit-header">
+                    <h1>Unit-IV: IoT Physical Devices and Endpoints</h1>
+                    <p>Comprehensive guide to IoT physical devices, Raspberry Pi interfaces, and Python applications for IoT.</p>
+                </div>
+
+                <!-- Question 1.c -->
+                <div id="iot-q1-c" class="question iot">
+                    <h3 class="question-title">Question 1. c) Explain the IoT Physical Devices and Endpoints.</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">IoT Physical Devices and Endpoints</h4>
+                        <p>IoT physical devices and endpoints differ from standard computers like desktops or laptops. They are generally specialized devices bridging the gap between the physical world and the digital world.</p>
+                        
+                        <h5>The "Thing" in IoT:</h5>
+                        <p>The fundamental block is the device itself, often called a "mote" or "node." It usually consists of:</p>
+                        
+                        <ul>
+                            <li><strong>Sensors:</strong> To collect data (temperature, motion, light)</li>
+                            <li><strong>Actuators:</strong> To perform actions (turn on a motor, switch a light)</li>
+                            <li><strong>Processing Unit:</strong> A microcontroller (like Arduino) or a Single Board Computer (SBC like Raspberry Pi) that processes data locally</li>
+                            <li><strong>Communication Interface:</strong> Modules to transmit data (Wi-Fi, Bluetooth, Zigbee, LoRa)</li>
+                            <li><strong>Power Source:</strong> Batteries, solar cells, or mains power, depending on the deployment</li>
+                        </ul>
+                        
+                        <h5>Endpoint Function:</h5>
+                        <p>The "endpoint" is the specific interface where the device connects to the network, allowing it to be addressable (usually via an IP address in IP-based networks) to send telemetry or receive commands.</p>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>IoT endpoints can range from simple sensors with minimal processing power to sophisticated devices like Raspberry Pi that can run complex applications locally.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 1.d -->
+                <div id="iot-q1-d" class="question iot">
+                    <h3 class="question-title">Question 1. d) Enumerate on Raspberry Pi interfaces.</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Raspberry Pi Interfaces</h4>
+                        <p>The Raspberry Pi is a Single Board Computer (SBC) equipped with various hardware interfaces to connect peripherals and sensors:</p>
+                        
+                        <ul>
+                            <li><strong>GPIO (General Purpose Input/Output):</strong> The 40-pin header used to connect sensors, LEDs, and switches. These pins can be programmed as input or output.</li>
+                            <li><strong>USB Ports (2.0/3.0):</strong> For connecting keyboards, mice, Wi-Fi dongles, or external drives.</li>
+                            <li><strong>HDMI (High-Definition Multimedia Interface):</strong> For video and audio output to a monitor or TV.</li>
+                            <li><strong>Ethernet Port (RJ45):</strong> For wired network/internet connection.</li>
+                            <li><strong>CSI (Camera Serial Interface):</strong> A ribbon cable port specifically for connecting the Raspberry Pi Camera Module.</li>
+                            <li><strong>DSI (Display Serial Interface):</strong> A ribbon cable port for connecting touch screen displays.</li>
+                            <li><strong>Audio Jack:</strong> 3.5mm jack for audio output (and composite video on older models).</li>
+                            <li><strong>Power Input:</strong> USB-C (on Pi 4) or Micro-USB (on older models) for power supply.</li>
+                        </ul>
+                        
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>Always check the pinout diagram for your specific Raspberry Pi model before connecting peripherals to avoid damage to the device.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 2.c -->
+                <div id="iot-q2-c" class="question iot">
+                    <h3 class="question-title">Question 2. c) i) Describe the relative strengths and limitations of Building IoT with Raspberry Pi. ii) Describe about IoT Physical Servers and Cloud Offerings?</h3>
+                    
+                    <div class="question-content">
+                        <div class="tab-container">
+                            <div class="tab-nav">
+                                <button class="tab-button active" data-tab="raspberry-pi">Raspberry Pi</button>
+                                <button class="tab-button" data-tab="servers-cloud">Servers & Cloud</button>
+                            </div>
+                            
+                            <div id="raspberry-pi" class="tab-content active">
+                                <h4 class="subsection-title">Strengths and Limitations of Raspberry Pi</h4>
+                                
+                                <h5>Strengths:</h5>
+                                <ul>
+                                    <li><strong>High Processing Power:</strong> Compared to microcontrollers (like Arduino), the Pi has a full CPU (ARM-based) and RAM, capable of running complex algorithms and local data processing.</li>
+                                    <li><strong>Full Operating System:</strong> It runs Linux (Raspberry Pi OS), allowing multitasking, file management, and the use of high-level languages like Python easily.</li>
+                                    <li><strong>Connectivity:</strong> Built-in Wi-Fi, Bluetooth, and Ethernet make it ready for IoT networking out of the box.</li>
+                                    <li><strong>Community Support:</strong> Massive global community providing libraries, tutorials, and troubleshooting.</li>
+                                </ul>
+                                
+                                <h5>Limitations:</h5>
+                                <ul>
+                                    <li><strong>Power Consumption:</strong> It consumes more power than a microcontroller, making it less suitable for battery-operated devices that need to run for months.</li>
+                                    <li><strong>No Real-time Capability:</strong> As it runs a general-purpose OS (Linux), it is not strictly "real-time" (deterministic), which can be an issue for precise timing applications without additional hardware.</li>
+                                    <li><strong>Cost:</strong> More expensive than simple microcontrollers like the ESP8266 or Arduino Nano.</li>
+                                </ul>
+                            </div>
+                            
+                            <div id="servers-cloud" class="tab-content">
+                                <h4 class="subsection-title">IoT Physical Servers and Cloud Offerings</h4>
+                                <p>This refers to the backend of an IoT system where data is stored and analyzed.</p>
+                                
+                                <h5>Physical Servers:</h5>
+                                <p>Dedicated hardware set up locally or in a data center to handle IoT data. This requires maintenance, cooling, and security management by the user.</p>
+                                
+                                <h5>Cloud Offerings (PaaS/SaaS):</h5>
+                                <p>Major providers offer managed IoT platforms:</p>
+                                <ul>
+                                    <li><strong>AWS IoT Core:</strong> Connects devices to the cloud, manages device shadows, and routes messages.</li>
+                                    <li><strong>Microsoft Azure IoT Hub:</strong> Secure communication between IoT applications and devices.</li>
+                                    <li><strong>Google Cloud IoT:</strong> Tools for unlocking insights from global device networks.</li>
+                                </ul>
+                                
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i>
+                                    <div>Cloud offerings significantly reduce the infrastructure management burden for IoT projects, allowing developers to focus on application logic rather than server maintenance.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 2.d -->
+                <div id="iot-q2-d" class="question iot">
+                    <h3 class="question-title">Question 2. d) Write python program for sending Email when control is switched on in Raspberry.</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Email Notification on Switch Press</h4>
+                        <p>Logic: Connect a switch to a GPIO pin. When the switch is pressed (Input goes HIGH/LOW), use Python's smtplib to send an email.</p>
+                        
+                        <button class="collapsible">View Solution Code</button>
+                        <div class="content">
+                            <div class="code-block"><code>import RPi.GPIO as GPIO
+import smtplib
+import time
+
+# --- Configuration ---
+SWITCH_PIN = 18
+SENDER_EMAIL = "your_email@gmail.com"
+SENDER_PASSWORD = "your_app_password" # Use App Password if using Gmail
+RECEIVER_EMAIL = "target_email@gmail.com"
+
+# --- GPIO Setup ---
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(SWITCH_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Button connects to Ground
+
+def send_email():
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(SENDER_EMAIL, SENDER_PASSWORD)
+        message = "Subject: Alert\n\nControl Switch turned ON!"
+        server.sendmail(SENDER_EMAIL, RECEIVER_EMAIL, message)
+        server.quit()
+        print("Email Sent Successfully!")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
+print("Waiting for switch press...")
+try:
+    while True:
+        input_state = GPIO.input(SWITCH_PIN)
+        if input_state == False: # Button Pressed (Active Low)
+            print("Switch Detected!")
+            send_email()
+            time.sleep(2) # Debounce delay
+except KeyboardInterrupt:
+    GPIO.cleanup()</code></div>
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>For Gmail, you'll need to generate an App Password instead of using your regular password due to security settings. Enable 2-factor authentication first, then generate an App Password in your Google Account settings.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3.c -->
+                <div id="iot-q3-c" class="question iot">
+                    <h3 class="question-title">Question 3. c) List and explain popular commands used in Raspberry Pi.</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Popular Raspberry Pi Commands</h4>
+                        <p>Since Raspberry Pi runs on Linux, it uses standard Linux terminal commands:</p>
+                        
+                        <ul>
+                            <li><strong>sudo raspi-config:</strong> Opens the Raspberry Pi configuration tool to change passwords, enable interfaces (SPI/I2C), and set localization.</li>
+                            <li><strong>ls:</strong> Lists the files and folders in the current directory.</li>
+                            <li><strong>cd &lt;folder&gt;:</strong> Changes the current directory (e.g., cd Documents).</li>
+                            <li><strong>ifconfig:</strong> Displays network configuration details (IP address, MAC address).</li>
+                            <li><strong>sudo apt-get update:</strong> Updates the list of available packages and their versions.</li>
+                            <li><strong>sudo apt-get install &lt;package_name&gt;:</strong> Installs new software (e.g., sudo apt-get install python3).</li>
+                            <li><strong>python3 &lt;filename.py&gt;:</strong> Executes a Python script.</li>
+                            <li><strong>shutdown -h now:</strong> Safely shuts down the Raspberry Pi immediately.</li>
+                            <li><strong>reboot:</strong> Restarts the system.</li>
+                        </ul>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>Many commands require 'sudo' (superuser do) prefix to execute with administrative privileges, which is often necessary for system configuration tasks.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 4.c -->
+                <div id="iot-q4-c" class="question iot">
+                    <h3 class="question-title">Question 4. c) Explain the python web application framework?</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Python Web Application Framework</h4>
+                        <p>A Python web application framework is a collection of libraries and modules that enables developers to build web applications without writing low-level code (like socket handling) from scratch.</p>
+                        
+                        <h5>Key Functions:</h5>
+                        <ul>
+                            <li><strong>URL Routing:</strong> Mapping URLs (e.g., /home) to specific Python functions</li>
+                            <li><strong>Templating:</strong> Inserting dynamic data into HTML pages</li>
+                            <li><strong>Database Handling:</strong> Interacting with databases (SQL/NoSQL) easily</li>
+                        </ul>
+                        
+                        <h5>Popular Frameworks for IoT:</h5>
+                        <ul>
+                            <li><strong>Flask:</strong> A "micro-framework." It is lightweight, easy to set up, and very popular for running simple web servers on Raspberry Pi to control GPIO pins via a web page.</li>
+                            <li><strong>Django:</strong> A full-stack "batteries-included" framework. It includes built-in admin panels, authentication, and database ORM, suitable for complex IoT dashboards.</li>
+                        </ul>
+                        
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i>
+                            <div>Web frameworks enable you to create user interfaces for your IoT projects, allowing remote monitoring and control of devices through a web browser.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 4.d -->
+                <div id="iot-q4-d" class="question iot">
+                    <h3 class="question-title">Question 4. d) Elaborate on the Amazon web services for IoT?</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Amazon Web Services (AWS) for IoT</h4>
+                        <p>Amazon Web Services (AWS) IoT is a managed cloud platform that lets connected devices interact with cloud applications and other devices easily and securely.</p>
+                        
+                        <h5>Key Components:</h5>
+                        <ul>
+                            <li><strong>AWS IoT Core:</strong> The central message broker that handles communication (via MQTT protocol) between devices and the AWS cloud.</li>
+                            <li><strong>Device Shadows:</strong> A JSON document used to store and retrieve current state information for a device (shadow), even if the device is offline.</li>
+                            <li><strong>AWS IoT Greengrass:</strong> Brings local compute, messaging, and data caching to devices, allowing them to act locally on the data they generate while still using the cloud for management.</li>
+                            <li><strong>Rules Engine:</strong> Allows you to build IoT applications that gather, process, analyze, and act on data generated by connected devices, without having to manage any infrastructure.</li>
+                        </ul>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>AWS IoT services provide a scalable, secure infrastructure for IoT projects of all sizes, from hobbyist projects to enterprise deployments.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 5.c -->
+                <div id="iot-q5-c" class="question iot">
+                    <h3 class="question-title">Question 5. c) i) Write a Python code for Interfacing LED and switch with Raspberry Pi. ii) Explain the SPI Raspberry Pi interface in detail.</h3>
+                    
+                    <div class="question-content">
+                        <div class="tab-container">
+                            <div class="tab-nav">
+                                <button class="tab-button active" data-tab="led-switch">LED & Switch Code</button>
+                                <button class="tab-button" data-tab="spi-interface">SPI Interface</button>
+                            </div>
+                            
+                            <div id="led-switch" class="tab-content active">
+                                <h4 class="subsection-title">Python Code for LED and Switch</h4>
+                                <p>Objective: Turn the LED ON when the button is pressed.</p>
+                                
+                                <div class="code-block"><code>import RPi.GPIO as GPIO
+import time
+
+# Pin Definitions
+LED_PIN = 23
+BUTTON_PIN = 24
+
+# Setup
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(LED_PIN, GPIO.OUT)
+GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Pull-up: Input is High by default
+
+print("Press the button to turn on LED")
+
+try:
+    while True:
+        button_state = GPIO.input(BUTTON_PIN)
+        if button_state == False:     # Button Pressed (Ground connection)
+            GPIO.output(LED_PIN, True) # LED ON
+        else:
+            GPIO.output(LED_PIN, False)# LED OFF
+        time.sleep(0.1)
+        
+except KeyboardInterrupt:
+    GPIO.cleanup()</code></div>
+                                
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <div>Always use a current-limiting resistor (typically 220-330Ω) when connecting an LED to a GPIO pin to prevent damage to both the LED and the Raspberry Pi.</div>
+                                </div>
+                            </div>
+                            
+                            <div id="spi-interface" class="tab-content">
+                                <h4 class="subsection-title">SPI (Serial Peripheral Interface) on Raspberry Pi</h4>
+                                <p>Definition: SPI is a synchronous serial communication interface specification used for short-distance communication, primarily in embedded systems.</p>
+                                
+                                <h5>Characteristics:</h5>
+                                <ul>
+                                    <li><strong>Full Duplex:</strong> Can send and receive data simultaneously</li>
+                                    <li><strong>Master-Slave Architecture:</strong> The Raspberry Pi acts as the Master, controlling the clock</li>
+                                    <li><strong>High Speed:</strong> Generally faster than I2C</li>
+                                </ul>
+                                
+                                <h5>The 4 Wires:</h5>
+                                <ul>
+                                    <li><strong>MOSI (Master Out Slave In):</strong> Master (Pi) sends data to the Slave (Sensor)</li>
+                                    <li><strong>MISO (Master In Slave Out):</strong> Slave (Sensor) sends data to the Master (Pi)</li>
+                                    <li><strong>SCLK (Serial Clock):</strong> The Master generates the clock pulses to synchronize data transmission</li>
+                                    <li><strong>CE/SS (Chip Enable / Slave Select):</strong> Used to select which slave device the master wants to communicate with. The Pi has two Chip Select pins (CE0, CE1) by default, allowing two SPI devices.</li>
+                                </ul>
+                                
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i>
+                                    <div>SPI must be enabled using the raspi-config utility before it can be used in Python programs.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 6.c -->
+                <div id="iot-q6-c" class="question iot">
+                    <h3 class="question-title">Question 6. c) i) Explain about Python web application framework - Django. ii) Explain about Designing a RESTful web API.</h3>
+                    
+                    <div class="question-content">
+                        <div class="tab-container">
+                            <div class="tab-nav">
+                                <button class="tab-button active" data-tab="django">Django Framework</button>
+                                <button class="tab-button" data-tab="rest-api">RESTful API Design</button>
+                            </div>
+                            
+                            <div id="django" class="tab-content active">
+                                <h4 class="subsection-title">Django Framework</h4>
+                                <p>Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design.</p>
+                                
+                                <h5>Architecture:</h5>
+                                <p>It follows the MVT (Model-View-Template) pattern.</p>
+                                <ul>
+                                    <li><strong>Model:</strong> Manages the data and database structure</li>
+                                    <li><strong>View:</strong> Handles the business logic and interacts with the model</li>
+                                    <li><strong>Template:</strong> Handles the presentation layer (HTML)</li>
+                                </ul>
+                                
+                                <h5>Use in IoT:</h5>
+                                <p>Django is excellent for building the central server that IoT devices report to. It can manage users, visualize data graphs, and store historical sensor logs in a robust database (like PostgreSQL).</p>
+                                
+                                <div class="alert alert-success">
+                                    <i class="fas fa-check-circle"></i>
+                                    <div>Django's built-in admin interface makes it easy to create management panels for your IoT devices without writing additional code.</div>
+                                </div>
+                            </div>
+                            
+                            <div id="rest-api" class="tab-content">
+                                <h4 class="subsection-title">Designing a RESTful Web API</h4>
+                                <p>REST (Representational State Transfer) is an architectural style for designing networked applications. A RESTful API allows IoT devices to communicate with a server using standard HTTP methods.</p>
+                                
+                                <h5>Key Design Principles:</h5>
+                                <ul>
+                                    <li><strong>Resources:</strong> Everything is a resource (e.g., a sensor reading) identified by a URI (Uniform Resource Identifier)<br>
+                                        Example: http://myserver.com/api/sensors/temp1</li>
+                                    <li><strong>Stateless:</strong> Each request from the client (IoT device) to server must contain all information needed to understand the request</li>
+                                </ul>
+                                
+                                <h5>HTTP Methods:</h5>
+                                <ul>
+                                    <li><strong>GET:</strong> Retrieve data (e.g., Get status of a light)</li>
+                                    <li><strong>POST:</strong> Create data (e.g., Upload a new temperature reading)</li>
+                                    <li><strong>PUT:</strong> Update data (e.g., Update the configuration of a device)</li>
+                                    <li><strong>DELETE:</strong> Remove data</li>
+                                </ul>
+                                
+                                <h5>JSON Format:</h5>
+                                <p>Data is usually exchanged in JSON format because it is lightweight and easy for both Python and JavaScript to parse.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unit V: Cloud Services Content -->
+            <div id="cloud-content" class="unit-content hidden">
+                <div class="unit-header">
+                    <h1>Unit-V: IoT Physical Servers and Cloud Offerings</h1>
+                    <p>Comprehensive guide to cloud storage models, APIs, Amazon web services, and IoT applications in agriculture and weather monitoring.</p>
+                </div>
+
+                <!-- Question 1.c -->
+                <div id="cloud-q1-c" class="question cloud">
+                    <h3 class="question-title">Question 1. c) Give overview of cloud storage models in brief?</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Cloud Storage Models</h4>
+                        <p>Cloud storage models define how data is stored, accessed, and managed in the cloud environment. In the context of IoT, where devices generate massive amounts of unstructured and structured data, choosing the right model is critical.</p>
+                        
+                        <h5>Object Storage (e.g., Amazon S3):</h5>
+                        <ul>
+                            <li><strong>Concept:</strong> Data is stored as distinct units called "objects" (files, images, logs) along with metadata and a unique identifier</li>
+                            <li><strong>Use in IoT:</strong> Ideal for storing vast amounts of unstructured data like sensor logs, video feeds from surveillance cameras, or firmware update files. It is highly scalable and accessible via HTTP APIs</li>
+                        </ul>
+                        
+                        <h5>Block Storage (e.g., Amazon EBS):</h5>
+                        <ul>
+                            <li><strong>Concept:</strong> Storage is split into fixed-sized blocks. It acts like a physical hard drive attached to a virtual server</li>
+                            <li><strong>Use in IoT:</strong> Used by the virtual servers (like EC2 instances) running the IoT application backend or databases that require low-latency read/write operations</li>
+                        </ul>
+                        
+                        <h5>File Storage (e.g., Amazon EFS):</h5>
+                        <ul>
+                            <li><strong>Concept:</strong> Data is stored in a hierarchical file and folder structure, similar to a standard PC file system (NFS/SMB)</li>
+                            <li><strong>Use in IoT:</strong> Useful when multiple IoT application servers need access to the same shared files simultaneously</li>
+                        </ul>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>Choosing the right storage model depends on your specific IoT use case, considering factors like access patterns, scalability requirements, and cost considerations.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 1.d -->
+                <div id="cloud-q1-d" class="question cloud">
+                    <h3 class="question-title">Question 1. d) Explain any three basic APIs?</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Three Basic Types of APIs</h4>
+                        
+                        <h5>Local APIs (OS Level):</h5>
+                        <ul>
+                            <li>These are the services provided by the Operating System to applications running on the same device</li>
+                            <li><strong>Example:</strong> In an IoT device, the code uses local APIs to control the hardware (like GPIO pins on a Raspberry Pi) or access the file system</li>
+                        </ul>
+                        
+                        <h5>Web APIs (REST/SOAP):</h5>
+                        <ul>
+                            <li>These allow interaction between two different systems over a network (Internet), typically using HTTP</li>
+                            <li><strong>Example:</strong> An IoT device sending temperature data to a cloud server using a POST request, or a mobile app fetching that data using a GET request. This is the foundation of IoT cloud communication</li>
+                        </ul>
+                        
+                        <h5>Program APIs (Libraries/Packages):</h5>
+                        <ul>
+                            <li>These are sets of code libraries or packages that developers import to perform specific tasks without writing code from scratch</li>
+                            <li><strong>Example:</strong> Importing the json package in Python to parse data, or the boto3 library to interact with AWS</li>
+                        </ul>
+                        
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i>
+                            <div>Understanding these different API types is crucial for IoT development, as devices often need to interact with local hardware, cloud services, and various software libraries.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 2.c -->
+                <div id="cloud-q2-c" class="question cloud">
+                    <h3 class="question-title">Question 2. c) Explain Amazon EC2 web service for IoT?</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Amazon EC2 Web Service for IoT</h4>
+                        <p>Amazon EC2 (Elastic Compute Cloud) is a web service that provides resizable compute capacity in the cloud. It essentially gives you virtual servers (instances) to run your applications.</p>
+                        
+                        <h5>Role in IoT:</h5>
+                        <p>EC2 instances act as the "brain" in the cloud for IoT systems. They host the backend applications, message brokers (like MQTT brokers), and databases that process data sent by IoT devices.</p>
+                        
+                        <h5>Scalability:</h5>
+                        <p>You can scale up (increase power) or scale out (add more servers) automatically as the number of connected IoT devices grows.</p>
+                        
+                        <h5>Flexibility:</h5>
+                        <p>It supports various operating systems (Linux, Windows) and allows developers to install any software stack (Python, Django, Node.js) required for the IoT solution.</p>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>EC2 instances can be configured with auto-scaling groups to automatically adjust capacity based on demand, ensuring your IoT backend can handle varying loads efficiently.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 2.d -->
+                <div id="cloud-q2-d" class="question cloud">
+                    <h3 class="question-title">Question 2. d) Explain the process of designing a RESTful web API?</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Designing a RESTful Web API</h4>
+                        <p>Designing a RESTful API involves creating a standardized way for IoT devices and clients to communicate with the server.</p>
+                        
+                        <h5>Identify Resources:</h5>
+                        <p>Determine what "things" or data needs to be exposed. In IoT, resources could be Sensors, Devices, or Logs.</p>
+                        
+                        <h5>Define URIs (Uniform Resource Identifiers):</h5>
+                        <p>Assign unique endpoints to these resources.</p>
+                        <p><strong>Example:</strong> http://api.mysystem.com/sensors/temp_sensor_01</p>
+                        
+                        <h5>Choose HTTP Methods:</h5>
+                        <p>Map actions to standard HTTP verbs:</p>
+                        <ul>
+                            <li><strong>GET:</strong> Retrieve specific resource (e.g., Read temperature)</li>
+                            <li><strong>POST:</strong> Create a new resource (e.g., Upload new data)</li>
+                            <li><strong>PUT:</strong> Update an existing resource (e.g., Change device settings)</li>
+                            <li><strong>DELETE:</strong> Remove a resource</li>
+                        </ul>
+                        
+                        <h5>Determine Representation (Format):</h5>
+                        <p>Decide how data is exchanged. JSON is the standard for IoT because it is lightweight and human-readable.</p>
+                        
+                        <h5>Statelessness:</h5>
+                        <p>Ensure the server does not store the client's state between requests. Each request must contain all necessary information (authentication, data) to complete the task.</p>
+                        
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i>
+                            <div>Well-designed RESTful APIs make it easier to integrate different IoT devices and applications, promoting interoperability and scalability.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3.c -->
+                <div id="cloud-q3-c" class="question cloud">
+                    <h3 class="question-title">Question 3. c) Illustrate the cloud for IoT?</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Cloud for IoT Architecture</h4>
+                        <p>The "Cloud for IoT" refers to the ecosystem of services used to collect, store, and analyze data from physical devices.</p>
+                        
+                        <h5>Device Layer:</h5>
+                        <p>Sensors and actuators collect data from the physical environment.</p>
+                        
+                        <h5>Communication Layer:</h5>
+                        <p>Devices send data to the cloud via gateways using protocols like MQTT or HTTP.</p>
+                        
+                        <h5>Cloud Layer:</h5>
+                        <ul>
+                            <li><strong>Ingestion:</strong> Accepts incoming data streams (e.g., AWS IoT Core)</li>
+                            <li><strong>Storage:</strong> Persists data (e.g., S3, DynamoDB)</li>
+                            <li><strong>Processing:</strong> Analyzes data (e.g., Lambda, EC2)</li>
+                        </ul>
+                        
+                        <h5>Application Layer:</h5>
+                        <p>Users visualize data via dashboards or mobile apps.</p>
+                        
+                        <h5>Key Benefit:</h5>
+                        <p>It offloads heavy computation and storage from the limited resource IoT devices to powerful cloud servers.</p>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>Cloud services enable IoT systems to scale globally, process massive amounts of data, and provide advanced analytics capabilities that would be impossible with on-premises solutions.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3.d -->
+                <div id="cloud-q3-d" class="question cloud">
+                    <h3 class="question-title">Question 3. d) Analyse JSON package and explain how does it useful in IoT?</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">JSON Package in Python</h4>
+                        <p>JSON (JavaScript Object Notation) is a lightweight data-interchange format. The Python json package is a built-in library used to work with JSON data.</p>
+                        
+                        <h5>Key Functions in Python:</h5>
+                        <ul>
+                            <li><strong>json.dumps(data):</strong> Serialization. Converts a Python object (dictionary) into a JSON string to be sent over the network</li>
+                            <li><strong>json.loads(string):</strong> Deserialization. Converts a received JSON string back into a Python object</li>
+                        </ul>
+                        
+                        <h5>Usefulness in IoT:</h5>
+                        <ul>
+                            <li><strong>Standard Format:</strong> Most cloud platforms (AWS IoT, Azure) require data payloads in JSON format</li>
+                            <li><strong>Lightweight:</strong> It has low overhead compared to XML, which saves bandwidth and battery life on constrained IoT devices</li>
+                            <li><strong>Readability:</strong> It is easy for humans to read and debug</li>
+                        </ul>
+                        
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i>
+                            <div>JSON has become the de facto standard for data exchange in IoT applications due to its simplicity and efficiency.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 4.c -->
+                <div id="cloud-q4-c" class="question cloud">
+                    <h3 class="question-title">Question 4. c) i) Explain the different services of cloud computing. ii) Give brief information about the service model of a service models of a cloud computing?</h3>
+                    
+                    <div class="question-content">
+                        <div class="tab-container">
+                            <div class="tab-nav">
+                                <button class="tab-button active" data-tab="cloud-services">Cloud Services</button>
+                                <button class="tab-button" data-tab="service-models">Service Models</button>
+                            </div>
+                            
+                            <div id="cloud-services" class="tab-content active">
+                                <h4 class="subsection-title">Different Services of Cloud Computing</h4>
+                                <p>Cloud providers offer a vast array of services, categorized broadly into:</p>
+                                
+                                <ul>
+                                    <li><strong>Compute Services:</strong> Virtual servers (EC2), serverless computing (Lambda) to run code</li>
+                                    <li><strong>Storage Services:</strong> Object storage (S3), block storage, and databases to hold data</li>
+                                    <li><strong>Networking Services:</strong> Virtual Private Clouds (VPC), Load Balancers to manage traffic</li>
+                                    <li><strong>IoT Specific Services:</strong> Device management, message brokers (IoT Core), and analytics</li>
+                                </ul>
+                            </div>
+                            
+                            <div id="service-models" class="tab-content">
+                                <h4 class="subsection-title">Service Models of Cloud Computing</h4>
+                                
+                                <h5>IaaS (Infrastructure as a Service):</h5>
+                                <ul>
+                                    <li>Provides raw computing resources (VMs, storage, network)</li>
+                                    <li>User manages: OS, applications, data</li>
+                                    <li><strong>Example:</strong> Amazon EC2</li>
+                                </ul>
+                                
+                                <h5>PaaS (Platform as a Service):</h5>
+                                <ul>
+                                    <li>Provides a platform (runtime, tools) to develop and deploy applications without managing the underlying hardware or OS</li>
+                                    <li>User manages: Applications and data</li>
+                                    <li><strong>Example:</strong> Google App Engine, AWS Elastic Beanstalk</li>
+                                </ul>
+                                
+                                <h5>SaaS (Software as a Service):</h5>
+                                <ul>
+                                    <li>Delivers software applications over the internet</li>
+                                    <li>User manages: Nothing (just uses the software)</li>
+                                    <li><strong>Example:</strong> Gmail, Dropbox, IoT Dashboards provided as a service</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 5.c -->
+                <div id="cloud-q5-c" class="question cloud">
+                    <h3 class="question-title">Question 5. c) Explain about weather reporting- air pollution monitoring</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">Weather Reporting & Air Pollution Monitoring</h4>
+                        <p>This is a classic IoT case study involving sensing, cloud transmission, and visualization.</p>
+                        
+                        <h5>System Architecture:</h5>
+                        
+                        <h6>Sensing Node:</h6>
+                        <ul>
+                            <li><strong>Sensors:</strong> Gas sensors (MQ-135 for Air Quality), PM2.5 sensors (dust), DHT11 (Temperature & Humidity)</li>
+                            <li><strong>Controller:</strong> Raspberry Pi or ESP8266 reads the sensor data</li>
+                        </ul>
+                        
+                        <h6>Data Processing:</h6>
+                        <p>The controller converts raw analog signals from sensors into digital values (e.g., PPM for gases).</p>
+                        
+                        <h6>Connectivity:</h6>
+                        <p>The device connects to Wi-Fi and sends the data to a Cloud platform (like ThingSpeak or AWS IoT) using REST API or MQTT.</p>
+                        
+                        <h6>Visualization:</h6>
+                        <p>The cloud platform plots the data on a real-time graph. Users can monitor pollution levels remotely via a web dashboard or mobile app.</p>
+                        
+                        <h6>Alerts:</h6>
+                        <p>If pollution exceeds a threshold, the system sends an email or SMS alert.</p>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>Such systems are crucial for urban planning and public health, providing real-time data that can help reduce pollution exposure and improve air quality.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 6.c -->
+                <div id="cloud-q6-c" class="question cloud">
+                    <h3 class="question-title">Question 6. c) Explain about IoT in Agriculture</h3>
+                    
+                    <div class="question-content">
+                        <h4 class="subsection-title">IoT in Agriculture (Smart Agriculture)</h4>
+                        <p>Smart Agriculture uses IoT to optimize farming practices, reduce waste, and increase yield.</p>
+                        
+                        <h5>Precision Farming:</h5>
+                        <ul>
+                            <li><strong>Soil Monitoring:</strong> Moisture sensors (soil hygrometers) detect when the soil is dry</li>
+                            <li><strong>Automated Irrigation:</strong> The system automatically turns on water pumps only when needed, saving water</li>
+                        </ul>
+                        
+                        <h5>Crop Monitoring:</h5>
+                        <ul>
+                            <li><strong>Drones or camera modules</strong> attached to Raspberry Pis monitor crop health using image processing (NDVI analysis) to detect diseases early</li>
+                        </ul>
+                        
+                        <h5>Greenhouse Automation:</h5>
+                        <ul>
+                            <li><strong>Sensors control</strong> temperature, humidity, and light levels inside a greenhouse by automatically adjusting fans, heaters, and shades</li>
+                        </ul>
+                        
+                        <h5>Livestock Monitoring:</h5>
+                        <ul>
+                            <li><strong>Wearable sensors</strong> track the health and location of cattle, alerting farmers if an animal is sick or straying</li>
+                        </ul>
+                        
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i>
+                            <div>IoT in agriculture helps farmers make data-driven decisions, leading to increased productivity, reduced costs, and more sustainable farming practices.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>IoT and Python Learning Portal</h3>
+                <p>Comprehensive guide to Python fundamentals, IoT devices, and cloud services for modern applications.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#" class="unit-nav" data-unit="python">Unit III: Python</a></li>
+                    <li><a href="#" class="unit-nav" data-unit="iot">Unit IV: IoT Devices</a></li>
+                    <li><a href="#" class="unit-nav" data-unit="cloud">Unit V: Cloud Services</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://www.python.org" target="_blank">Python.org</a></li>
+                    <li><a href="https://www.raspberrypi.org" target="_blank">Raspberry Pi</a></li>
+                    <li><a href="https://aws.amazon.com/iot/" target="_blank">AWS IoT</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 IoT and Python Learning Portal. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Unit navigation
+            const navUnits = document.querySelectorAll('.nav-unit');
+            const unitContents = document.querySelectorAll('.unit-content');
+            const unitSidebars = document.querySelectorAll('.unit-sidebar');
+            
+            navUnits.forEach(unit => {
+                unit.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Get the target unit
+                    const targetUnit = this.getAttribute('data-unit');
+                    
+                    // Update active nav unit
+                    navUnits.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show/hide content
+                    unitContents.forEach(content => {
+                        if (content.id === `${targetUnit}-content`) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                    
+                    // Show/hide sidebar
+                    unitSidebars.forEach(sidebar => {
+                        if (sidebar.id === `${targetUnit}-sidebar`) {
+                            sidebar.classList.remove('hidden');
+                        } else {
+                            sidebar.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+            
+            // Footer unit navigation
+            const footerNavLinks = document.querySelectorAll('.unit-nav');
+            footerNavLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetUnit = this.getAttribute('data-unit');
+                    
+                    // Trigger click on corresponding nav unit
+                    const targetNavUnit = document.querySelector(`.nav-unit[data-unit="${targetUnit}"]`);
+                    if (targetNavUnit) {
+                        targetNavUnit.click();
+                    }
+                });
+            });
+            
+            // Tab functionality
+            const tabContainers = document.querySelectorAll('.tab-container');
+            tabContainers.forEach(container => {
+                const tabButtons = container.querySelectorAll('.tab-button');
+                const tabContents = container.querySelectorAll('.tab-content');
+                
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const targetTab = this.getAttribute('data-tab');
+                        
+                        // Update active button
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Show/hide content
+                        tabContents.forEach(content => {
+                            if (content.id === targetTab) {
+                                content.classList.add('active');
+                            } else {
+                                content.classList.remove('active');
+                            }
+                        });
+                    });
+                });
+            });
+            
+            // Collapsible functionality
+            const collapsibles = document.querySelectorAll('.collapsible');
+            collapsibles.forEach(collapsible => {
+                collapsible.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    const content = this.nextElementSibling;
+                    
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                    }
+                });
+            });
+            
+            // Sidebar navigation
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Update active sidebar link within the same unit
+                    const currentSidebar = this.closest('.unit-sidebar');
+                    if (currentSidebar) {
+                        currentSidebar.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                        this.classList.add('active');
+                    }
+                    
+                    // Smooth scroll to target
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // Smooth scrolling for all anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href !== '#') {
+                        e.preventDefault();
+                        const target = document.querySelector(href);
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
