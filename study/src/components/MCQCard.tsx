@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { MCQQuestion } from "@/data/questionData";
+import type { MCQQuestion } from "@/data/questionsData";
 
 interface MCQCardProps {
   question: MCQQuestion;
@@ -23,86 +23,114 @@ export const MCQCard = ({ question, index }: MCQCardProps) => {
   const isCorrect = selectedOption === question.correctAnswer;
 
   return (
-    <Card className="p-6 hover:shadow-lg transition-shadow">
-      <div className="space-y-4">
-        {/* Question Header */}
-        <div className="flex items-start gap-3">
-          <span className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary text-sm font-semibold">
+    <Card className="flex flex-col overflow-hidden border bg-white dark:bg-slate-950 shadow-sm hover:shadow-md transition-all duration-200">
+      {/* Question Header */}
+      <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950">
+        <div className="flex items-start gap-4">
+          <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-sm font-bold border border-blue-100 dark:border-blue-800">
             {index + 1}
-          </span>
-          <div className="flex-1">
+          </div>
+          <div className="flex-1 space-y-1">
             {question.topic && (
-              <span className="inline-block px-2 py-1 text-xs rounded bg-accent text-accent-foreground mb-2">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium text-slate-600 dark:text-slate-400 mb-2 border border-slate-200 dark:border-slate-700">
                 {question.topic}
               </span>
             )}
-            <p className="text-base font-medium text-foreground leading-relaxed">
+            <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-50 leading-snug">
               {question.question}
-            </p>
+            </h3>
           </div>
         </div>
+      </div>
 
-        {/* Options */}
-        <div className="space-y-2 ml-11">
+      {/* Interactive Body */}
+      <div className="flex-1 bg-slate-50/50 dark:bg-slate-900/20 p-5 sm:p-6 space-y-6">
+
+        {/* Options Grid */}
+        <div className="grid gap-3 sm:grid-cols-1">
           {question.options.map((option, idx) => {
             const isSelected = selectedOption === idx;
             const isCorrectOption = idx === question.correctAnswer;
-            const showCorrect = hasAnswered && isCorrectOption;
-            const showIncorrect = hasAnswered && isSelected && !isCorrect;
+
+            // Determine state for styling
+            let variantStyle = "bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50/50 dark:hover:bg-blue-900/10";
+
+            if (hasAnswered) {
+              if (isCorrectOption) {
+                variantStyle = "bg-green-50 dark:bg-green-900/20 border-green-500 ring-1 ring-green-500 text-green-900 dark:text-green-100";
+              } else if (isSelected && !isCorrect) {
+                variantStyle = "bg-red-50 dark:bg-red-900/20 border-red-500 ring-1 ring-red-500 text-red-900 dark:text-red-100";
+              } else {
+                variantStyle = "opacity-50 grayscale border-transparent bg-slate-100 dark:bg-slate-900";
+              }
+            } else if (isSelected) {
+              variantStyle = "border-blue-500 ring-1 ring-blue-500 bg-blue-50 dark:bg-blue-900/20";
+            }
 
             return (
-              <Button
+              <button
                 key={idx}
-                variant="outline"
-                className={cn(
-                  "w-full justify-start text-left h-auto py-3 px-4 transition-all",
-                  !hasAnswered && "hover:bg-accent hover:text-accent-foreground",
-                  showCorrect && "bg-green-50 border-green-500 text-green-900 hover:bg-green-50 dark:bg-green-950 dark:text-green-100 dark:border-green-700",
-                  showIncorrect && "bg-red-50 border-red-500 text-red-900 hover:bg-red-50 dark:bg-red-950 dark:text-red-100 dark:border-red-700",
-                  hasAnswered && !isSelected && !isCorrectOption && "opacity-50"
-                )}
                 onClick={() => handleOptionClick(idx)}
                 disabled={hasAnswered}
+                className={cn(
+                  "relative flex items-center gap-4 w-full p-4 text-left text-sm sm:text-base rounded-xl border transition-all duration-200 group",
+                  variantStyle
+                )}
               >
-                <span className="flex items-center gap-3 w-full">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-semibold">
-                    {String.fromCharCode(65 + idx)}
-                  </span>
-                  <span className="flex-1">{option}</span>
-                  {showCorrect && <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />}
-                  {showIncorrect && <XCircle className="w-5 h-5 text-red-600 dark:text-red-400" />}
+                {/* Option Letter (A, B, C...) */}
+                <span className={cn(
+                  "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border transition-colors",
+                  hasAnswered && isCorrectOption ? "bg-green-600 border-green-600 text-white" :
+                    hasAnswered && isSelected && !isCorrect ? "bg-red-600 border-red-600 text-white" :
+                      "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 group-hover:bg-white dark:group-hover:bg-slate-700"
+                )}>
+                  {String.fromCharCode(65 + idx)}
                 </span>
-              </Button>
+
+                <span className="flex-1 font-medium leading-relaxed">
+                  {option}
+                </span>
+
+                {/* Status Icons */}
+                {hasAnswered && isCorrectOption && <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 animate-in zoom-in spin-in-12" />}
+                {hasAnswered && isSelected && !isCorrect && <XCircle className="w-5 h-5 text-red-600 dark:text-red-400 animate-in zoom-in" />}
+              </button>
             );
           })}
         </div>
 
-        {/* Feedback */}
+        {/* Explanation / Feedback Box */}
         {hasAnswered && (
           <div className={cn(
-            "ml-11 p-4 rounded-lg animate-in fade-in slide-in-from-top-2",
-            isCorrect ? "bg-green-50 dark:bg-green-950/30" : "bg-red-50 dark:bg-red-950/30"
+            "rounded-xl border overflow-hidden animate-in fade-in slide-in-from-top-2",
+            isCorrect
+              ? "border-green-200 dark:border-green-900 bg-green-50/50 dark:bg-green-900/10"
+              : "border-blue-200 dark:border-blue-900 bg-blue-50/50 dark:bg-blue-900/10"
           )}>
-            <div className="flex items-start gap-2">
-              {isCorrect ? (
-                <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-              ) : (
-                <XCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
-              )}
-              <div>
-                <p className={cn(
-                  "font-semibold mb-1",
-                  isCorrect ? "text-green-900 dark:text-green-100" : "text-red-900 dark:text-red-100"
-                )}>
-                  {isCorrect ? "Correct! 🎉" : "Not quite 😅"}
-                </p>
-                <p className={cn(
-                  "text-sm leading-relaxed",
-                  isCorrect ? "text-green-800 dark:text-green-200" : "text-red-800 dark:text-red-200"
-                )}>
-                  {!isCorrect && `Correct answer: ${question.options[question.correctAnswer]}\n\n`}
-                  <span className="font-medium">Explanation:</span> {question.explanation}
-                </p>
+            <div className="p-4 sm:p-5">
+              <div className="flex items-start gap-3">
+                {isCorrect ? (
+                  <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full shrink-0">
+                    <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  </div>
+                ) : (
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full shrink-0">
+                    <HelpCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                )}
+
+                <div className="space-y-2 pt-1">
+                  <p className={cn(
+                    "font-semibold text-base",
+                    isCorrect ? "text-green-900 dark:text-green-100" : "text-slate-900 dark:text-slate-100"
+                  )}>
+                    {isCorrect ? "Correct Answer!" : "Explanation"}
+                  </p>
+
+                  <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                    {question.explanation}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

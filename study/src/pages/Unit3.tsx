@@ -6,7 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Search, Brain } from "lucide-react";
 import { MCQCard } from "@/components/MCQCard";
 import { FillBlankCard } from "@/components/FillBlankCard";
-import { questionsData } from "@/data/questionData";
+import { DescriptiveCard } from "@/components/DescriptiveCard"; // Import the new component
+import { questionsData } from "../data/questionData";
 
 const Unit3 = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -19,7 +20,14 @@ const Unit3 = () => {
       q.question.toLowerCase().includes(query) ||
       q.topic?.toLowerCase().includes(query) ||
       (q.options && q.options.some((opt: string) => opt.toLowerCase().includes(query))) ||
-      (q.answer && q.answer.toLowerCase().includes(query)) ||
+      // Handle searching within structured answer blocks
+      (q.answer && Array.isArray(q.answer)
+        ? q.answer.some((block: any) =>
+          (block.content && block.content.toLowerCase().includes(query)) ||
+          (block.items && block.items.some((item: string) => item.toLowerCase().includes(query)))
+        )
+        : q.answer && typeof q.answer === 'string' && q.answer.toLowerCase().includes(query)
+      ) ||
       (q.correctAnswer && q.correctAnswer.toLowerCase().includes(query))
     );
   };
@@ -27,64 +35,6 @@ const Unit3 = () => {
   const filteredMCQs = filterQuestions(unitData.mcqs);
   const filteredFillBlanks = filterQuestions(unitData.fillBlanks);
   const filteredDescriptive = filterQuestions(unitData.descriptive);
-
-  // Format answer text with proper formatting
-  const formatAnswer = (answer: string) => {
-    return answer.split('\n\n').map((paragraph, idx) => {
-      // Handle bullet points and numbered lists
-      if (paragraph.startsWith('•') || paragraph.match(/^\d+\./) || paragraph.startsWith('-')) {
-        return (
-          <div key={idx} className="space-y-3">
-            {paragraph.split('\n').map((line, lineIdx) => (
-              <div key={lineIdx} className="flex items-start gap-3">
-                {(line.startsWith('•') || line.startsWith('-')) && (
-                  <>
-                    <span className="text-primary mt-1 flex-shrink-0 text-lg">•</span>
-                    <p className="text-foreground leading-relaxed flex-1 text-base">
-                      {line.substring(1).trim()}
-                    </p>
-                  </>
-                )}
-                {line.match(/^\d+\./) && (
-                  <p className="text-foreground leading-relaxed text-base">
-                    {line}
-                  </p>
-                )}
-                {!line.startsWith('•') && !line.startsWith('-') && !line.match(/^\d+\./) && line.trim() && (
-                  <p className="text-foreground leading-relaxed ml-6 text-base">
-                    {line}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        );
-      }
-
-      // Handle bold text (***text***)
-      if (paragraph.includes('***')) {
-        const parts = paragraph.split('***');
-        return (
-          <p key={idx} className="text-foreground leading-relaxed whitespace-pre-line text-base">
-            {parts.map((part, partIdx) =>
-              partIdx % 2 === 1 ? (
-                <strong key={partIdx} className="font-semibold text-foreground">{part}</strong>
-              ) : (
-                part
-              )
-            )}
-          </p>
-        );
-      }
-
-      // Regular paragraphs
-      return (
-        <p key={idx} className="text-foreground leading-relaxed whitespace-pre-line text-base">
-          {paragraph}
-        </p>
-      );
-    });
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -160,7 +110,7 @@ const Unit3 = () => {
               </TabsTrigger>
             </TabsList>
 
-            {/* Descriptive Tab - Always Visible Answers */}
+            {/* Descriptive Tab */}
             <TabsContent value="descriptive" className="space-y-4 sm:space-y-6">
               {filteredDescriptive.length === 0 ? (
                 <div className="text-center py-8 sm:py-12 text-muted-foreground text-sm sm:text-base">
@@ -168,40 +118,8 @@ const Unit3 = () => {
                 </div>
               ) : (
                 filteredDescriptive.map((desc, index) => (
-                  <div key={desc.id} className="bg-card rounded-lg border shadow-sm hover:shadow-md transition-shadow">
-                    {/* Question Section */}
-                    <div className="p-4 sm:p-6 border-b">
-                      <div className="flex items-start gap-3 sm:gap-4">
-                        <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-primary/10 text-primary text-sm font-semibold flex items-center justify-center">
-                          {index + 1}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          {desc.topic && (
-                            <span className="inline-block px-2 py-1 text-xs rounded-full bg-accent text-accent-foreground mb-2 sm:mb-3 font-medium border">
-                              {desc.topic}
-                            </span>
-                          )}
-                          <h3 className="text-lg sm:text-xl font-semibold text-foreground leading-relaxed break-words">
-                            {desc.question}
-                          </h3>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Answer Section - Always Visible */}
-                    <div className="p-4 sm:p-6 bg-muted/30">
-                      <div className="flex items-start gap-3 sm:gap-4">
-                        <div className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 sm:mt-1">
-                          <span className="text-green-600 text-xs sm:text-sm font-bold">A</span>
-                        </div>
-                        <div className="flex-1 space-y-3 sm:space-y-4">
-                          <div className="text-foreground leading-relaxed">
-                            {formatAnswer(desc.answer)}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  // Updated to use the DescriptiveCard component directly
+                  <DescriptiveCard key={desc.id} question={desc} index={index} />
                 ))
               )}
             </TabsContent>
