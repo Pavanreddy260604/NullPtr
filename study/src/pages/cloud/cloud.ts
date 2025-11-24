@@ -159,7 +159,7 @@ export const questionsData =
             "Grid Computing",
             "All of the above"
           ],
-          "correctAnswer": 3,
+          "correctAnswer": 0,
           "explanation": "Cloud computing leverages virtualization, SOA, and grid computing technologies as foundational components.",
           "topic": "Cloud Technologies"
         },

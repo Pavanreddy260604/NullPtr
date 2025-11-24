@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { BookOpen, Server, Cloud, Shield, ArrowRight } from "lucide-react";
+import { BookOpen, Server, Cloud, Shield, ArrowRight, ArrowLeft } from "lucide-react";
 
 const Cloud1 = () => {
     const units = [
@@ -33,6 +33,20 @@ const Cloud1 = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-background via-accent/20 to-background">
+            {/* Header with Back Button */}
+            <header className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+                <div className="container mx-auto px-4 py-4">
+                    <div className="flex items-center justify-between">
+                        <Link to="/">
+                            <Button variant="ghost" size="sm">
+                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                Back to Subjects
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+            </header>
+
             {/* Hero Section */}
             <section className="container mx-auto px-4 py-16 md:py-24">
                 <div className="max-w-4xl mx-auto text-center space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
@@ -40,6 +54,12 @@ const Cloud1 = () => {
                         <BookOpen className="w-4 h-4" />
                         <span className="text-sm font-medium">Interactive Platform</span>
                     </div>
+                    <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground">
+                        Cloud Computing
+                    </h1>
+                    <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                        Master cloud technologies, virtualization, and distributed systems through interactive learning.
+                    </p>
                 </div>
             </section>
 
