@@ -7,11 +7,11 @@ import { ArrowLeft, Search, Brain } from "lucide-react";
 import { MCQCard } from "@/components/MCQCard";
 import { FillBlankCard } from "@/components/FillBlankCard";
 import { DescriptiveCard } from "@/components/DescriptiveCard";
-import { questionsData } from "@/data/questionData";
+import { questionsData } from "./cloud";
 
-const Unit5 = () => {
+const Unit4c = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const unitData = questionsData.units.find(u => u.unit === 5)!;
+  const unitData = questionsData.units.find(u => u.unit === 4)!;
 
   const filterQuestions = (questions: any[]) => {
     if (!searchQuery.trim()) return questions;
@@ -33,7 +33,7 @@ const Unit5 = () => {
       <header className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link to="/">
+            <Link to="/cloud">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Units
@@ -41,11 +41,11 @@ const Unit5 = () => {
             </Link>
 
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
                 <Brain className="w-5 h-5 text-white" />
               </div>
               <div className="hidden sm:block">
-                <div className="text-sm text-muted-foreground">Unit 5</div>
+                <div className="text-sm text-muted-foreground">Unit 4</div>
                 <div className="font-semibold text-foreground">{unitData.title}</div>
               </div>
             </div>
@@ -54,11 +54,11 @@ const Unit5 = () => {
       </header>
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-background py-12 border-b border-border">
+      <section className="bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-background py-12 border-b border-border">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
-            <div className="inline-block px-3 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 text-sm font-medium mb-4">
-              Unit 5
+            <div className="inline-block px-3 py-1 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 text-sm font-medium mb-4">
+              Unit 4
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
               {unitData.title}
@@ -142,7 +142,7 @@ const Unit5 = () => {
           </Tabs>
 
           {/* Encouragement */}
-          <div className="mt-12 p-6 rounded-lg bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20">
+          <div className="mt-12 p-6 rounded-lg bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20">
             <p className="text-center text-foreground font-medium">
               💪 You're getting better with every question! Keep practicing ✨
             </p>
@@ -153,4 +153,4 @@ const Unit5 = () => {
   );
 };
 
-export default Unit5;
+export default Unit4c;

@@ -3,32 +3,24 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BookOpen, Brain, Globe, Share2, ArrowRight } from "lucide-react";
 
+
 const Index = () => {
   const units = [
     {
       number: 3,
-      title: "Sentiment Analysis",
-      description: "Master the art of extracting emotions and opinions from text",
-      icon: Brain,
+      title: "Web Social Media Analytics",
+      icon: Globe,
       color: "from-blue-500 to-cyan-500",
-      path: "/unit-3"
+      path: "/wsma"
     },
     {
       number: 4,
-      title: "Web Mining & Analytics",
-      description: "Discover patterns and insights from web data",
-      icon: Globe,
+      title: "Cloud Computing",
+      icon: Brain,
       color: "from-purple-500 to-pink-500",
-      path: "/unit-4"
+      path: "/cloud"
     },
-    {
-      number: 5,
-      title: "Social Media Analytics",
-      description: "Analyze social networks and online interactions",
-      icon: Share2,
-      color: "from-orange-500 to-red-500",
-      path: "/unit-5"
-    }
+
   ];
 
   return (
@@ -56,7 +48,7 @@ const Index = () => {
       <section className="container mx-auto px-4 pb-24">
         <div className="max-w-5xl mx-auto space-y-6">
           <h2 className="text-2xl md:text-3xl font-bold text-center text-foreground mb-8">
-            Choose Your Unit
+            Choose Your subject
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -71,15 +63,11 @@ const Index = () => {
                       </div>
 
                       <div>
-                        <div className="text-sm font-semibold text-muted-foreground mb-1">
-                          Unit {unit.number}
-                        </div>
+
                         <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
                           {unit.title}
                         </h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          {unit.description}
-                        </p>
+
                       </div>
 
                       <Button

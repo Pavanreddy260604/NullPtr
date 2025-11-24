@@ -6,12 +6,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Search, Brain } from "lucide-react";
 import { MCQCard } from "@/components/MCQCard";
 import { FillBlankCard } from "@/components/FillBlankCard";
-import { DescriptiveCard } from "@/components/DescriptiveCard"; // Import the new component
-import { questionsData } from "../data/questionData";
+import { DescriptiveCard } from "@/components/DescriptiveCard";
+import { questionsData } from "@/data/questionData";
 
-const Unit3 = () => {
+const Unit5 = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const unitData = questionsData.units.find(u => u.unit === 3)!;
+  const unitData = questionsData.units.find(u => u.unit === 5)!;
 
   const filterQuestions = (questions: any[]) => {
     if (!searchQuery.trim()) return questions;
@@ -19,16 +19,7 @@ const Unit3 = () => {
     return questions.filter(q =>
       q.question.toLowerCase().includes(query) ||
       q.topic?.toLowerCase().includes(query) ||
-      (q.options && q.options.some((opt: string) => opt.toLowerCase().includes(query))) ||
-      // Handle searching within structured answer blocks
-      (q.answer && Array.isArray(q.answer)
-        ? q.answer.some((block: any) =>
-          (block.content && block.content.toLowerCase().includes(query)) ||
-          (block.items && block.items.some((item: string) => item.toLowerCase().includes(query)))
-        )
-        : q.answer && typeof q.answer === 'string' && q.answer.toLowerCase().includes(query)
-      ) ||
-      (q.correctAnswer && q.correctAnswer.toLowerCase().includes(query))
+      (q.options && q.options.some((opt: string) => opt.toLowerCase().includes(query)))
     );
   };
 
@@ -42,20 +33,20 @@ const Unit3 = () => {
       <header className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link to="/">
-              <Button variant="ghost" size="sm" className="text-sm">
+            <Link to="/wsma">
+              <Button variant="ghost" size="sm">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Units
               </Button>
             </Link>
 
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                <Brain className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                <Brain className="w-5 h-5 text-white" />
               </div>
-              <div className="text-right">
-                <div className="text-xs sm:text-sm text-muted-foreground">Unit 3</div>
-                <div className="font-semibold text-foreground text-sm sm:text-base">{unitData.title}</div>
+              <div className="hidden sm:block">
+                <div className="text-sm text-muted-foreground">Unit 5</div>
+                <div className="font-semibold text-foreground">{unitData.title}</div>
               </div>
             </div>
           </div>
@@ -63,16 +54,16 @@ const Unit3 = () => {
       </header>
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-500/10 via-cyan-500/5 to-background py-8 sm:py-12 border-b border-border">
+      <section className="bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-background py-12 border-b border-border">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
-            <div className="inline-block px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs sm:text-sm font-medium mb-3 sm:mb-4">
-              Unit 3
+            <div className="inline-block px-3 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 text-sm font-medium mb-4">
+              Unit 5
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 sm:mb-3">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
               {unitData.title}
             </h1>
-            <p className="text-base sm:text-lg text-muted-foreground">
+            <p className="text-lg text-muted-foreground">
               {unitData.subtitle}
             </p>
           </div>
@@ -80,10 +71,10 @@ const Unit3 = () => {
       </section>
 
       {/* Main Content */}
-      <section className="container mx-auto px-4 py-6 sm:py-8">
+      <section className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Search */}
-          <div className="mb-4 sm:mb-6">
+          <div className="mb-6">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -91,34 +82,33 @@ const Unit3 = () => {
                 placeholder="Search questions by keyword, topic, or content..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 text-sm sm:text-base"
+                className="pl-10"
               />
             </div>
           </div>
 
           {/* Tabs */}
-          <Tabs defaultValue="descriptive" className="space-y-4 sm:space-y-6">
-            <TabsList className="grid w-full grid-cols-3 p-1 sm:p-2">
-              <TabsTrigger value="descriptive" className="text-xs sm:text-sm px-2 sm:px-4 py-2">
-                Q&A ({filteredDescriptive.length})
+          <Tabs defaultValue="descriptive" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="descriptive" className="text-sm">
+                Descriptive ({filteredDescriptive.length})
               </TabsTrigger>
-              <TabsTrigger value="mcqs" className="text-xs sm:text-sm px-2 sm:px-4 py-2">
+              <TabsTrigger value="mcqs" className="text-sm">
                 MCQs ({filteredMCQs.length})
               </TabsTrigger>
-              <TabsTrigger value="fillblanks" className="text-xs sm:text-sm px-2 sm:px-4 py-2">
+              <TabsTrigger value="fillblanks" className="text-sm">
                 Fill Blanks ({filteredFillBlanks.length})
               </TabsTrigger>
             </TabsList>
 
             {/* Descriptive Tab */}
-            <TabsContent value="descriptive" className="space-y-4 sm:space-y-6">
+            <TabsContent value="descriptive" className="space-y-4">
               {filteredDescriptive.length === 0 ? (
-                <div className="text-center py-8 sm:py-12 text-muted-foreground text-sm sm:text-base">
+                <div className="text-center py-12 text-muted-foreground">
                   No questions found matching "{searchQuery}"
                 </div>
               ) : (
                 filteredDescriptive.map((desc, index) => (
-                  // Updated to use the DescriptiveCard component directly
                   <DescriptiveCard key={desc.id} question={desc} index={index} />
                 ))
               )}
@@ -127,7 +117,7 @@ const Unit3 = () => {
             {/* MCQs Tab */}
             <TabsContent value="mcqs" className="space-y-4">
               {filteredMCQs.length === 0 ? (
-                <div className="text-center py-8 sm:py-12 text-muted-foreground text-sm sm:text-base">
+                <div className="text-center py-12 text-muted-foreground">
                   No questions found matching "{searchQuery}"
                 </div>
               ) : (
@@ -140,7 +130,7 @@ const Unit3 = () => {
             {/* Fill Blanks Tab */}
             <TabsContent value="fillblanks" className="space-y-4">
               {filteredFillBlanks.length === 0 ? (
-                <div className="text-center py-8 sm:py-12 text-muted-foreground text-sm sm:text-base">
+                <div className="text-center py-12 text-muted-foreground">
                   No questions found matching "{searchQuery}"
                 </div>
               ) : (
@@ -152,8 +142,8 @@ const Unit3 = () => {
           </Tabs>
 
           {/* Encouragement */}
-          <div className="mt-8 sm:mt-12 p-4 sm:p-6 rounded-lg bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20">
-            <p className="text-center text-foreground font-medium text-base sm:text-lg">
+          <div className="mt-12 p-6 rounded-lg bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20">
+            <p className="text-center text-foreground font-medium">
               💪 You're getting better with every question! Keep practicing ✨
             </p>
           </div>
@@ -163,4 +153,4 @@ const Unit3 = () => {
   );
 };
 
-export default Unit3;
+export default Unit5;
