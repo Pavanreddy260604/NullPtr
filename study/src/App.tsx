@@ -14,6 +14,10 @@ import Cloud1 from "./pages/cloud/Cloud1";
 import Unit3c from "./pages/cloud/Unit-3";
 import Unit4c from "./pages/cloud/Unit4";
 import Unit5c from "./pages/cloud/Unit5";
+import PAA from "./pages/PA/PAA";
+import Unit3p from "./pages/PA/Unit3";
+import Unit4p from "./pages/PA/Unit4";
+import Unit5p from "./pages/PA/Unit5";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -32,6 +36,10 @@ const App = () => (
           <Route path="/cloud/unit-3" element={<Unit3c />} />
           <Route path="/cloud/unit-4" element={<Unit4c />} />
           <Route path="/cloud/unit-5" element={<Unit5c />} />
+          <Route path="/pa" element={<PAA />} />
+          <Route path="/pa/unit-3" element={<Unit3p />} />
+          <Route path="/pa/unit-4" element={<Unit4p />} />
+          <Route path="/pa/unit-5" element={<Unit5p />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
