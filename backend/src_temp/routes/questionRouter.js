@@ -11,7 +11,10 @@ import {
     updateDescriptiveById,
     deleteMCQById,
     deleteFillBlankById,
-    deleteDescriptiveById
+    deleteDescriptiveById,
+    bulkCreateMCQs,
+    bulkCreateFillBlanks,
+    bulkCreateDescriptives
 } from "../controllers/questionController.js";
 
 const router = express.Router();
@@ -28,4 +31,7 @@ router.put("/descriptive/:id", updateDescriptiveById);
 router.delete("/mcq/:id", deleteMCQById);
 router.delete("/fillblank/:id", deleteFillBlankById);
 router.delete("/descriptive/:id", deleteDescriptiveById);
+router.post("/mcq/bulk", bulkCreateMCQs);
+router.post("/fillblank/bulk", bulkCreateFillBlanks);
+router.post("/descriptive/bulk", bulkCreateDescriptives);
 export default router;
