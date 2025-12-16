@@ -36,7 +36,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden p-4">
+    <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden p-3 sm:p-4">
       {/* Modern Background Effects */}
       <div className="absolute inset-0 h-full w-full bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
       <div className="absolute left-0 right-0 top-[-10%] h-[500px] w-[500px] rounded-full bg-primary/20 opacity-20 blur-[100px] pointer-events-none"></div>
@@ -59,7 +59,7 @@ const Login: React.FC = () => {
               <BookOpen className="w-7 h-7" />
             </motion.div>
             <div className="space-y-2">
-              <CardTitle className="text-2xl font-bold tracking-tight">Welcome Back</CardTitle>
+              <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight">Welcome Back</CardTitle>
               <CardDescription className="text-base">
                 Enter your credentials to access the admin panel
               </CardDescription>

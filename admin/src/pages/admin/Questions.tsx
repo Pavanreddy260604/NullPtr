@@ -55,9 +55,37 @@ import { Badge } from "@/components/ui/badge";
 import FormModal from "@/components/shared/FormModal";
 import ConfirmModal from "@/components/shared/ConfirmModal";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import DescriptiveEditor from "@/components/shared/DescriptiveEditor";
 
-// Utility function for sanitizing input
-const sanitizeInput = (input: string): string => {
+// Define proper types for form data
+interface MCQFormData {
+  question: string;
+  options: string[];
+  correctAnswer: number | string;
+  explanation?: string;
+}
+
+interface FillBlankFormData {
+  question: string;
+  correctAnswer: string;
+  explanation?: string;
+}
+
+interface DescriptiveFormData {
+  question: string;
+  answer: AnswerBlock[];
+}
+
+// Create a union type for form data
+type FormData = MCQFormData | FillBlankFormData | DescriptiveFormData;
+
+// Define tab type
+type TabType = "mcq" | "fillblank" | "descriptive";
+
+// Utility function for sanitizing input (but only for display, not for code blocks)
+const sanitizeInput = (input: string, isCode = false): string => {
+  if (isCode) return input; // Don't sanitize code blocks
+
   return input
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -65,12 +93,10 @@ const sanitizeInput = (input: string): string => {
     .replace(/'/g, "&#039;");
 };
 
-// Custom hook for bulk import operations
-const useBulkImport = (activeTab: string, unitId: string, subjectId: string) => {
+// Split useBulkImport hook into smaller, focused hooks
+const useImageUpload = () => {
   const [isUploadingImages, setIsUploadingImages] = useState(false);
-  const [isImportingData, setIsImportingData] = useState(false);
   const [uploadedRefs, setUploadedRefs] = useState<Record<string, string>>({});
-  const queryClient = useQueryClient();
 
   const handleImageUpload = async (files: File[]) => {
     if (!files?.length) return toast.error("Please select image files first.");
@@ -104,7 +130,7 @@ const useBulkImport = (activeTab: string, unitId: string, subjectId: string) => 
         results.forEach(result => {
           if (result) {
             // Use filename as ref key
-            refs[result.file.name] = (result.data as any).fileUrl;
+            refs[result.file.name] = result.data.fileUrl;
           }
         });
       }
@@ -127,6 +153,17 @@ const useBulkImport = (activeTab: string, unitId: string, subjectId: string) => 
       setIsUploadingImages(false);
     }
   };
+
+  return {
+    isUploadingImages,
+    uploadedRefs,
+    handleImageUpload,
+  };
+};
+
+const useBulkImport = (activeTab: TabType, unitId: string, subjectId: string) => {
+  const [isImportingData, setIsImportingData] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleBulkImport = async (files: File[], refImages: Record<string, string>) => {
     if (!files || files.length === 0) return toast.error("Please select at least one JSON file.");
@@ -184,9 +221,6 @@ const useBulkImport = (activeTab: string, unitId: string, subjectId: string) => 
 
       if (allItems.length === 0) throw new Error("No valid questions found in uploaded files.");
 
-      // Validate aggregated items (Simplified validation for brevity, keeps existing logic structure)
-      // Note: Real-world app might want per-file error reporting, but we'll aggregate for now.
-
       // Add progress feedback
       toast.info(`Importing ${allItems.length} questions from ${files.length} file(s)...`);
 
@@ -195,16 +229,13 @@ const useBulkImport = (activeTab: string, unitId: string, subjectId: string) => 
       } else if (activeTab === "fillblank") {
         await fillBlankApi.bulkCreate(allItems, unitId, subjectId);
       } else if (activeTab === "descriptive") {
-        await descriptiveApi.bulkCreate(allItems, unitId, subjectId, refImages);
+        // FIX: Don't send refs to backend for descriptive questions
+        await descriptiveApi.bulkCreate(allItems, unitId, subjectId, {});
       }
 
       toast.success(`✅ Successfully imported ${allItems.length} questions!`);
       queryClient.invalidateQueries({ queryKey: [activeTab === 'mcq' ? 'mcqs' : activeTab === 'fillblank' ? 'fill' : 'desc', unitId] });
 
-      // Add delay before closing modal
-      setTimeout(() => {
-        return true; // Signal that modal should close
-      }, 2000);
       return true;
     } catch (err: any) {
       console.error("❌ Bulk Import Error:", err);
@@ -218,7 +249,7 @@ const useBulkImport = (activeTab: string, unitId: string, subjectId: string) => 
         msg = err.message;
       }
       toast.error(msg);
-      return false; // Signal that modal should not close
+      return false;
     } finally {
       setIsImportingData(false);
     }
@@ -348,6 +379,7 @@ const useBulkImport = (activeTab: string, unitId: string, subjectId: string) => 
 
       // 4️⃣ Send to backend (no refImages needed - already resolved)
       toast.info(`Importing ${allItems.length} questions...`);
+      // FIX: Don't send refs to backend for descriptive questions
       await descriptiveApi.bulkCreate(allItems, unitId, subjectId, {});
 
       toast.success(`✅ Successfully imported ${allItems.length} questions!`);
@@ -365,10 +397,7 @@ const useBulkImport = (activeTab: string, unitId: string, subjectId: string) => 
   };
 
   return {
-    isUploadingImages,
     isImportingData,
-    uploadedRefs,
-    handleImageUpload,
     handleBulkImport,
     handleCombinedImport,
   };
@@ -390,7 +419,7 @@ const ModalLayout: React.FC<{
 /* -------------------------------------------------------------------------- */
 /* 🧠 MCQ FORM                                                                */
 /* -------------------------------------------------------------------------- */
-const MCQForm = memo<{ formData: Partial<MCQ>; setFormData: React.Dispatch<React.SetStateAction<Partial<MCQ>>> }>(({ formData, setFormData }) => {
+const MCQForm = memo<{ formData: MCQFormData; setFormData: React.Dispatch<React.SetStateAction<MCQFormData>> }>(({ formData, setFormData }) => {
   const [options, setOptions] = useState<string[]>(formData.options || ["", "", "", ""]);
 
   // Convert index to string for form display if needed
@@ -422,6 +451,7 @@ const MCQForm = memo<{ formData: Partial<MCQ>; setFormData: React.Dispatch<React
 
   const handleSelect = (opt: string) => {
     setCorrectAnswer(opt);
+    // Store as string for form convenience, converted to index on submit
     setFormData(prev => ({ ...prev, correctAnswer: opt }));
   };
 
@@ -434,7 +464,7 @@ const MCQForm = memo<{ formData: Partial<MCQ>; setFormData: React.Dispatch<React
           onChange={(e) =>
             setFormData(prev => ({ ...prev, question: sanitizeInput(e.target.value) }))
           }
-          placeholder="e.g., What is powerhouse of the cell?"
+          placeholder="e.g., What is powerhouse of cell?"
           rows={3}
           required
         />
@@ -475,7 +505,7 @@ const MCQForm = memo<{ formData: Partial<MCQ>; setFormData: React.Dispatch<React
 /* -------------------------------------------------------------------------- */
 /* 🧩 FILL IN THE BLANK FORM                                                  */
 /* -------------------------------------------------------------------------- */
-const FillBlankForm = memo<{ formData: Partial<FillBlank>; setFormData: React.Dispatch<React.SetStateAction<Partial<FillBlank>>> }>(({ formData, setFormData }) => {
+const FillBlankForm = memo<{ formData: FillBlankFormData; setFormData: React.Dispatch<React.SetStateAction<FillBlankFormData>> }>(({ formData, setFormData }) => {
   const getPreview = () => {
     if (!formData.question)
       return (
@@ -551,43 +581,42 @@ const FillBlankForm = memo<{ formData: Partial<FillBlank>; setFormData: React.Di
 /* 🖼️ DESCRIPTIVE FORM                                                        */
 /* -------------------------------------------------------------------------- */
 const DescriptiveForm = memo<{
-  formData: Partial<Descriptive>;
-  setFormData: React.Dispatch<React.SetStateAction<Partial<Descriptive>>>;
+  formData: DescriptiveFormData;
+  setFormData: React.Dispatch<React.SetStateAction<DescriptiveFormData>>;
   setIsUploadingGlobal: React.Dispatch<React.SetStateAction<boolean>>;
 }>(({ formData, setFormData, setIsUploadingGlobal }) => {
-  // FIX: Initialize blocks from formData and sync when it changes
-  const [blocks, setBlocks] = useState<AnswerBlock[]>(
-    formData.answer || [{ type: "text", content: "" }]
-  );
-
-  useEffect(() => {
-    if (formData.answer) {
-      setBlocks(formData.answer);
-    }
-  }, [formData.answer]);
+  // Use formData directly to ensure state sync, defaulting to one empty text block
+  const blocks = formData.answer || [{ type: "text", content: "" }];
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeUploadIndex, setActiveUploadIndex] = useState<number | null>(null);
 
+  // Helper to update blocks in parent state directly
   const updateBlocks = (newBlocks: AnswerBlock[]) => {
-    setBlocks(newBlocks);
     setFormData(prev => ({ ...prev, answer: newBlocks }));
   };
 
-  const updateContent = (i: number, v: string) => {
-    const newBlocks = [...blocks];
-    newBlocks[i].content = sanitizeInput(v);
+  const updateContent = (i: number, v: string, isCode = false) => {
+    const newBlocks = blocks.map((block, idx) =>
+      idx === i ? { ...block, content: sanitizeInput(v, isCode) } : block
+    );
     updateBlocks(newBlocks);
   };
 
-  const addBlock = (type: any) => {
-    const newBlock = { type, content: "" };
+  const addBlock = (type: AnswerBlock['type']) => {
+    let newBlock: AnswerBlock = { type, content: "" };
+
+    if (type === 'list') {
+      newBlock = { type, items: [""] };
+    } else if (type === 'diagram') {
+      // Logic for diagram if needed
+    }
+
     const newBlocks = [...blocks, newBlock];
     updateBlocks(newBlocks);
-    // If it's a diagram, immediately trigger upload for the new block
+
     if (type === 'diagram') {
       const newIndex = newBlocks.length - 1;
-      // FIX: Prevent race condition by capturing index before async operation
       setTimeout(() => triggerUpload(newIndex), 0);
     }
   };
@@ -595,6 +624,9 @@ const DescriptiveForm = memo<{
   const removeBlock = (i: number) => {
     if (blocks.length > 1) {
       updateBlocks(blocks.filter((_, x) => x !== i));
+    } else {
+      // Must always have at least one block
+      updateBlocks([{ type: 'text', content: '' }]);
     }
   };
 
@@ -610,7 +642,9 @@ const DescriptiveForm = memo<{
   const triggerUpload = (index: number) => {
     setActiveUploadIndex(index);
     // Clear the file input before triggering
-    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
     fileInputRef.current?.click();
   };
 
@@ -629,20 +663,21 @@ const DescriptiveForm = memo<{
       return;
     }
 
-    // FIX: Capture index before async operation to prevent race conditions
+    // FIX: Capture index and current blocks before async operation to prevent race conditions
     const currentIndex = activeUploadIndex;
+    const currentBlocks = [...blocks];
     setIsUploadingGlobal(true);
     toast.info("Uploading image...");
 
     try {
       const r = await uploadApi.upload(f);
-      const newBlocks = [...blocks];
-      newBlocks[currentIndex].content = (r.data as any).fileUrl;
+      const newBlocks = [...currentBlocks];
+      newBlocks[currentIndex].content = r.data.fileUrl;
       updateBlocks(newBlocks);
       toast.success("Image uploaded!");
     } catch (error) {
       // Revert block state on error
-      const newBlocks = [...blocks];
+      const newBlocks = [...currentBlocks];
       newBlocks[currentIndex].content = "";
       updateBlocks(newBlocks);
       toast.error("Upload failed. Please try again.");
@@ -650,7 +685,9 @@ const DescriptiveForm = memo<{
       setIsUploadingGlobal(false);
       setActiveUploadIndex(null);
       // FIX: Clear file input value to allow re-uploading the same file
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
@@ -669,11 +706,13 @@ const DescriptiveForm = memo<{
       </div>
 
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <Label>Answer Blocks</Label>
-          <div className="flex gap-1 bg-muted/50 p-1 rounded-lg">
+        <div className="flex flex-wrap items-center justify-between gap-2 py-2 border-b">
+          <Label className="shrink-0">Answer Blocks</Label>
+          <div className="flex flex-wrap gap-1 bg-muted/50 p-1 rounded-lg">
             <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('text')} className="h-7 text-xs gap-1 hover:bg-background hover:shadow-sm"><Type className="w-3 h-3" /> Text</Button>
             <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('heading')} className="h-7 text-xs gap-1 hover:bg-background hover:shadow-sm"><Heading className="w-3 h-3" /> Header</Button>
+            <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('subheading')} className="h-7 text-xs gap-1 hover:bg-background hover:shadow-sm"><Heading className="w-3 h-3" /> Sub</Button>
+            <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('list')} className="h-7 text-xs gap-1 hover:bg-background hover:shadow-sm"><Layers className="w-3 h-3" /> List</Button>
             <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('code')} className="h-7 text-xs gap-1 hover:bg-background hover:shadow-sm"><Code className="w-3 h-3" /> Code</Button>
             <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('diagram')} className="h-7 text-xs gap-1 hover:bg-background hover:shadow-sm text-blue-600"><ImageIcon className="w-3 h-3" /> Image</Button>
           </div>
@@ -687,67 +726,170 @@ const DescriptiveForm = memo<{
           onChange={handleFileChange}
         />
 
-        <ScrollArea className="h-[400px] border rounded-xl bg-muted/10 p-4 shadow-inner">
-          <div className="space-y-3">
+        <ScrollArea className="h-[600px] border rounded-xl bg-muted/10 p-4 shadow-inner">
+          <div className="space-y-4">
             {blocks.map((block, i) => (
-              <motion.div layout key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="relative group bg-card border rounded-lg shadow-sm hover:shadow-md transition-shadow p-1">
-                <div className="absolute -right-3 top-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                  <Button type="button" variant="secondary" size="icon" className="h-6 w-6 rounded-full shadow border" onClick={() => removeBlock(i)}><X className="w-3 h-3 text-red-500" /></Button>
-                  <Button type="button" variant="outline" size="icon" className="h-6 w-6 rounded-full bg-background" onClick={() => moveBlock(i, 'up')} disabled={i === 0}><ArrowUp className="w-3 h-3" /></Button>
-                  <Button type="button" variant="outline" size="icon" className="h-6 w-6 rounded-full bg-background" onClick={() => moveBlock(i, 'down')} disabled={i === blocks.length - 1}><ArrowDown className="w-3 h-3" /></Button>
-                </div>
-
-                <div className="p-3">
-                  <div className="mb-2">
+              <div key={i} className="bg-card border rounded-lg shadow-sm overflow-hidden">
+                {/* Block Header with Type Badge and Actions */}
+                <div className="bg-muted/30 px-4 py-2 border-b flex items-center justify-between">
+                  <div className="flex items-center gap-2">
                     <Badge variant="outline" className="text-[10px] uppercase tracking-wider text-muted-foreground h-5">
                       {block.type}
                     </Badge>
+                    <span className="text-xs text-muted-foreground">Block {i + 1}</span>
                   </div>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => moveBlock(i, 'up')}
+                      disabled={i === 0}
+                      className="h-7 w-7 p-0"
+                    >
+                      <ArrowUp className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => moveBlock(i, 'down')}
+                      disabled={i === blocks.length - 1}
+                      className="h-7 w-7 p-0"
+                    >
+                      <ArrowDown className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeBlock(i)}
+                      disabled={blocks.length <= 1}
+                      className="h-7 w-7 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </div>
 
+                {/* Block Content */}
+                <div className="p-4">
                   {block.type === 'diagram' ? (
                     <div
-                      className={`relative border-2 border-dashed rounded-lg transition-colors ${!block.content ? 'border-blue-200 bg-blue-50/50 hover:bg-blue-50 cursor-pointer h-32 flex flex-col items-center justify-center' : 'border-border bg-muted/10 p-2'}`}
+                      className={`relative border-2 border-dashed rounded-lg transition-colors ${!block.content ? 'border-blue-200 bg-blue-50/50 hover:bg-blue-50 cursor-pointer h-40 flex flex-col items-center justify-center' : 'border-border bg-muted/10'}`}
                       onClick={() => !block.content && triggerUpload(i)}
                     >
                       {block.content ? (
-                        <div className="relative group/img">
+                        <div className="space-y-3">
                           <img src={block.content} alt="Block" className="max-h-60 rounded mx-auto object-contain" />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity rounded">
-                            <Button type="button" variant="secondary" size="sm" onClick={(e) => { e.stopPropagation(); triggerUpload(i); }}>Change Image</Button>
-                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => { e.stopPropagation(); triggerUpload(i); }}
+                            className="w-full"
+                          >
+                            <Upload className="w-3 h-3 mr-1" /> Change Image
+                          </Button>
                         </div>
                       ) : (
                         <>
-                          <Upload className="w-8 h-8 text-blue-400 mb-2" />
+                          <Upload className="w-10 h-10 text-blue-400 mb-2" />
                           <span className="text-sm text-blue-600 font-medium">Click to Upload Image</span>
+                          <span className="text-xs text-muted-foreground mt-1">PNG, JPG up to 5MB</span>
                         </>
                       )}
                     </div>
                   ) : block.type === 'code' ? (
                     <Textarea
-                      value={block.content}
-                      onChange={e => updateContent(i, e.target.value)}
+                      value={block.content || ""}
+                      onChange={e => updateContent(i, e.target.value, true)} // Don't sanitize code blocks
                       className="font-mono text-sm bg-slate-950 text-slate-50 border-0 resize-none"
                       placeholder="// Paste code here..."
-                      rows={4}
+                      rows={6}
                     />
+                  ) : block.type === 'list' ? (
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        {(block.items || []).map((item, itemIdx) => (
+                          <div key={itemIdx} className="flex gap-2 items-center">
+                            <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <div className="w-2 h-2 rounded-full bg-primary/60"></div>
+                            </div>
+                            <Input
+                              value={item}
+                              onChange={(e) => {
+                                const newBlocks = [...blocks];
+                                if (!newBlocks[i].items) newBlocks[i].items = [];
+                                newBlocks[i].items![itemIdx] = e.target.value;
+                                updateBlocks(newBlocks);
+                              }}
+                              className="flex-1"
+                              placeholder={`Point ${itemIdx + 1}`}
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const newBlocks = [...blocks];
+                                newBlocks[i].items = newBlocks[i].items?.filter((_, idx) => idx !== itemIdx);
+                                updateBlocks(newBlocks);
+                              }}
+                              className="h-8 w-8 p-0 text-muted-foreground hover:text-red-500"
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const newBlocks = [...blocks];
+                          if (!newBlocks[i].items) newBlocks[i].items = [];
+                          newBlocks[i].items!.push("");
+                          updateBlocks(newBlocks);
+                        }}
+                        className="w-full"
+                      >
+                        <Plus className="w-3 h-3 mr-1" /> Add Point
+                      </Button>
+                    </div>
                   ) : (
                     <Textarea
-                      value={block.content}
+                      value={block.content || ""}
                       onChange={e => updateContent(i, e.target.value)}
-                      className={`border-0 shadow-none px-0 focus-visible:ring-0 resize-none ${block.type === 'heading' ? 'text-lg font-bold' : 'text-sm'}`}
-                      placeholder={block.type === 'heading' ? "Enter Heading..." : "Enter paragraph text..."}
-                      rows={block.type === 'heading' ? 1 : 3}
+                      className={`border-0 shadow-none px-0 focus-visible:ring-0 resize-none ${block.type === 'heading' ? 'text-xl font-bold' : block.type === 'subheading' ? 'text-lg font-semibold text-muted-foreground' : 'text-base'}`}
+                      placeholder={block.type === 'heading' ? "Enter Heading..." : block.type === 'subheading' ? "Enter Subheading..." : "Enter paragraph text..."}
+                      rows={block.type === 'heading' || block.type === 'subheading' ? 2 : 4}
                     />
                   )}
                 </div>
-              </motion.div>
+              </div>
             ))}
+          </div>
+
+          {/* Add Block Section */}
+          <div className="pt-4 mt-4 border-t">
+            <div className="text-center">
+              <p className="text-xs text-muted-foreground mb-3">Add more content blocks</p>
+              <div className="inline-flex flex-wrap justify-center gap-2 bg-background border rounded-lg p-1">
+                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('text')} className="h-8 px-3 text-xs gap-1 hover:bg-primary hover:text-primary-foreground"><Type className="w-3 h-3" /> Text</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('heading')} className="h-8 px-3 text-xs gap-1 hover:bg-primary hover:text-primary-foreground"><Heading className="w-3 h-3" /> Heading</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('subheading')} className="h-8 px-3 text-xs gap-1 hover:bg-primary hover:text-primary-foreground"><Heading className="w-3 h-3" /> Sub</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('list')} className="h-8 px-3 text-xs gap-1 hover:bg-primary hover:text-primary-foreground"><Layers className="w-3 h-3" /> List</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('code')} className="h-8 px-3 text-xs gap-1 hover:bg-primary hover:text-primary-foreground"><Code className="w-3 h-3" /> Code</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('diagram')} className="h-8 px-3 text-xs gap-1 hover:bg-blue-600 hover:text-white text-blue-600"><ImageIcon className="w-3 h-3" /> Image</Button>
+              </div>
+            </div>
           </div>
 
           {blocks.length === 0 && (
             <div className="text-center py-12 text-muted-foreground">
-              Click buttons above to add content blocks.
+              Start by adding content blocks above or using the toolbar.
             </div>
           )}
         </ScrollArea>
@@ -764,13 +906,13 @@ const Questions: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [selectedSubjectId, setSelectedSubjectId] = useState("");
-  const [activeTab, setActiveTab] = useState<"mcq" | "fillblank" | "descriptive">("mcq");
+  const [activeTab, setActiveTab] = useState<TabType>("mcq");
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
-  const [formData, setFormData] = useState<any>({});
-  const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
+  const [formData, setFormData] = useState<FormData>({ question: "", options: ["", "", "", ""], correctAnswer: 0 } as MCQFormData);
+  const [selectedQuestion, setSelectedQuestion] = useState<MCQ | FillBlank | Descriptive | null>(null);
   const [isUploadingGlobal, setIsUploadingGlobal] = useState(false);
   const [bulkImages, setBulkImages] = useState<File[]>([]);
   const [bulkFiles, setBulkFiles] = useState<File[]>([]);
@@ -779,15 +921,12 @@ const Questions: React.FC = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
 
-  // Use custom hook for bulk import operations
-  const {
-    isUploadingImages,
-    isImportingData,
-    uploadedRefs,
-    handleImageUpload,
-    handleBulkImport,
-    handleCombinedImport,
-  } = useBulkImport(activeTab, unitId!, selectedSubjectId);
+  // 🚀 NEW: Descriptive Editor State (Full-page Notion-like editor)
+  const [isDescriptiveEditorOpen, setIsDescriptiveEditorOpen] = useState(false);
+
+  // Use custom hooks for bulk import operations
+  const { isUploadingImages, handleImageUpload } = useImageUpload();
+  const { isImportingData, handleBulkImport, handleCombinedImport } = useBulkImport(activeTab, unitId || "", selectedSubjectId);
 
   // Helper function to get the appropriate API based on active tab
   const getApi = () => {
@@ -797,11 +936,14 @@ const Questions: React.FC = () => {
   };
 
   // Helper to prepare data for API, especially for MCQs
-  const prepareDataForApi = (data: any, tab: string) => {
+  const prepareDataForApi = (data: FormData, tab: TabType) => {
     let preparedData = { ...data };
-    if (tab === 'mcq' && Array.isArray(preparedData.options)) {
-      const idx = preparedData.options.findIndex((o: string) => o === preparedData.correctAnswer);
-      preparedData.correctAnswer = idx >= 0 ? idx : 0; // Default to 0 if not found
+    if (tab === 'mcq' && Array.isArray((preparedData as MCQFormData).options)) {
+      // FIX: Ensure correctAnswer always becomes an index before create/update
+      if (typeof (preparedData as MCQFormData).correctAnswer === 'string') {
+        const idx = (preparedData as MCQFormData).options.findIndex((o: string) => o === (preparedData as MCQFormData).correctAnswer);
+        (preparedData as MCQFormData).correctAnswer = idx >= 0 ? idx : 0; // Default to 0 if not found
+      }
     }
     return preparedData;
   };
@@ -833,46 +975,96 @@ const Questions: React.FC = () => {
     enabled: !!selectedSubjectId,
   });
 
-  // FIX #07: Add keepPreviousData to prevent flickering when switching tabs
+  // FIX: Remove double-unwrap since API already returns correct types
   const { data: mcqs, isLoading: isLoadingMcq } = useQuery({
     queryKey: ["mcqs", unitId],
-    queryFn: () => mcqApi.getByUnit(unitId!).then((r) => r.data),
+    queryFn: () => mcqApi.getByUnit(unitId!),
     enabled: !!unitId && activeTab === "mcq",
   });
 
   const { data: fill, isLoading: isLoadingFill } = useQuery({
     queryKey: ["fill", unitId],
-    queryFn: () => fillBlankApi.getByUnit(unitId!).then((r) => r.data),
+    queryFn: () => fillBlankApi.getByUnit(unitId!),
     enabled: !!unitId && activeTab === "fillblank",
   });
 
   const { data: desc, isLoading: isLoadingDesc } = useQuery({
     queryKey: ["desc", unitId],
-    queryFn: () => descriptiveApi.getByUnit(unitId!).then((r) => r.data),
+    queryFn: () => descriptiveApi.getByUnit(unitId!),
     enabled: !!unitId && activeTab === "descriptive",
   });
 
+  // FIX: Force list to always be an array
+  const list = Array.isArray(
+    activeTab === "mcq" ? mcqs : activeTab === "fillblank" ? fill : desc
+  )
+    ? activeTab === "mcq" ? mcqs : activeTab === "fillblank" ? fill : desc
+    : [];
 
-  const createMut = useMutation<any, Error, any>({
-    mutationFn: (d: any) => {
+  const isLoading = activeTab === "mcq" ? isLoadingMcq : activeTab === "fillblank" ? isLoadingFill : isLoadingDesc;
+
+  // FIX: Reset selectedIds when tab changes
+  useEffect(() => {
+    setSelectedIds(new Set());
+  }, [activeTab]);
+
+  // FIX #05: Reset form state when modal is opened/closed
+  const openCreate = useCallback(() => {
+    setSelectedQuestion(null);
+    const initialData = activeTab === 'mcq'
+      ? { question: "", options: ["", "", "", ""], correctAnswer: 0 } as MCQFormData
+      : activeTab === 'fillblank'
+        ? { question: "", correctAnswer: "" } as FillBlankFormData
+        : { question: "", answer: [{ type: "text", content: "" }] } as DescriptiveFormData;
+    setFormData(initialData);
+
+    // Use new full-page editor for descriptive questions
+    if (activeTab === 'descriptive') {
+      setIsDescriptiveEditorOpen(true);
+    } else {
+      setIsModalOpen(true);
+    }
+  }, [activeTab]);
+
+  const openEdit = useCallback((q: MCQ | FillBlank | Descriptive) => {
+    setSelectedQuestion(q);
+    let initialFormData = { ...q } as FormData;
+    if (activeTab === 'mcq' && typeof (q as MCQ).correctAnswer === 'number' && (q as MCQ).options) {
+      // Convert index back to string for form
+      (initialFormData as MCQFormData).correctAnswer = (q as MCQ).options[(q as MCQ).correctAnswer] || '';
+    }
+    setFormData(initialFormData);
+
+    // Use new full-page editor for descriptive questions
+    if (activeTab === 'descriptive') {
+      setIsDescriptiveEditorOpen(true);
+    } else {
+      setIsModalOpen(true);
+    }
+  }, [activeTab]);
+
+  // FIX: Use proper typing for mutations
+  const createMut = useMutation({
+    mutationFn: (data: FormData) => {
       const api = getApi();
       // FIX #04: Add validation for subject and unit
       if (!unitId || !selectedSubjectId) {
         toast.error("Please select a subject and unit first.");
         throw new Error("Missing ID");
       }
-      const preparedData = prepareDataForApi(d, activeTab);
+      const preparedData = prepareDataForApi(data, activeTab);
       return api.create({ ...preparedData, unitId, subjectId: selectedSubjectId, topic: currentUnit?.title || "General" });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [activeTab === 'mcq' ? 'mcqs' : activeTab === 'fillblank' ? 'fill' : 'desc', unitId] });
       toast.success("Created!");
       setIsModalOpen(false);
+      setIsDescriptiveEditorOpen(false);
     }
   });
 
-  const updateMut = useMutation<any, Error, any>({
-    mutationFn: ({ id, data }: any) => {
+  const updateMut = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: FormData }) => {
       const api = getApi();
       const preparedData = prepareDataForApi(data, activeTab);
       return api.update(id, preparedData);
@@ -881,6 +1073,7 @@ const Questions: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: [activeTab === 'mcq' ? 'mcqs' : activeTab === 'fillblank' ? 'fill' : 'desc', unitId] });
       toast.success("Updated!");
       setIsModalOpen(false);
+      setIsDescriptiveEditorOpen(false);
     }
   });
 
@@ -896,27 +1089,18 @@ const Questions: React.FC = () => {
     }
   });
 
-  const list: any[] = activeTab === "mcq" ? mcqs : activeTab === "fillblank" ? fill : desc;
-  const isLoading = activeTab === "mcq" ? isLoadingMcq : activeTab === "fillblank" ? isLoadingFill : isLoadingDesc;
-
-  // FIX #05: Reset form state when modal is opened/closed
-  const openCreate = useCallback(() => {
-    setSelectedQuestion(null);
-    const initialData = activeTab === 'mcq' ? { options: ['', '', '', ''] } : { answer: [{ type: 'text', content: '' }] };
-    setFormData(initialData);
-    setIsModalOpen(true);
-  }, [activeTab]);
-
-  const openEdit = useCallback((q: any) => {
-    setSelectedQuestion(q);
-    let initialFormData = { ...q };
-    if (activeTab === 'mcq' && typeof q.correctAnswer === 'number' && q.options) {
-      // Convert index back to string for form
-      initialFormData.correctAnswer = q.options[q.correctAnswer] || '';
+  // FIX: Use proper bulk delete endpoint instead of multiple API calls
+  const bulkDeleteMut = useMutation({
+    mutationFn: (ids: string[]) => {
+      const api = getApi();
+      return api.bulkDelete(ids);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [activeTab === 'mcq' ? 'mcqs' : activeTab === 'fillblank' ? 'fill' : 'desc', unitId] });
+      toast.success("Deleted selected questions!");
+      setSelectedIds(new Set());
     }
-    setFormData(initialFormData);
-    setIsModalOpen(true);
-  }, [activeTab]);
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -927,17 +1111,17 @@ const Questions: React.FC = () => {
       return;
     }
 
-    if (activeTab === "mcq" && (!formData.options || formData.options.some(opt => !opt.trim()))) {
+    if (activeTab === "mcq" && (!(formData as MCQFormData).options || (formData as MCQFormData).options.some(opt => !opt.trim()))) {
       toast.error("All MCQ options must be filled");
       return;
     }
 
-    if (activeTab === "fillblank" && !formData.correctAnswer) {
+    if (activeTab === "fillblank" && !(formData as FillBlankFormData).correctAnswer) {
       toast.error("Correct answer is required for fill-in-the-blank questions");
       return;
     }
 
-    if (activeTab === "descriptive" && (!formData.answer || formData.answer.length === 0)) {
+    if (activeTab === "descriptive" && (!(formData as DescriptiveFormData).answer || (formData as DescriptiveFormData).answer.length === 0)) {
       toast.error("At least one answer block is required for descriptive questions");
       return;
     }
@@ -959,18 +1143,19 @@ const Questions: React.FC = () => {
   }, [isBulkModalOpen]);
 
   // FIX #09: Enhanced search to include answer text for descriptive questions
-  const filtered = list?.filter((q: any) => {
+  // FIX: Guard .filter() usage
+  const filtered = Array.isArray(list) ? list.filter((q: any) => {
     const questionMatch = (q.question || "").toLowerCase().includes(searchTerm.toLowerCase());
     if (activeTab === "descriptive") {
-      const answerMatch = JSON.stringify(q.answer || "").toLowerCase().includes(searchTerm.toLowerCase());
+      const answerMatch = JSON.stringify((q as Descriptive).answer || "").toLowerCase().includes(searchTerm.toLowerCase());
       return questionMatch || answerMatch;
     }
     return questionMatch;
-  });
+  }) : [];
 
   // Handle bulk import with modal close logic
   const handleBulkImportWithModalClose = async () => {
-    const shouldClose = await handleBulkImport(bulkFiles, uploadedRefs);
+    const shouldClose = await handleBulkImport(bulkFiles, {});
     if (shouldClose) {
       setIsBulkModalOpen(false);
     }
@@ -997,7 +1182,8 @@ const Questions: React.FC = () => {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      const allIds = filtered?.map((q: any) => q._id) || [];
+      // FIX: Prevent bulk delete on stale filtered list
+      const allIds = filtered.map(q => q._id);
       setSelectedIds(new Set(allIds));
     } else {
       setSelectedIds(new Set());
@@ -1012,43 +1198,58 @@ const Questions: React.FC = () => {
     }
 
     setIsBulkDeleting(true);
-    const api = getApi();
     const idsToDelete = Array.from(selectedIds);
 
     try {
-      // Execute deletions in parallel
-      await Promise.all(idsToDelete.map(id => api.delete(id)));
-
-      toast.success(`Successfully deleted ${selectedIds.size} questions.`);
-      setSelectedIds(new Set()); // Clear selection
-
-      // Invalidate queries to refresh list
-      queryClient.invalidateQueries({ queryKey: [activeTab === 'mcq' ? 'mcqs' : activeTab === 'fillblank' ? 'fill' : 'desc', unitId] });
-
+      // Use bulk delete endpoint instead of multiple API calls
+      await bulkDeleteMut.mutateAsync(idsToDelete);
     } catch (error) {
       console.error("Bulk delete failed:", error);
-      toast.error("Failed to delete some questions. Please try again.");
+      toast.error("Failed to delete questions. Please try again.");
     } finally {
       setIsBulkDeleting(false);
     }
   };
 
+  // 🚀 NEW: Handler for saving from DescriptiveEditor
+  const handleDescriptiveSave = useCallback((data: { question: string; answer: AnswerBlock[] }) => {
+    if (!data.question.trim()) {
+      toast.error("Question is required");
+      return;
+    }
+
+    if (selectedQuestion) {
+      // Update existing
+      updateMut.mutate({
+        id: selectedQuestion._id,
+        data: { question: data.question, answer: data.answer } as DescriptiveFormData
+      });
+    } else {
+      // Create new
+      createMut.mutate({ question: data.question, answer: data.answer } as DescriptiveFormData);
+    }
+    setIsDescriptiveEditorOpen(false);
+  }, [selectedQuestion, updateMut, createMut]);
+
+  // FIX: Check if any loading operation is in progress
+  const isAnyLoading = isLoading || isImportingData || isUploadingGlobal || isUploadingImages || isBulkDeleting;
+
   return (
-    <div className="space-y-6 px-4 sm:px-0 max-w-7xl mx-auto">
+    <div className="space-y-4 sm:space-y-6 px-0 max-w-7xl mx-auto">
       {/* --- 1. DUAL DROPDOWN HEADER --- */}
       <div className="flex flex-col gap-6 border-b pb-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="icon" onClick={() => navigate(-1)} className="h-10 w-10 rounded-full">
-              <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+            <Button variant="outline" size="icon" onClick={() => navigate(-1)} className="h-8 w-8 sm:h-10 sm:w-10 rounded-full shrink-0">
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
             </Button>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">Question Manager</h1>
-              <p className="text-sm text-muted-foreground">Select Subject & Unit to manage content.</p>
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight truncate">Question Manager</h1>
+              <p className="text-xs sm:text-sm text-muted-foreground truncate">Select Subject & Unit to manage content.</p>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="w-full sm:w-[250px]">
+            <div className="w-full sm:w-[200px] md:w-[250px]">
               <Label className="text-[10px] uppercase font-bold text-muted-foreground mb-1 block">1. Subject</Label>
               <Select value={selectedSubjectId} onValueChange={(v) => setSelectedSubjectId(v)}>
                 <SelectTrigger className="h-10 bg-background">
@@ -1066,7 +1267,7 @@ const Questions: React.FC = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="w-full sm:w-[250px]">
+            <div className="w-full sm:w-[200px] md:w-[250px]">
               <Label className="text-[10px] uppercase font-bold text-muted-foreground mb-1 block">2. Unit</Label>
               <Select
                 value={unitId || ""}
@@ -1116,26 +1317,27 @@ const Questions: React.FC = () => {
         </motion.div>
       ) : (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row gap-3 justify-between items-center bg-card/50 p-1 rounded-lg border">
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-3 justify-between items-stretch sm:items-center bg-card/50 p-2 sm:p-1 rounded-lg border">
             <Tabs
               value={activeTab}
-              onValueChange={(v: any) => setActiveTab(v)}
+              onValueChange={(v: TabType) => setActiveTab(v)}
               className="w-full sm:w-auto"
             >
               <TabsList className="h-9 w-full sm:w-auto">
+                {/* FIX: Fix Tabs count (length crash) */}
                 <TabsTrigger value="mcq" className="text-xs">
-                  MCQ ({mcqs?.length || 0})
+                  MCQ ({Array.isArray(mcqs) ? mcqs.length : 0})
                 </TabsTrigger>
                 <TabsTrigger value="fillblank" className="text-xs">
-                  Fill ({fill?.length || 0})
+                  Fill ({Array.isArray(fill) ? fill.length : 0})
                 </TabsTrigger>
                 <TabsTrigger value="descriptive" className="text-xs">
-                  Desc ({desc?.length || 0})
+                  Desc ({Array.isArray(desc) ? desc.length : 0})
                 </TabsTrigger>
               </TabsList>
             </Tabs>
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <div className="relative flex-1 sm:w-[200px]">
+            <div className="flex items-center gap-2 w-full">
+              <div className="relative flex-1">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                 <Input
                   placeholder="Search..."
@@ -1144,16 +1346,20 @@ const Questions: React.FC = () => {
                   className="pl-8 h-9 text-sm bg-background/50"
                 />
               </div>
-              <Button onClick={openCreate} size="sm" className="h-9">
-                <Plus className="w-3.5 h-3.5 mr-1" /> Add
+              {/* FIX: Disable actions while loading */}
+              <Button onClick={openCreate} size="sm" className="h-9 px-3 shrink-0" disabled={isAnyLoading}>
+                <Plus className="w-3.5 h-3.5 sm:mr-1" />
+                <span className="hidden sm:inline">Add</span>
               </Button>
               <Button
                 variant="secondary"
                 size="sm"
-                className="h-9"
+                className="h-9 px-3 shrink-0"
                 onClick={() => setIsBulkModalOpen(true)}
+                disabled={isAnyLoading}
               >
-                <Upload className="w-3.5 h-3.5 mr-1" /> Bulk Import
+                <Upload className="w-3.5 h-3.5 sm:mr-1" />
+                <span className="hidden sm:inline">Bulk Import</span>
               </Button>
             </div>
           </div>
@@ -1178,7 +1384,7 @@ const Questions: React.FC = () => {
                       variant="destructive"
                       size="sm"
                       onClick={handleBulkDelete}
-                      disabled={isBulkDeleting}
+                      disabled={isAnyLoading}
                       className="animate-in fade-in slide-in-from-right-5"
                     >
                       {isBulkDeleting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
@@ -1196,7 +1402,7 @@ const Questions: React.FC = () => {
                   transition={{ delay: i * 0.05 }}
                 >
                   <Card className={`hover:border-primary/50 transition-colors ${selectedIds.has(q._id) ? 'border-primary bg-primary/5' : ''}`}>
-                    <CardContent className="p-4 flex gap-4">
+                    <CardContent className="p-3 sm:p-4 flex gap-2 sm:gap-4">
                       {/* 🚀 NEW: Row Checkbox */}
                       <div className="pt-1">
                         <input
@@ -1223,17 +1429,17 @@ const Questions: React.FC = () => {
                           {q.question}
                         </h3>
                         <div className="text-xs text-muted-foreground mt-1 truncate">
-                          {activeTab === "mcq" && q.options && q.options.join(", ")}
+                          {activeTab === "mcq" && (q as MCQ).options && (q as MCQ).options.join(", ")}
                           {activeTab === "fillblank" && (
                             <span>
                               Answer:{" "}
                               <span className="font-mono bg-muted px-1 rounded">
-                                {q.correctAnswer}
+                                {(q as FillBlank).correctAnswer}
                               </span>
                             </span>
                           )}
                           {activeTab === "descriptive" && (
-                            <span>{q.answer?.length || 0} Content Blocks</span>
+                            <span>{(q as Descriptive).answer?.length || 0} Content Blocks</span>
                           )}
                         </div>
                       </div>
@@ -1243,6 +1449,7 @@ const Questions: React.FC = () => {
                           size="icon"
                           onClick={() => openEdit(q)}
                           aria-label={`Edit question: ${q.question}`}
+                          disabled={isAnyLoading}
                         >
                           <Edit className="w-4 h-4 text-muted-foreground" />
                         </Button>
@@ -1254,6 +1461,7 @@ const Questions: React.FC = () => {
                             setIsDeleteModalOpen(true);
                           }}
                           aria-label={`Delete question: ${q.question}`}
+                          disabled={isAnyLoading}
                         >
                           <Trash2 className="w-4 h-4 text-red-400" />
                         </Button>
@@ -1284,42 +1492,42 @@ const Questions: React.FC = () => {
         }
         size="lg"
       >
-        <ModalLayout
-          title={selectedQuestion ? "Edit Question" : "Create Question"}
-          footer={
-            <>
-              <Button
-                variant="outline"
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isUploadingGlobal || createMut.isPending || updateMut.isPending}
-              >
-                {isUploadingGlobal ? "Uploading..." : "Save Question"}
-              </Button>
-            </>
-          }
-        >
-          <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
+          <ModalLayout
+            title={selectedQuestion ? "Edit Question" : "Create Question"}
+            footer={
+              <>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isUploadingGlobal || createMut.isPending || updateMut.isPending}
+                >
+                  {isUploadingGlobal ? "Uploading..." : "Save Question"}
+                </Button>
+              </>
+            }
+          >
             {activeTab === "mcq" && (
-              <MCQForm formData={formData} setFormData={setFormData} />
+              <MCQForm formData={formData as MCQFormData} setFormData={setFormData as React.Dispatch<React.SetStateAction<MCQFormData>>} />
             )}
             {activeTab === "fillblank" && (
-              <FillBlankForm formData={formData} setFormData={setFormData} />
+              <FillBlankForm formData={formData as FillBlankFormData} setFormData={setFormData as React.Dispatch<React.SetStateAction<FillBlankFormData>>} />
             )}
             {activeTab === "descriptive" && (
               <DescriptiveForm
-                formData={formData}
-                setFormData={setFormData}
+                formData={formData as DescriptiveFormData}
+                setFormData={setFormData as React.Dispatch<React.SetStateAction<DescriptiveFormData>>}
                 setIsUploadingGlobal={setIsUploadingGlobal}
               />
             )}
-          </form>
-        </ModalLayout>
+          </ModalLayout>
+        </form>
       </FormModal>
 
       {/* FIX #08: Include question text in delete confirmation */}
@@ -1334,6 +1542,22 @@ const Questions: React.FC = () => {
         title="Delete Question"
         description={`Are you sure you want to delete this question? "${selectedQuestion?.question || ''}"`}
         isLoading={deleteMut.isPending}
+      />
+
+      {/* 🚀 NEW: Full-page Descriptive Editor (Notion-like) */}
+      <DescriptiveEditor
+        isOpen={isDescriptiveEditorOpen}
+        onClose={() => {
+          setIsDescriptiveEditorOpen(false);
+          setSelectedQuestion(null);
+        }}
+        onSave={handleDescriptiveSave}
+        initialData={selectedQuestion && activeTab === 'descriptive' ? {
+          question: (selectedQuestion as Descriptive).question || '',
+          answer: (selectedQuestion as Descriptive).answer || [{ type: 'text', content: '' }],
+        } : undefined}
+        isLoading={createMut.isPending || updateMut.isPending}
+        mode={selectedQuestion ? 'edit' : 'create'}
       />
 
       {/* Bulk Import Modal */}
@@ -1375,7 +1599,7 @@ const Questions: React.FC = () => {
                       const newFiles = Array.from(e.target.files || []);
                       setBulkImages(prev => [...prev, ...newFiles]);
                       // Reset input to allow re-selecting the same file
-                      e.target.value = '';
+                      if (e.target) e.target.value = '';
                     }}
                   />
                 </label>
@@ -1410,7 +1634,7 @@ const Questions: React.FC = () => {
                     onChange={(e) => {
                       const newFiles = Array.from(e.target.files || []);
                       setBulkFiles(prev => [...prev, ...newFiles]);
-                      e.target.value = '';
+                      if (e.target) e.target.value = '';
                     }}
                   />
                 </label>

@@ -1,4 +1,5 @@
 import axios from "axios";
+import type { AxiosProgressEvent } from "axios";
 
 // 🌍 Configure your API base URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -90,8 +91,9 @@ export interface FillBlank {
 }
 
 export interface AnswerBlock {
-  type: "text" | "heading" | "list" | "code" | "diagram";
-  content: string;
+  type: "text" | "heading" | "subheading" | "list" | "code" | "diagram" | "image" | "callout";
+  content?: string;
+  items?: string[]; // For list type
   ref?: string; // Optional ref for diagram blocks before upload
 }
 
@@ -134,39 +136,60 @@ export const unitApi = {
 /* 🎯 MCQ API                                                                 */
 /* -------------------------------------------------------------------------- */
 export const mcqApi = {
-  baseUrl: "/question/mcq",
-  getByUnit: (unitId: string) => api.get<MCQ[]>(`/question/mcq/unit/${unitId}`),
-  create: (data: Omit<MCQ, "_id">) => api.post<MCQ>("/question/mcq", data),
+  getByUnit: (unitId: string): Promise<MCQ[]> =>
+    api.get(`/question/mcq/unit/${unitId}`).then(r => r.data.data ?? []),
+
+  create: (data: Omit<MCQ, "_id">) =>
+    api.post<MCQ>("/question/mcq", data),
+
   update: (id: string, data: Partial<MCQ>) =>
     api.put<MCQ>(`/question/mcq/${id}`, data),
-  delete: (id: string) => api.delete(`/question/mcq/${id}`),
-  // Standardized bulk create
+
+  delete: (id: string) =>
+    api.delete(`/question/mcq/${id}`),
+
   bulkCreate: (data: MCQ[], unitId: string, subjectId: string) =>
     api.post(`/question/mcq/bulk`, {
       unitId,
       subjectId,
       mcqs: data,
     }),
+
+  // ✅ ADD THIS
+  bulkDelete: (ids: string[]) =>
+    api.delete(`/question/mcq/bulk`, {
+      data: { ids },
+    }),
 };
+
 
 /* -------------------------------------------------------------------------- */
 /* ✏️ FILL IN THE BLANK API                                                   */
 /* -------------------------------------------------------------------------- */
 export const fillBlankApi = {
-  baseUrl: "/question/fillblank",
-  getByUnit: (unitId: string) =>
-    api.get<FillBlank[]>(`/question/fillblank/unit/${unitId}`),
+  getByUnit: (unitId: string): Promise<FillBlank[]> =>
+    api.get(`/question/fillblank/unit/${unitId}`).then(r => r.data.data ?? []),
+
   create: (data: Omit<FillBlank, "_id">) =>
-    api.post<FillBlank>("/question/fillblank", data),
+    api.post("/question/fillblank", data),
+
   update: (id: string, data: Partial<FillBlank>) =>
-    api.put<FillBlank>(`/question/fillblank/${id}`, data),
-  delete: (id: string) => api.delete(`/question/fillblank/${id}`),
-  // Standardized bulk create
+    api.put(`/question/fillblank/${id}`, data),
+
+  delete: (id: string) =>
+    api.delete(`/question/fillblank/${id}`),
+
   bulkCreate: (data: FillBlank[], unitId: string, subjectId: string) =>
     api.post(`/question/fillblank/bulk`, {
       unitId,
       subjectId,
       fillBlanks: data,
+    }),
+
+  // ✅ ADD THIS
+  bulkDelete: (ids: string[]) =>
+    api.delete(`/question/fillblank/bulk`, {
+      data: { ids },
     }),
 };
 
@@ -174,30 +197,30 @@ export const fillBlankApi = {
 /* 🧠 DESCRIPTIVE API (with bulk + image refs)                                 */
 /* -------------------------------------------------------------------------- */
 export const descriptiveApi = {
-  baseUrl: "/question/descriptive",
-  getByUnit: (unitId: string) =>
-    api.get<Descriptive[]>(`/question/descriptive/unit/${unitId}`),
+  getByUnit: (unitId: string): Promise<Descriptive[]> =>
+    api.get(`/question/descriptive/unit/${unitId}`).then(r => r.data.data ?? []),
 
   create: (data: Omit<Descriptive, "_id">) =>
-    api.post<Descriptive>("/question/descriptive", data),
+    api.post("/question/descriptive", data),
 
   update: (id: string, data: Partial<Descriptive>) =>
-    api.put<Descriptive>(`/question/descriptive/${id}`, data),
+    api.put(`/question/descriptive/${id}`, data),
 
-  delete: (id: string) => api.delete(`/question/descriptive/${id}`),
+  delete: (id: string) =>
+    api.delete(`/question/descriptive/${id}`),
 
-  // Bulk Create Descriptive (already standardized)
-  bulkCreate: (
-    descriptives: Descriptive[],
-    unitId: string,
-    subjectId: string,
-    refImages: Record<string, string> = {}
-  ) =>
+  bulkCreate: (descriptives, unitId, subjectId, refImages = {}) =>
     api.post(`/question/descriptive/bulk`, {
       unitId,
       subjectId,
       descriptives,
       refImages,
+    }),
+
+  // ✅ ADD THIS
+  bulkDelete: (ids: string[]) =>
+    api.delete(`/question/descriptive/bulk`, {
+      data: { ids },
     }),
 };
 
@@ -205,38 +228,45 @@ export const descriptiveApi = {
 /* ☁️ FILE UPLOAD API                                                         */
 /* -------------------------------------------------------------------------- */
 export const uploadApi = {
-  // 🔹 Single file upload with progress callback
   upload: (
     file: File,
-    folder = 'wasa-learn/uploads',
-    onUploadProgress?: (progressEvent: ProgressEvent) => void
+    folder = "wasa-learn/uploads",
+    onUploadProgress?: (e: AxiosProgressEvent) => void
   ) => {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('folder', folder);
-    return api.post<{ fileUrl: string; publicId?: string }>('/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      onUploadProgress,
-    });
+    formData.append("file", file);
+    formData.append("folder", folder);
+
+    return api.post<{ fileUrl: string; publicId?: string }>(
+      "/upload",
+      formData,
+      {
+        timeout: 60_000,
+        onUploadProgress,
+      }
+    );
   },
 
-  // 🔹 Bulk file upload (✅ for /upload/bulk)
   bulkUpload: (
     files: File[],
-    folder = 'wasa-learn/bulk_diagrams',
-    onUploadProgress?: (progressEvent: ProgressEvent) => void
+    folder = "wasa-learn/bulk_diagrams",
+    onUploadProgress?: (e: AxiosProgressEvent) => void
   ) => {
     const formData = new FormData();
-    files.forEach((f) => formData.append('files', f));
-    formData.append('folder', folder);
-    return api.post<{ images: { ref: string; fileUrl: string }[] }>('/upload/bulk', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      onUploadProgress,
-    });
+    files.forEach((f) => formData.append("files", f));
+    formData.append("folder", folder);
+
+    return api.post<{ images: { ref: string; fileUrl: string }[] }>(
+      "/upload/bulk",
+      formData,
+      {
+        timeout: 120_000,
+        onUploadProgress,
+      }
+    );
   },
 
-  // 🔐 Get signature for direct Cloudinary upload
-  getSignature: (folder = 'wasa-learn/bulk_diagrams') =>
+  getSignature: (folder = "wasa-learn/bulk_diagrams") =>
     api.get<{
       signature: string;
       timestamp: number;
@@ -245,7 +275,6 @@ export const uploadApi = {
       apiKey: string;
     }>(`/upload/signature?folder=${folder}`),
 
-  // ☁️ Direct upload to Cloudinary (bypasses your server)
   directUploadToCloudinary: async (
     file: File,
     signatureData: {
@@ -255,26 +284,31 @@ export const uploadApi = {
       cloudName: string;
       apiKey: string;
     }
-  ): Promise<{ secure_url: string; public_id: string }> => {
+  ): Promise<{
+    secure_url: string;
+    public_id: string;
+    width: number;
+    height: number;
+    format: string;
+  }> => {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('api_key', signatureData.apiKey);
-    formData.append('timestamp', String(signatureData.timestamp));
-    formData.append('signature', signatureData.signature);
-    formData.append('folder', signatureData.folder);
+    formData.append("file", file);
+    formData.append("api_key", signatureData.apiKey);
+    formData.append("timestamp", String(signatureData.timestamp));
+    formData.append("signature", signatureData.signature);
+    formData.append("folder", signatureData.folder);
 
-    const response = await fetch(
+    const res = await fetch(
       `https://api.cloudinary.com/v1_1/${signatureData.cloudName}/image/upload`,
-      { method: 'POST', body: formData }
+      { method: "POST", body: formData }
     );
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.error?.message || response.statusText;
-      throw new Error(`Cloudinary upload failed: ${errorMessage}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.error?.message || "Cloudinary upload failed");
     }
 
-    return response.json();
+    return res.json();
   },
 };
 

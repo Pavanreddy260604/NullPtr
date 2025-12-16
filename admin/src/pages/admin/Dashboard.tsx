@@ -64,14 +64,14 @@ const Dashboard: React.FC = () => {
   const recentSubjects = subjects?.slice(0, 3) || [];
 
   return (
-    <div className="space-y-8 px-4 sm:px-0 max-w-7xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 px-0 max-w-7xl mx-auto">
 
       {/* Header */}
       <div className="flex flex-col gap-2">
         <motion.h1
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          className="text-3xl font-bold tracking-tight"
+          className="text-2xl sm:text-3xl font-bold tracking-tight"
         >
           Admin Overview
         </motion.h1>
@@ -86,7 +86,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
         <StatCard
           title="Total Subjects"
           value={subjectCount}
@@ -114,7 +114,7 @@ const Dashboard: React.FC = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
 
         {/* Main Content: Recent Subjects */}
         <div className="lg:col-span-2 space-y-6">

@@ -36,30 +36,48 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
             onClick={onClose}
           />
 
-          {/* Modal */}
+          {/* Modal - Bottom sheet on mobile, centered on desktop */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md p-4"
+            className="fixed z-50 w-full p-3 sm:p-4
+              bottom-0 left-0 right-0
+              sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2
+              sm:max-w-md"
           >
-            <div className="bg-card rounded-xl border shadow-xl overflow-hidden p-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center flex-shrink-0">
-                  <AlertTriangle className="w-6 h-6 text-destructive" />
+            <div className="bg-card rounded-xl sm:rounded-xl border shadow-xl overflow-hidden p-4 sm:p-6 safe-bottom">
+              {/* Mobile drag indicator */}
+              <div className="sm:hidden flex justify-center pb-3 -mt-1">
+                <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-destructive/10 flex items-center justify-center flex-shrink-0 mx-auto sm:mx-0">
+                  <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-destructive" />
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold">{title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{description}</p>
+                <div className="flex-1 text-center sm:text-left">
+                  <h3 className="text-base sm:text-lg font-semibold">{title}</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1 line-clamp-3">{description}</p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 mt-6">
-                <Button variant="outline" onClick={onClose} disabled={isLoading}>
+              <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 sm:gap-3 mt-5 sm:mt-6">
+                <Button
+                  variant="outline"
+                  onClick={onClose}
+                  disabled={isLoading}
+                  className="w-full sm:w-auto"
+                >
                   Cancel
                 </Button>
-                <Button variant="destructive" onClick={onConfirm} disabled={isLoading}>
+                <Button
+                  variant="destructive"
+                  onClick={onConfirm}
+                  disabled={isLoading}
+                  className="w-full sm:w-auto"
+                >
                   {isLoading ? (
                     <motion.div
                       animate={{ rotate: 360 }}
@@ -80,3 +98,4 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
 };
 
 export default ConfirmModal;
+

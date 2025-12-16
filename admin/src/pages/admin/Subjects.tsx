@@ -164,7 +164,7 @@ const Subjects: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8 px-4 sm:px-0 max-w-7xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 px-0 max-w-7xl mx-auto">
       {/* Modern Header Section 
         Changes:
         1. Separated Title from Controls
@@ -175,8 +175,8 @@ const Subjects: React.FC = () => {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Subjects</h1>
-          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Subjects</h1>
+          <p className="text-muted-foreground mt-1 text-xs sm:text-sm md:text-base">
             Manage your curriculum and learning paths.
           </p>
         </motion.div>

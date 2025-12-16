@@ -165,15 +165,15 @@ const Units: React.FC = () => {
   if (subjectsLoading) return <LoadingSpinner />;
 
   return (
-    <div className="space-y-8 px-4 sm:px-0 max-w-7xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 px-0 max-w-7xl mx-auto">
       {/* Header Section */}
       <div className="flex flex-col gap-6">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Units</h1>
-          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Units</h1>
+          <p className="text-muted-foreground mt-1 text-xs sm:text-sm md:text-base">
             Organize content into manageable learning modules.
           </p>
         </motion.div>

@@ -27,15 +27,15 @@ const AdminLayout: React.FC = () => {
           }`}
       >
         {/* Mobile Header: Provides Hamburger to OPEN sidebar on mobile */}
-        <header className="lg:hidden sticky top-0 z-30 flex h-16 w-full items-center border-b bg-background/95 backdrop-blur px-4">
-          <Button variant="ghost" size="icon" onClick={() => setMobileOpen(true)} className="-ml-2">
-            <Menu className="h-6 w-6" />
+        <header className="lg:hidden sticky top-0 z-30 flex h-14 sm:h-16 w-full items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 px-3 sm:px-4 safe-top">
+          <Button variant="ghost" size="icon" onClick={() => setMobileOpen(true)} className="-ml-1 h-9 w-9 sm:h-10 sm:w-10">
+            <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
           </Button>
-          <span className="ml-3 font-semibold text-lg">EduAdmin</span>
+          <span className="ml-2 sm:ml-3 font-semibold text-base sm:text-lg">EduAdmin</span>
         </header>
 
-        <main className="flex-1 p-4 md:p-6 lg:p-8">
-          <div className="mx-auto max-w-7xl">
+        <main className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8">
+          <div className="mx-auto max-w-7xl w-full">
             <Outlet />
           </div>
         </main>
