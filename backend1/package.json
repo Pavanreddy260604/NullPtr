@@ -15,6 +15,6 @@
         "streamifier": "^0.1.1"
     },
     "scripts": {
-        "build": "echo 'no build needed'"
+        "build": "echo 'Build started...' && mkdir -p public && echo 'Build complete'"
     }
 }
