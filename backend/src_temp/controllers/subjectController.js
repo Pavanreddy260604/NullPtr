@@ -1,5 +1,8 @@
 import Subject from "../models/Subject.js";
 import Unit from "../models/Unit.js";
+import MCQ from "../models/MCQ.js";
+import FillBlank from "../models/FillBlank.js";
+import Descriptive from "../models/Descriptive.js";
 import { deleteFromCloudinary } from "../utils/cloudinaryCleanup.js";
 export const createSubject = async (req, res) => {
     try {
