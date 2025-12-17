@@ -21,8 +21,8 @@ const App = () => (
           <Routes>
             {/* Dynamic Routes - All data from API */}
             <Route path="/" element={<Index />} />
-            <Route path="/subject/:subjectId" element={<SubjectPage />} />
-            <Route path="/unit/:unitId" element={<UnitPage />} />
+            <Route path="/subjects/:subjectId" element={<SubjectPage />} />
+            <Route path="/units/:unitId" element={<UnitPage />} />
 
             {/* Catch-all 404 */}
             <Route path="*" element={<NotFound />} />

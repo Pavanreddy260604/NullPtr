@@ -233,7 +233,7 @@ const Index = () => {
                                 {subjects.map((subject, index) => (
                                     <Link
                                         key={subject._id}
-                                        to={`/subject/${subject._id}`}
+                                        to={`/subjects/${subject._id}`}
                                         className="group"
                                     >
                                         <Card className="relative h-full overflow-hidden bg-white dark:bg-white/5 backdrop-blur-md border-slate-200 dark:border-white/10 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-500 hover:shadow-2xl dark:hover:shadow-purple-500/20 hover:-translate-y-2">
