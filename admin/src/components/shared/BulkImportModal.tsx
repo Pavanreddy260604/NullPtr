@@ -61,10 +61,10 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
   const parseCSV = (text: string): Record<string, string>[] => {
     const lines = text.trim().split('\n');
     if (lines.length < 2) throw new Error('CSV must have at least a header row and one data row');
-    
+
     const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
     const rows: Record<string, string>[] = [];
-    
+
     for (let i = 1; i < lines.length; i++) {
       const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
       const row: Record<string, string> = {};
@@ -73,7 +73,7 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
       });
       rows.push(row);
     }
-    
+
     return rows;
   };
 
@@ -141,7 +141,7 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
 
       const items = data.map(parseItem);
       await onImport(items);
-      
+
       setImportResult({ success: items.length, failed: 0 });
       setTimeout(() => {
         onClose();
@@ -243,11 +243,10 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
             {templateFields.map((field) => (
               <span
                 key={field.name}
-                className={`px-2 py-1 rounded text-xs ${
-                  field.required
-                    ? 'bg-primary/10 text-primary border border-primary/20'
-                    : 'bg-muted text-muted-foreground'
-                }`}
+                className={`px-2 py-1 rounded text-xs ${field.required
+                  ? 'bg-primary/10 text-primary border border-primary/20'
+                  : 'bg-muted text-muted-foreground'
+                  }`}
               >
                 {field.name}{field.required ? '*' : ''}
               </span>

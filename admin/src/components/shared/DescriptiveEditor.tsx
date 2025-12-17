@@ -1,10 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import {
     Save,
-    Plus,
-    Trash2,
-    ArrowUp,
-    ArrowDown,
     Type,
     Heading1,
     Heading2,
@@ -12,30 +8,13 @@ import {
     Code2,
     Image as ImageIcon,
     MessageSquare,
-    GripVertical,
     ChevronLeft,
-    Check,
     Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
-import { AnswerBlock, uploadApi } from '@/lib/api';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-    DropdownMenuSeparator,
-    DropdownMenuLabel,
-} from '@/components/ui/dropdown-menu';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-    PopoverClose,
-} from '@/components/ui/popover';
+import { AnswerBlock } from '@/lib/api';
 import { BlockWrapper } from './editor/ui/BlockWrapper';
 import { EditorToolbar } from './editor/ui/EditorToolbar';
 import { BlockRenderer } from './editor/BlockRenderer';
@@ -116,7 +95,7 @@ const DescriptiveEditor: React.FC<DescriptiveEditorProps> = ({
     const {
         question, setQuestion,
         blocks,
-        activeBlockId, setActiveBlockId, // Updated destructuring
+        activeBlockId, setActiveBlockId,
         slashMenu, setSlashMenu,
         blockRefs,
         containerRef,
@@ -185,55 +164,30 @@ const DescriptiveEditor: React.FC<DescriptiveEditorProps> = ({
                     <div className="space-y-2">
                         {blocks.map((block, i) => (
                             <BlockWrapper
-                                key={block.id || i} // Use ID for key! Fallback to i only if hydration fails (shouldn't happen)
+                                key={block.id || i}
                                 blockId={block.id}
                                 blockType={block.type}
-                                index={i} // Still useful for UI numbering if needed
+                                index={i}
                                 totalBlocks={blocks.length}
-                                isActive={activeBlockId === block.id} // Explicit Selection
-                                blockTypes={BLOCK_TYPES}
-                                onAdd={(type) => addBlock(type, block.id)} // Pass ID
-                                onMoveUp={() => moveBlock(block.id, 'up')} // Pass ID
-                                onMoveDown={() => moveBlock(block.id, 'down')} // Pass ID
-                                onDelete={() => deleteBlock(block.id)} // Pass ID
-                                onChangeType={(type) => updateBlock(block.id, { type: type, items: type === 'list' ? [''] : undefined })} // Pass ID
+                                isActive={activeBlockId === block.id}
+                                onMoveUp={() => moveBlock(block.id, 'up')}
+                                onMoveDown={() => moveBlock(block.id, 'down')}
+                                onDelete={() => deleteBlock(block.id)}
                             >
                                 <BlockRenderer
                                     block={block}
-                                    index={i} // Index for Ref Array (Legacy Ref support)
+                                    index={i}
                                     setBlockRef={(el) => (blockRefs.current[i] = el)}
-                                    // Wrappers for ID-based logic
                                     updateBlock={(idx, val) => updateBlock(block.id, val)}
                                     handleKeyDown={(e, idx, blk) => handleKeyDown(e, block.id, blk)}
-                                    onFocus={() => setActiveBlockId(block.id)} // Explicit Set
+                                    onFocus={() => setActiveBlockId(block.id)}
                                     handleImageUpload={(idx, file) => handleImageUpload(block.id, file)}
                                 />
                             </BlockWrapper>
                         ))}
                     </div>
 
-                    {/* Add Block Button */}
-                    <div className="mt-6 flex justify-center ml-[160px] max-w-2xl">
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button variant="outline" size="sm" className="text-muted-foreground">
-                                    <Plus className="w-4 h-4 mr-2" /> Add block
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-64 p-2">
-                                {BLOCK_TYPES.map((type) => (
-                                    <button
-                                        key={type.value}
-                                        onClick={() => addBlock(type.value)}
-                                        className="flex items-center gap-2 w-full p-2 rounded hover:bg-accent text-left text-sm"
-                                    >
-                                        <type.icon className={cn("w-4 h-4", type.color)} />
-                                        {type.label}
-                                    </button>
-                                ))}
-                            </PopoverContent>
-                        </Popover>
-                    </div>
+
                 </div>
             </div>
 

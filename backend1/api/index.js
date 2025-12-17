@@ -42,6 +42,16 @@ const getModel = (name) =>
 /* 🚀 3. Monolithic Handler                           */
 /* -------------------------------------------------- */
 export default async function handler(req, res) {
+    // CORS Headers for cross-origin requests
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+    // Handle preflight
+    if (req.method === "OPTIONS") {
+        return res.status(200).end();
+    }
+
     if (req.method !== "GET") {
         return res.status(405).json({ message: "Only GET allowed" });
     }
@@ -63,6 +73,13 @@ export default async function handler(req, res) {
 
         const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
         let data = null;
+
+        // Collection name mapping (API resource -> MongoDB collection)
+        const collectionMap = {
+            mcq: "mcqs",
+            fillblank: "fillblanks",
+            descriptive: "descriptive", // Singular - matches your admin backend model
+        };
 
         /* --- ROUTING --- */
 
@@ -89,16 +106,18 @@ export default async function handler(req, res) {
         }
 
         // 3. QUESTIONS ROUTES (MCQ, FillBlank, Descriptive)
-        else if (["mcq", "fillblank", "descriptive"].includes(resource)) {
-            const collectionName = resource + "s"; // Pluralize: mcqs, fillblanks...
+        else if (collectionMap[resource]) {
+            const collectionName = collectionMap[resource];
 
             if (subResource === "unit" && isValidId(param)) {
                 data = await getModel(collectionName).find({ unitId: param });
+            } else if (isValidId(subResource)) {
+                data = await getModel(collectionName).findById(subResource);
             }
         }
 
         // 4. Fallback
-        if (!data) {
+        if (data === null || data === undefined) {
             return res.status(404).json({ message: "Resource not found or invalid ID" });
         }
 

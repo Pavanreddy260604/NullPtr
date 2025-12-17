@@ -60,14 +60,15 @@ export const GutterControls: React.FC<GutterControlsProps> = ({
                         Add block below
                     </div>
                     {blockTypes.map((type) => (
-                        <button
-                            key={type.value}
-                            onClick={() => onAdd(type.value)}
-                            className="flex items-center gap-2 w-full p-2 rounded hover:bg-accent text-left text-sm"
-                        >
-                            <type.icon className={cn("w-4 h-4", type.color)} />
-                            {type.label}
-                        </button>
+                        <PopoverClose asChild key={type.value}>
+                            <button
+                                onClick={() => onAdd(type.value)}
+                                className="flex items-center gap-2 w-full p-2 rounded hover:bg-accent text-left text-sm"
+                            >
+                                <type.icon className={cn("w-4 h-4", type.color)} />
+                                {type.label}
+                            </button>
+                        </PopoverClose>
                     ))}
                 </PopoverContent>
             </Popover>
