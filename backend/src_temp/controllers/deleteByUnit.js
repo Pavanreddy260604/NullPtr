@@ -42,7 +42,7 @@ export const deleteByIdAndUnit = (
         if (docUnitId) {
             await Unit.updateOne(
                 { _id: docUnitId },
-                { $pull: { [unitField]: id } },
+                { $pull: { [unitField]: new mongoose.Types.ObjectId(id) } },
                 { session }
             );
         }

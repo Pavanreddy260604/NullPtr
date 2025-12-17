@@ -31,7 +31,11 @@ const AdminLayout: React.FC = () => {
           <Button variant="ghost" size="icon" onClick={() => setMobileOpen(true)} className="-ml-1 h-9 w-9 sm:h-10 sm:w-10">
             <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
           </Button>
-          <span className="ml-2 sm:ml-3 font-semibold text-base sm:text-lg">EduAdmin</span>
+          <span className="ml-2 sm:ml-3 font-mono font-semibold text-base sm:text-lg">
+            <span className="text-purple-500">&lt;</span>
+            <span className="bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 bg-clip-text text-transparent">NullPtr</span>
+            <span className="text-purple-500">/&gt;</span>
+          </span>
         </header>
 
         <main className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8">

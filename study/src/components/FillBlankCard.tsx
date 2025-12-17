@@ -4,7 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CheckCircle2, XCircle, RotateCcw, Eye, EyeOff, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { FillBlankQuestion } from "@/data/questionsData";
+
+interface FillBlankQuestion {
+  id: string;
+  question: string;
+  correctAnswer: string;
+  explanation?: string;
+  topic?: string;
+}
 
 interface FillBlankCardProps {
   question: FillBlankQuestion;
@@ -36,7 +43,6 @@ export const FillBlankCard = ({ question, index }: FillBlankCardProps) => {
   const isCorrect = hasAnswered && userAnswer.trim() !== "" &&
     normalizeAnswer(userAnswer) === normalizeAnswer(question.correctAnswer);
 
-  // Calculate similarity for partial credit
   const getSimilarity = (str1: string, str2: string) => {
     if (!str1.trim() || !str2.trim()) return 0;
     const words1 = str1.toLowerCase().split(' ');
@@ -49,20 +55,20 @@ export const FillBlankCard = ({ question, index }: FillBlankCardProps) => {
   const isClose = hasAnswered && userAnswer.trim() !== "" && !isCorrect && similarity > 0.5;
 
   return (
-    <Card className="flex flex-col overflow-hidden border bg-white dark:bg-slate-950 shadow-sm hover:shadow-md transition-all duration-200">
+    <Card className="flex flex-col overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300">
       {/* Question Header */}
-      <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950">
+      <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/5">
         <div className="flex items-start gap-4">
-          <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-sm font-bold border border-blue-100 dark:border-blue-800">
+          <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white text-sm font-bold shadow-lg">
             {index + 1}
           </div>
-          <div className="flex-1 space-y-1">
+          <div className="flex-1 space-y-2">
             {question.topic && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-xs font-medium text-slate-600 dark:text-slate-400 mb-2 border border-slate-200 dark:border-slate-700">
+              <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 text-xs font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30">
                 {question.topic}
               </span>
             )}
-            <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-50 leading-snug">
+            <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white leading-snug">
               {question.question}
             </h3>
           </div>
@@ -70,7 +76,7 @@ export const FillBlankCard = ({ question, index }: FillBlankCardProps) => {
       </div>
 
       {/* Interactive Body */}
-      <div className="flex-1 bg-slate-50/50 dark:bg-slate-900/20 p-5 sm:p-6 space-y-6">
+      <div className="flex-1 bg-white dark:bg-slate-900/50 p-5 sm:p-6 space-y-6">
 
         {/* Input Section */}
         <div className="space-y-3">
@@ -85,30 +91,30 @@ export const FillBlankCard = ({ question, index }: FillBlankCardProps) => {
                 if (e.key === "Enter") handleShowAnswer();
               }}
               className={cn(
-                "flex-1 h-11 text-base transition-all duration-200 bg-white dark:bg-slate-950",
-                hasAnswered && isCorrect && "border-green-500 ring-1 ring-green-500/20",
-                hasAnswered && !isCorrect && userAnswer.trim() !== "" && "border-red-500 ring-1 ring-red-500/20",
-                hasAnswered && isClose && "border-orange-500 ring-1 ring-orange-500/20"
+                "flex-1 h-12 text-base bg-slate-50 dark:bg-slate-800/50 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-500 focus:ring-emerald-500/20",
+                hasAnswered && isCorrect && "border-green-500 ring-1 ring-green-500/30",
+                hasAnswered && !isCorrect && userAnswer.trim() !== "" && "border-red-500 ring-1 ring-red-500/30",
+                hasAnswered && isClose && "border-orange-500 ring-1 ring-orange-500/30"
               )}
             />
             <Button
               onClick={handleShowAnswer}
               className={cn(
-                "h-11 px-6 font-medium min-w-[140px] transition-all",
+                "h-12 px-6 font-medium min-w-[140px] transition-all",
                 showAnswer
-                  ? "bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-300"
-                  : "bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow"
+                  ? "bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600"
+                  : "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg"
               )}
             >
               {showAnswer ? (
                 <>
                   <EyeOff className="w-4 h-4 mr-2" />
-                  Hide Answer
+                  Hide
                 </>
               ) : (
                 <>
                   <Eye className="w-4 h-4 mr-2" />
-                  Check Answer
+                  Check
                 </>
               )}
             </Button>
@@ -123,7 +129,7 @@ export const FillBlankCard = ({ question, index }: FillBlankCardProps) => {
                   "text-red-600 dark:text-red-400"
             )}>
               {isCorrect ? (
-                <><CheckCircle2 className="w-4 h-4" /> Correct! Well done.</>
+                <><CheckCircle2 className="w-4 h-4" /> 🎉 Correct! Well done.</>
               ) : isClose ? (
                 <><HelpCircle className="w-4 h-4" /> Close! You're on the right track.</>
               ) : (
@@ -135,17 +141,17 @@ export const FillBlankCard = ({ question, index }: FillBlankCardProps) => {
 
         {/* Revealed Answer Section */}
         {showAnswer && (
-          <div className="rounded-xl border border-blue-100 dark:border-blue-900/50 bg-blue-50/50 dark:bg-blue-900/10 overflow-hidden animate-in fade-in slide-in-from-top-2">
+          <div className="rounded-xl border border-emerald-200 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10 overflow-hidden animate-in fade-in slide-in-from-top-2">
             {/* Toolbar Header */}
-            <div className="flex items-center justify-between px-4 py-2 border-b border-blue-100 dark:border-blue-900/50 bg-blue-100/50 dark:bg-blue-900/20">
-              <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-                Correct Answer
+            <div className="flex items-center justify-between px-4 py-3 border-b border-emerald-100 dark:border-emerald-500/20 bg-emerald-100 dark:bg-emerald-500/10">
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                ✓ Correct Answer
               </span>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleReset}
-                className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-200/50 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                className="h-7 px-3 text-xs text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-500/20"
               >
                 <RotateCcw className="w-3 h-3 mr-1.5" />
                 Reset
@@ -154,14 +160,14 @@ export const FillBlankCard = ({ question, index }: FillBlankCardProps) => {
 
             {/* Content */}
             <div className="p-4 sm:p-5">
-              <p className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-3">
+              <p className="text-lg font-semibold text-slate-900 dark:text-white mb-3">
                 {question.correctAnswer}
               </p>
               {question.explanation && (
-                <div className="flex gap-3 text-sm text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-950/50 p-3 rounded-lg border border-blue-100 dark:border-blue-900/30">
-                  <HelpCircle className="w-5 h-5 text-blue-500 shrink-0" />
+                <div className="flex gap-3 text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/50 p-3 rounded-lg border border-emerald-100 dark:border-emerald-500/20">
+                  <HelpCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <p className="leading-relaxed">
-                    <span className="font-semibold text-slate-900 dark:text-slate-200">Explanation: </span>
+                    <span className="font-semibold text-emerald-700 dark:text-emerald-300">Explanation: </span>
                     {question.explanation}
                   </p>
                 </div>

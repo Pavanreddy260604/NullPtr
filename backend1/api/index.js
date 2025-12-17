@@ -63,6 +63,10 @@ export default async function handler(req, res) {
         // e.g., "/api/units/subject/123" -> ["api", "units", "subject", "123"]
         const parts = req.url.split("?")[0].split("/").filter(Boolean);
 
+        // Debug logging
+        console.log("Request URL:", req.url);
+        console.log("Parsed parts:", parts);
+
         // Locate 'api' to anchor our logic, or assume structure if 'api' is missing
         const apiIndex = parts.indexOf("api");
         const rootIndex = apiIndex === -1 ? 0 : apiIndex + 1; // Start looking after 'api'
@@ -71,14 +75,17 @@ export default async function handler(req, res) {
         const subResource = parts[rootIndex + 1]; // e.g., "subject" OR specific ID
         const param = parts[rootIndex + 2];       // e.g., ID if subResource was "subject"
 
-        const isValidId = (id) => mongoose.Types.ObjectId.isValid(id);
+        console.log("Routing -> resource:", resource, "subResource:", subResource, "param:", param);
+
+        const isValidId = (id) => id && mongoose.Types.ObjectId.isValid(id);
         let data = null;
 
         // Collection name mapping (API resource -> MongoDB collection)
+        // Mongoose auto-pluralizes: MCQ -> mcqs, FillBlank -> fillblanks, Descriptive -> descriptives
         const collectionMap = {
             mcq: "mcqs",
             fillblank: "fillblanks",
-            descriptive: "descriptive", // Singular - matches your admin backend model
+            descriptive: "descriptives", // FIXED: Was "descriptive", should be "descriptives"
         };
 
         /* --- ROUTING --- */
@@ -86,11 +93,13 @@ export default async function handler(req, res) {
         // 1. SUBJECTS ROUTES
         if (resource === "subjects") {
             if (!subResource) {
-                // List all subjects (Limited to 50 for safety)
-                data = await getModel("subjects").find().limit(50);
+                // List all subjects
+                console.log("Fetching all subjects...");
+                data = await getModel("subjects").find().lean();
             } else if (isValidId(subResource)) {
                 // Get single subject by ID
-                data = await getModel("subjects").findById(subResource);
+                console.log("Fetching subject by ID:", subResource);
+                data = await getModel("subjects").findById(subResource).lean();
             }
         }
 
@@ -98,10 +107,12 @@ export default async function handler(req, res) {
         else if (resource === "units") {
             if (subResource === "subject" && isValidId(param)) {
                 // Get units by Subject ID
-                data = await getModel("units").find({ subjectId: param });
+                console.log("Fetching units for subject:", param);
+                data = await getModel("units").find({ subjectId: new mongoose.Types.ObjectId(param) }).lean();
             } else if (isValidId(subResource)) {
                 // Get single unit by ID
-                data = await getModel("units").findById(subResource);
+                console.log("Fetching unit by ID:", subResource);
+                data = await getModel("units").findById(subResource).lean();
             }
         }
 
@@ -110,16 +121,24 @@ export default async function handler(req, res) {
             const collectionName = collectionMap[resource];
 
             if (subResource === "unit" && isValidId(param)) {
-                data = await getModel(collectionName).find({ unitId: param });
+                console.log("Fetching", collectionName, "for unit:", param);
+                data = await getModel(collectionName).find({ unitId: new mongoose.Types.ObjectId(param) }).lean();
             } else if (isValidId(subResource)) {
-                data = await getModel(collectionName).findById(subResource);
+                console.log("Fetching", collectionName, "by ID:", subResource);
+                data = await getModel(collectionName).findById(subResource).lean();
             }
         }
 
         // 4. Fallback
         if (data === null || data === undefined) {
-            return res.status(404).json({ message: "Resource not found or invalid ID" });
+            console.log("404 - No data found for route");
+            return res.status(404).json({
+                message: "Resource not found or invalid ID",
+                debug: { resource, subResource, param }
+            });
         }
+
+        console.log("Success - returning", Array.isArray(data) ? data.length + " items" : "1 item");
 
         /* --- CACHING & RESPONSE --- */
         res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
@@ -127,6 +146,6 @@ export default async function handler(req, res) {
 
     } catch (err) {
         console.error("API Error:", err);
-        return res.status(500).json({ message: "Internal Server Error" });
+        return res.status(500).json({ message: "Internal Server Error", error: err.message });
     }
 }

@@ -297,10 +297,12 @@ export const uploadApi = {
     formData.append("timestamp", String(signatureData.timestamp));
     formData.append("signature", signatureData.signature);
     formData.append("folder", signatureData.folder);
+    const uploadUrl = `${import.meta.env.VITE_CLOUDINARY_UPLOAD_URL}/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`;
+
+
 
     const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${signatureData.cloudName}/image/upload`,
-      { method: "POST", body: formData }
+      `${uploadUrl}`, { method: "POST", body: formData }
     );
 
     if (!res.ok) {

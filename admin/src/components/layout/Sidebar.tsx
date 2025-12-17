@@ -120,13 +120,15 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed, mobileOpen, 
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex items-center gap-3 overflow-hidden"
+            className="flex items-center gap-2 overflow-hidden"
           >
-            <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 shadow-sm">
-              <BookOpen className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 text-white flex items-center justify-center flex-shrink-0 shadow-lg font-mono font-bold text-sm">
+              *
             </div>
-            <span className={cn("font-bold text-lg tracking-tight whitespace-nowrap", styles.textHighlight)}>
-              EduAdmin
+            <span className={cn("font-bold text-lg tracking-tight whitespace-nowrap font-mono", styles.textHighlight)}>
+              <span className="text-purple-500">&lt;</span>
+              <span className="bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 bg-clip-text text-transparent">NullPtr</span>
+              <span className="text-purple-500">/&gt;</span>
             </span>
           </motion.div>
         ) : (

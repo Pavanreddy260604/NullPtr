@@ -155,14 +155,16 @@ export const bulkCreateDescriptives = bulkCreateByUnit(
 /*                           🧹 BULK DELETE OPERATIONS                        */
 /* -------------------------------------------------------------------------- */
 
-export const bulkDeleteMcqs = bulkDeleteByUnit(MCQ, "MCQs");
+export const bulkDeleteMcqs = bulkDeleteByUnit(MCQ, "MCQs", "mcqs");
 
 export const bulkDeleteFillBlanks = bulkDeleteByUnit(
     FillBlank,
-    "FillBlanks"
+    "FillBlanks",
+    "fillBlanks"
 );
 
 export const bulkDeleteDescriptives = bulkDeleteByUnit(
     Descriptive,
-    "Descriptives"
+    "Descriptives",
+    "descriptive"
 );
