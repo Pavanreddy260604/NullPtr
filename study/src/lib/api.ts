@@ -81,7 +81,7 @@ async function fetchApi<T>(endpoint: string): Promise<T> {
 /* 📚 SUBJECT API                                                             */
 /* -------------------------------------------------------------------------- */
 export async function getSubjects(): Promise<Subject[]> {
-    return fetchApi<Subject[]>("/subject");
+    return fetchApi<Subject[]>("/subjects");
 }
 
 export async function getSubject(id: string): Promise<Subject> {
@@ -103,7 +103,7 @@ export async function getUnit(id: string): Promise<Unit> {
 /* 🎯 MCQ API                                                                 */
 /* -------------------------------------------------------------------------- */
 export async function getMCQsByUnit(unitId: string): Promise<MCQ[]> {
-    return fetchApi<MCQ[]>(`/question/mcq/unit/${unitId}`);
+    return fetchApi<MCQ[]>(`/question/mcq/units/${unitId}`);
 }
 
 /* -------------------------------------------------------------------------- */
