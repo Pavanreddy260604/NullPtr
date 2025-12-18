@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://a5f5210e.study-8xz.pages.dev/subjects/694141ae7cd65c429ef643ae">🌐 Live Demo</a> •
+  <a href="https://a5f5210e.study-8xz.pages.dev">🌐 Live Demo</a> •
   <a href="#-features">✨ Features</a> •
   <a href="#-installation">🚀 Installation</a> •
   <a href="#-tech-stack">🛠️ Tech Stack</a> •
