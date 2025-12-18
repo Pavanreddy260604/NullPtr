@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { BookOpen, ArrowRight, Sparkles, GraduationCap, Trophy, Zap, Terminal } from "lucide-react";
+import { BookOpen, ArrowRight, Sparkles, GraduationCap, Trophy, Zap, Terminal, Github } from "lucide-react";
 import { getSubjects, Subject } from "@/lib/api";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -284,11 +284,23 @@ const Index = () => {
 
                 {/* Footer */}
                 <footer className="border-t border-slate-200 dark:border-white/10 py-8 bg-white dark:bg-transparent">
-                    <div className="container mx-auto px-4 text-center text-slate-500 text-sm">
-                        <p className="font-mono">
+                    <div className="container mx-auto px-4 text-center space-y-4">
+                        <p className="font-mono text-slate-500 text-sm">
                             <span className="text-purple-600 dark:text-purple-400">&lt;NullPtr/&gt;</span>
                             <span className="text-slate-400"> // </span>
                             Built by engineers, for engineers 🚀
+                        </p>
+                        <a
+                            href="https://github.com/Pavanreddy260604/study"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all text-sm font-medium"
+                        >
+                            <Github className="w-4 h-4" />
+                            <span>View Source Code</span>
+                        </a>
+                        <p className="text-xs text-slate-400">
+                            Open source • Contribute & improve the project
                         </p>
                     </div>
                 </footer>
