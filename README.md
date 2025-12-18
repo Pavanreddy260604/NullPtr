@@ -290,7 +290,7 @@ npm run dev
 
 ### Base URL
 ```
-Production: https://study-g3xc.onrender.com
+Production: https://yourendor.com
 Development: http://localhost:3000
 ```
 
