@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Search, Loader2, FileQuestion, PenLine, MessageSquare, Sparkles } from "lucide-react";
 import { MCQCard } from "@/components/MCQCard";
 import { FillBlankCard } from "@/components/FillBlankCard";
@@ -71,10 +72,33 @@ const UnitPage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-100 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex items-center justify-center">
-                <div className="text-center space-y-4">
-                    <div className="w-16 h-16 mx-auto rounded-full border-4 border-purple-500/20 border-t-purple-500 animate-spin" />
-                    <p className="text-slate-500">Loading questions...</p>
+            <div className="min-h-screen bg-slate-100 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+                <div className="container mx-auto px-4 py-8">
+                    <div className="max-w-4xl mx-auto space-y-6">
+                        {/* Header skeleton */}
+                        <div className="flex items-center justify-between">
+                            <Skeleton className="h-10 w-24" />
+                            <Skeleton className="h-6 w-32" />
+                        </div>
+                        {/* Title skeleton */}
+                        <div className="text-center py-8">
+                            <Skeleton className="h-8 w-48 mx-auto mb-2" />
+                            <Skeleton className="h-10 w-96 mx-auto" />
+                        </div>
+                        {/* Search skeleton */}
+                        <Skeleton className="h-12 w-full rounded-lg" />
+                        {/* Tabs skeleton */}
+                        <Skeleton className="h-14 w-full rounded-xl" />
+                        {/* Question cards skeleton */}
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className="p-6 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10">
+                                <Skeleton className="h-6 w-3/4 mb-4" />
+                                <Skeleton className="h-4 w-full mb-2" />
+                                <Skeleton className="h-4 w-full mb-2" />
+                                <Skeleton className="h-4 w-2/3" />
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         );

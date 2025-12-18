@@ -1,73 +1,83 @@
-# Welcome to your Lovable project
+# NullPtr - Engineering Study Platform
 
-## Project info
+A modern PWA study platform for CS & Engineering students with MCQs, Fill-in-the-Blanks, and Q&A questions.
 
-**URL**: https://lovable.dev/projects/13e0b8ee-5473-45aa-8f75-86cd266a3ab9
+## 🚀 Features
 
-## How can I edit this code?
+- **Offline Support** - Works without internet after first load
+- **PWA** - Install as native app on mobile/desktop
+- **Dark/Light Mode** - Automatic theme switching
+- **Multiple Question Types** - MCQs, Fill Blanks, Descriptive Q&A
+- **Subject-based Organization** - Units and topics
 
-There are several ways of editing your application.
+## 🛠️ Tech Stack
 
-**Use Lovable**
+- **Frontend**: React + TypeScript + Vite
+- **Styling**: TailwindCSS + shadcn/ui
+- **State**: React Query
+- **Backend**: Node.js + Express + MongoDB
+- **Hosting**: Vercel (frontend) + Render (backend)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/13e0b8ee-5473-45aa-8f75-86cd266a3ab9) and start prompting.
+## 📦 Setup
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
+- Node.js 18+
+- npm or bun
 
-**Use your preferred IDE**
+### Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```bash
+# Clone the repo
+git clone https://github.com/Pavanreddy260604/study.git
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Navigate to study folder
+cd study
 
-Follow these steps:
+# Install dependencies
+npm install
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Create .env file
+echo "VITE_API_URL=https://study-g3xc.onrender.com" > .env
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start dev server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Build for Production
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm run build
+npm run preview
+```
 
-**Use GitHub Codespaces**
+## 📁 Project Structure
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```
+study/
+├── public/           # Static assets (icons, manifest)
+├── src/
+│   ├── components/   # UI components
+│   ├── hooks/        # Custom React hooks
+│   ├── lib/          # Utilities and API
+│   ├── pages/        # Page components
+│   └── App.tsx       # Root component
+├── index.html
+├── vite.config.ts    # Vite + PWA config
+└── tailwind.config.ts
+```
 
-## What technologies are used for this project?
+## 🤝 Contributing
 
-This project is built with:
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📄 License
 
-## How can I deploy this project?
+Open source - feel free to use and modify!
 
-Simply open [Lovable](https://lovable.dev/projects/13e0b8ee-5473-45aa-8f75-86cd266a3ab9) and click on Share -> Publish.
+## 👨‍💻 Author
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+**Pavan Reddy** - [GitHub](https://github.com/Pavanreddy260604)

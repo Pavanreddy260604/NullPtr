@@ -33,6 +33,7 @@ export interface MCQ {
     options: string[];
     correctAnswer: number;
     explanation?: string;
+    topic?: string;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -44,6 +45,7 @@ export interface FillBlank {
     question: string;
     correctAnswer: string;
     explanation?: string;
+    topic?: string;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -61,6 +63,7 @@ export interface Descriptive {
     unitId: string;
     question: string;
     answer: AnswerBlock[];
+    topic?: string;
     createdAt?: string;
     updatedAt?: string;
 }

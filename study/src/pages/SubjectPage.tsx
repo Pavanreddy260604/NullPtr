@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, BookOpen, Loader2, Play, FileQuestion, PenLine, MessageSquare } from "lucide-react";
 import { getSubject, getUnitsBySubject, Subject, Unit } from "@/lib/api";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -38,10 +39,40 @@ const SubjectPage = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-100 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex items-center justify-center">
-                <div className="text-center space-y-4">
-                    <div className="w-16 h-16 mx-auto rounded-full border-4 border-purple-500/20 border-t-purple-500 animate-spin" />
-                    <p className="text-slate-500">Loading...</p>
+            <div className="min-h-screen bg-slate-100 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+                <div className="container mx-auto px-4 py-8">
+                    {/* Header skeleton */}
+                    <div className="flex items-center justify-between mb-8">
+                        <Skeleton className="h-10 w-24" />
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                    </div>
+                    {/* Hero skeleton */}
+                    <div className="py-12 mb-8">
+                        <Skeleton className="h-6 w-32 mb-4" />
+                        <Skeleton className="h-12 w-64 mb-2" />
+                        <Skeleton className="h-4 w-96" />
+                    </div>
+                    {/* Units grid skeleton */}
+                    <Skeleton className="h-8 w-48 mb-6" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {[1, 2, 3, 4].map((i) => (
+                            <Card key={i} className="p-6 bg-white dark:bg-white/5 border-slate-200 dark:border-white/10">
+                                <div className="flex items-start gap-4">
+                                    <Skeleton className="w-14 h-14 rounded-2xl" />
+                                    <div className="flex-1">
+                                        <Skeleton className="h-6 w-3/4 mb-2" />
+                                        <Skeleton className="h-4 w-full" />
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-100 dark:border-white/10">
+                                    <Skeleton className="h-4 w-16" />
+                                    <Skeleton className="h-4 w-16" />
+                                    <Skeleton className="h-4 w-16" />
+                                    <Skeleton className="h-8 w-24 ml-auto" />
+                                </div>
+                            </Card>
+                        ))}
+                    </div>
                 </div>
             </div>
         );
