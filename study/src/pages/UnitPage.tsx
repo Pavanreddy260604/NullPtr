@@ -111,7 +111,7 @@ const UnitPage = () => {
                 {/* Header */}
                 <header className="sticky top-0 z-20 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10">
                     <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-                        <Link to={`/subject/${unit?.subjectId}`}>
+                        <Link to={`/subjects/${unit?.subjectId}`}>
                             <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10">
                                 <ArrowLeft className="w-4 h-4 mr-2" />
                                 Back
