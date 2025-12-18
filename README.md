@@ -64,7 +64,7 @@ Whether you're preparing for exams, revising concepts, or testing your knowledge
 
 Experience NullPtr in action:
 
-**👉 [https://a5f5210e.study-8xz.pages.dev/subjects/694141ae7cd65c429ef643ae](https://a5f5210e.study-8xz.pages.dev/subjects/694141ae7cd65c429ef643ae)**
+**👉 [https://a5f5210e.study-8xz.pages.dev](https://a5f5210e.study-8xz.pages.dev)**
 
 Try out the platform, explore subjects, and practice questions — all in your browser!
 
