@@ -242,7 +242,7 @@ const Index = () => {
                                         to={`/subjects/${subject._id}`}
                                         className="group"
                                     >
-                                        <Card className="relative h-full overflow-hidden bg-white dark:bg-white/5 backdrop-blur-md border-slate-200 dark:border-white/10 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-500 hover:shadow-2xl dark:hover:shadow-purple-500/20 hover:-translate-y-2">
+                                        <Card className="relative h-full overflow-hidden bg-white dark:bg-white/5 backdrop-blur-md border-slate-200 dark:border-white/10 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl dark:hover:shadow-purple-500/20 hover:-translate-y-2 active:scale-95">
                                             {/* Gradient Overlay */}
                                             <div className={`absolute inset-0 bg-gradient-to-br ${gradients[index % gradients.length]} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
 

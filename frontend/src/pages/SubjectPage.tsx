@@ -185,7 +185,7 @@ const SubjectPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {units.map((unit, index) => (
                                 <Link key={unit._id} to={`/units/${unit._id}`} className="group">
-                                    <Card className="relative overflow-hidden bg-white dark:bg-white/5 backdrop-blur-md border-slate-200 dark:border-white/10 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300 hover:shadow-xl dark:hover:shadow-purple-500/10">
+                                    <Card className="relative overflow-hidden bg-white dark:bg-white/5 backdrop-blur-md border-slate-200 dark:border-white/10 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300 hover:shadow-xl dark:hover:shadow-purple-500/10 active:scale-[0.98]">
                                         {/* Progress-like accent */}
                                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity" />
 
