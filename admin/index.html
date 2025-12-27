@@ -3,11 +3,26 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Enhanced mobile viewport for better responsiveness -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+  
   <title>NullPtr Admin - Question Management</title>
-  <meta name="description"
-    content="NullPtr Admin Panel - Manage subjects, units, and questions for CS & Engineering students" />
+  <meta name="description" content="NullPtr Admin Panel - Manage subjects, units, and questions for CS & Engineering students" />
   <meta name="author" content="NullPtr" />
+  
+  <!-- Security: Prevent clickjacking -->
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+  
+  <!-- Prevent automatic phone number detection (iOS) -->
+  <meta name="format-detection" content="telephone=no" />
+  
+  <!-- Mobile Web App Capable -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="NullPtr Admin" />
 
   <!-- Favicons -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -15,11 +30,18 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
+  <!-- Open Graph -->
   <meta property="og:title" content="NullPtr Admin Panel" />
   <meta property="og:description" content="Manage your NullPtr learning content" />
   <meta property="og:type" content="website" />
 
-  <meta name="theme-color" content="#8b5cf6" />
+  <!-- Theme Color for Mobile Browsers -->
+  <meta name="theme-color" content="#8b5cf6" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#1e1b4b" media="(prefers-color-scheme: dark)" />
+  
+  <!-- Preconnect to external resources for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
 
 <body>

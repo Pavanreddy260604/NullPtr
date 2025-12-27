@@ -215,7 +215,7 @@ cd frontend
 npm install
 
 # Create environment file
-echo "VITE_API_URL=https://study-g3xc.onrender.com" > .env
+echo "VITE_API_URL=https://yourrendorurl.com" > .env
 
 # Start development server
 npm run dev
@@ -456,9 +456,7 @@ Your support encourages continued development and maintenance of this project.
 
 ---
 
-<p align="center">
-  <strong>Built with ❤️ for CS & Engineering Students</strong>
-</p>
+
 
 <p align="center">
   <em>Last Updated: December 18, 2025</em>
