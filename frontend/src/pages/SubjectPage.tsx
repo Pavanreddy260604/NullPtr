@@ -126,18 +126,18 @@ const SubjectPage = () => {
                 </header>
 
                 {/* Hero */}
-                <section className="py-16 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+                <section className="py-8 md:py-16 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
                     <div className="container mx-auto px-4">
                         <div className="max-w-3xl">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 text-sm mb-4">
                                 <BookOpen className="w-4 h-4" />
                                 <span>{units.length} Units Available</span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900 dark:text-transparent dark:bg-gradient-to-r dark:from-white dark:to-slate-400 dark:bg-clip-text">
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-slate-900 dark:text-transparent dark:bg-gradient-to-r dark:from-white dark:to-slate-400 dark:bg-clip-text">
                                 {subject?.name}
                             </h1>
                             {subject?.description && (
-                                <p className="text-lg text-slate-600 dark:text-slate-400">{subject.description}</p>
+                                <p className="text-base md:text-lg text-slate-600 dark:text-slate-400">{subject.description}</p>
                             )}
                         </div>
                     </div>

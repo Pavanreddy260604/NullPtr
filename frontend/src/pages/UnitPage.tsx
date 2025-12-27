@@ -152,18 +152,18 @@ const UnitPage = () => {
                 </header>
 
                 {/* Hero */}
-                <section className="py-12 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+                <section className="py-8 md:py-12 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
                     <div className="container mx-auto px-4">
                         <div className="max-w-4xl mx-auto text-center">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 text-sm mb-4">
                                 <Sparkles className="w-4 h-4" />
                                 <span>{totalQuestions} Questions</span>
                             </div>
-                            <h1 className="text-3xl md:text-4xl font-bold mb-2 text-slate-900 dark:bg-gradient-to-r dark:from-white dark:to-slate-400 dark:bg-clip-text dark:text-transparent">
+                            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-slate-900 dark:bg-gradient-to-r dark:from-white dark:to-slate-400 dark:bg-clip-text dark:text-transparent">
                                 Unit {unit?.unit}: {unit?.title}
                             </h1>
                             {unit?.subtitle && (
-                                <p className="text-slate-600 dark:text-slate-400">{unit.subtitle}</p>
+                                <p className="text-sm md:text-base text-slate-600 dark:text-slate-400">{unit.subtitle}</p>
                             )}
                         </div>
                     </div>

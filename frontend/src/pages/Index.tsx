@@ -83,8 +83,8 @@ const Index = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-white overflow-hidden transition-colors">
-            {/* Theme Toggle - Desktop Only */}
-            <div className="fixed top-4 right-4 z-50 hidden md:block">
+            {/* Theme Toggle */}
+            <div className="fixed top-4 right-4 z-50">
                 <ThemeToggle />
             </div>
 
@@ -114,7 +114,7 @@ const Index = () => {
             {/* Content */}
             <div className="relative z-10">
                 {/* Hero Section */}
-                <section className="container mx-auto px-4 py-20 md:py-32">
+                <section className="container mx-auto px-4 py-12 md:py-32">
                     <div className="max-w-4xl mx-auto text-center space-y-8">
                         {/* Terminal Badge */}
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 dark:bg-black/50 backdrop-blur-sm border border-slate-700 dark:border-white/20 text-sm font-mono">
