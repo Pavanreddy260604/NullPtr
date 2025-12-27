@@ -15,8 +15,10 @@ import FormModal from '@/components/shared/FormModal';
 import ConfirmModal from '@/components/shared/ConfirmModal';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import BulkImportModal from '@/components/shared/BulkImportModal';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Subjects: React.FC = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
@@ -124,10 +126,18 @@ const Subjects: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    let finalVisibility = formData.visibility;
+    // 🔒 Enforce Public Role Constraint: Public user creates Public content
+    if (user?.role === 'public') {
+      finalVisibility = 'public';
+    }
+
     const payload = {
       ...formData,
-      visibility: formData.visibility as 'public' | 'private'
+      visibility: finalVisibility as 'public' | 'private'
     };
+
     if (selectedSubject) {
       updateMutation.mutate({ id: selectedSubject._id, data: payload });
     } else {
@@ -174,10 +184,18 @@ const Subjects: React.FC = () => {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground">Subjects</h1>
-          <p className="text-muted-foreground mt-0.5 text-xs sm:text-sm">
-            Manage your curriculum and learning paths.
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground">Subjects</h1>
+              <p className="text-muted-foreground mt-0.5 text-xs sm:text-sm">
+                Manage your curriculum and learning paths.
+              </p>
+            </div>
+            {/* Show User Role Badge */}
+            <div className={`px-3 py-1 rounded-full text-xs font-medium border ${user?.role === 'private' ? 'bg-purple-500/10 text-purple-500 border-purple-500/20' : 'bg-green-500/10 text-green-500 border-green-500/20'}`}>
+              {user?.role === 'private' ? 'Private Admin Space' : 'Public Workspace'}
+            </div>
+          </div>
         </motion.div>
 
         <motion.div
@@ -318,31 +336,35 @@ const Subjects: React.FC = () => {
               <Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="visibility">Visibility (Who can see this?)</Label>
-              <Select
-                value={formData.visibility}
-                onValueChange={(value) => setFormData({ ...formData, visibility: value })}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select visibility" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="public">
-                    <div className="flex items-center gap-2">
-                      <Eye className="w-4 h-4" />
-                      <span>Public (Students)</span>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="private">
-                    <div className="flex items-center gap-2">
-                      <EyeOff className="w-4 h-4" />
-                      <span>Private (Second Space)</span>
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {/* 🔒 ONLY Private Admin can see/change visibility */}
+            {user?.role === 'private' && (
+              <div className="space-y-2">
+                <Label htmlFor="visibility">Visibility (Who can see this?)</Label>
+                <Select
+                  value={formData.visibility}
+                  onValueChange={(value) => setFormData({ ...formData, visibility: value })}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select visibility" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="public">
+                      <div className="flex items-center gap-2">
+                        <Eye className="w-4 h-4" />
+                        <span>Public (Students)</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="private">
+                      <div className="flex items-center gap-2">
+                        <EyeOff className="w-4 h-4" />
+                        <span>Private (Second Space)</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">Only you (Private Admin) can see this option.</p>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="code">Code</Label>
