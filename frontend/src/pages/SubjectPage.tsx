@@ -114,7 +114,7 @@ const SubjectPage = () => {
                             </Button>
                         </Link>
                         <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-3">
+                            <div className="hidden md:flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                                     <BookOpen className="w-4 h-4 text-white" />
                                 </div>
@@ -187,15 +187,15 @@ const SubjectPage = () => {
                                             <div className="flex items-center gap-3 mt-4 pt-4 border-t border-slate-100 dark:border-white/10">
                                                 <div className="flex items-center gap-1.5 text-xs text-slate-500">
                                                     <FileQuestion className="w-3.5 h-3.5" />
-                                                    <span>MCQs</span>
+                                                    <span className="hidden sm:inline">MCQs</span>
                                                 </div>
                                                 <div className="flex items-center gap-1.5 text-xs text-slate-500">
                                                     <PenLine className="w-3.5 h-3.5" />
-                                                    <span>Fill Blanks</span>
+                                                    <span className="hidden sm:inline">Fill Blanks</span>
                                                 </div>
                                                 <div className="flex items-center gap-1.5 text-xs text-slate-500">
                                                     <MessageSquare className="w-3.5 h-3.5" />
-                                                    <span>Q&A</span>
+                                                    <span className="hidden sm:inline">Q&A</span>
                                                 </div>
                                                 <div className="ml-auto">
                                                     <Button

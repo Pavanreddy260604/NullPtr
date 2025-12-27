@@ -142,7 +142,7 @@ const UnitPage = () => {
                             </Button>
                         </Link>
                         <div className="flex items-center gap-4">
-                            <div className="text-right">
+                            <div className="text-right hidden md:block">
                                 <div className="text-xs text-slate-500">Unit {unit?.unit}</div>
                                 <div className="font-semibold text-sm">{unit?.title}</div>
                             </div>
