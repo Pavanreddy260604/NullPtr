@@ -12,20 +12,34 @@ interface Props {
 export const SecondSpaceDialog = ({ open, onOpenChange }: Props) => {
     const [value, setValue] = useState("");
 
-    const handleComplete = (pin: string) => {
-        if (pin === "2606") {
-            const secret = import.meta.env.VITE_SECOND_SPACE_SECRET || "nullptr_secret_123";
-            localStorage.setItem("second_space_secret", secret);
-            toast.success("Unlocked Second Space");
+    const handleComplete = async (pin: string) => {
+        if (pin === "0000") {
+            localStorage.removeItem("second_space_secret");
+            toast.success("Locked Second Space");
             setTimeout(() => window.location.reload(), 1000);
-        } else {
-            if (pin === "0000") {
-                localStorage.removeItem("second_space_secret");
-                toast.success("Locked Second Space");
+            return;
+        }
+        try {
+            const rawApiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+            const API_BASE_URL = rawApiUrl.endsWith("/") ? rawApiUrl.slice(0, -1) : rawApiUrl;
+
+            const res = await fetch(`${API_BASE_URL}/verify-pin`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ pin })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                localStorage.setItem("second_space_secret", data.secret);
+                toast.success("Unlocked Second Space");
                 setTimeout(() => window.location.reload(), 1000);
-                return;
+            } else {
+                toast.error("Invalid PIN");
+                setValue("");
             }
-            toast.error("Access Denied");
+        } catch (e) {
+            toast.error("Security Check Failed");
             setValue("");
         }
     };

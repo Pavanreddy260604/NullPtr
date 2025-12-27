@@ -52,26 +52,41 @@ export default async function handler(req, res) {
         return res.status(204).end();
     }
 
-    if (req.method !== "GET") {
-        return res.status(405).json({ message: "Only GET allowed" });
+    if (req.method !== "GET" && req.method !== "POST") {
+        return res.status(405).json({ message: "Method Not Allowed" });
     }
 
     try {
         await connectDB();
 
-        // Safe URL Parsing: Splits path and removes empty strings
-        // e.g., "/api/units/subject/123" -> ["api", "units", "subject", "123"]
+        // Safe URL Parsing
         const parts = req.url.split("?")[0].split("/").filter(Boolean);
+        const apiIndex = parts.indexOf("api");
+        const rootIndex = apiIndex === -1 ? 0 : apiIndex + 1;
+        const resource = parts[rootIndex];
+
+        // 🔒 SECURE PIN VERIFICATION
+        if (req.method === "POST" && resource === "verify-pin") {
+            const { pin } = req.body;
+            const SERVER_PIN = process.env.SECOND_SPACE_PIN || "2606";
+            const SERVER_SECRET = process.env.SECOND_SPACE_SECRET || "nullptr_secret_123";
+
+            if (pin === SERVER_PIN) {
+                return res.status(200).json({ secret: SERVER_SECRET });
+            } else {
+                return res.status(401).json({ message: "Invalid PIN" });
+            }
+        }
+
+        if (req.method !== "GET") {
+            return res.status(405).json({ message: "Only GET allowed for data" });
+        }
+
 
         // Debug logging
         console.log("Request URL:", req.url);
         console.log("Parsed parts:", parts);
 
-        // Locate 'api' to anchor our logic, or assume structure if 'api' is missing
-        const apiIndex = parts.indexOf("api");
-        const rootIndex = apiIndex === -1 ? 0 : apiIndex + 1; // Start looking after 'api'
-
-        const resource = parts[rootIndex];       // e.g., "subjects"
         const subResource = parts[rootIndex + 1]; // e.g., "subject" OR specific ID
         const param = parts[rootIndex + 2];       // e.g., ID if subResource was "subject"
 
