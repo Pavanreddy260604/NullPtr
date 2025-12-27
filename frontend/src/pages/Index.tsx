@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, ArrowRight, Sparkles, GraduationCap, Trophy, Zap, Terminal, Github, Lock, UserSecret } from "lucide-react";
+import { BookOpen, ArrowRight, Sparkles, GraduationCap, Trophy, Zap, Terminal, Github, Lock } from "lucide-react";
 import { getSubjects, Subject } from "@/lib/api";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SecondSpaceDialog } from "@/components/SecondSpaceDialog";
@@ -331,7 +331,7 @@ const Index = () => {
                                 </div>
 
                                 <div className="flex items-center justify-center gap-3 mb-12">
-                                    <UserSecret className="w-8 h-8 text-red-500" />
+                                    <Lock className="w-8 h-8 text-red-500" />
                                     <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white">
                                         Second Space
                                     </h2>
