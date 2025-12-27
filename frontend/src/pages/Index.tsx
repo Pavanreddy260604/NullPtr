@@ -83,8 +83,8 @@ const Index = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-white overflow-hidden transition-colors">
-            {/* Theme Toggle */}
-            <div className="fixed top-4 right-4 z-50">
+            {/* Theme Toggle - Desktop Only */}
+            <div className="fixed top-4 right-4 z-50 hidden md:block">
                 <ThemeToggle />
             </div>
 
@@ -126,7 +126,7 @@ const Index = () => {
 
                         {/* Animated Title */}
                         <div className="relative">
-                            <h1 className="text-6xl md:text-8xl font-bold leading-tight font-mono">
+                            <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl font-bold leading-tight font-mono tracking-tighter">
                                 <span className="text-purple-500 dark:text-purple-400">&lt;</span>
                                 <span className="text-transparent bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-500 dark:from-purple-400 dark:via-pink-400 dark:to-cyan-400 bg-clip-text">
                                     {nullText}
@@ -135,7 +135,7 @@ const Index = () => {
                                     {ptrText}
                                 </span>
                                 <span className="text-purple-500 dark:text-purple-400">/&gt;</span>
-                                <span className="inline-block w-1 h-12 md:h-16 bg-purple-500 dark:bg-purple-400 animate-blink ml-2 align-middle"></span>
+                                <span className="inline-block w-1 h-8 xs:h-10 sm:h-12 md:h-16 bg-purple-500 dark:bg-purple-400 animate-blink ml-2 align-middle"></span>
                             </h1>
 
                             {/* Decorative asterisk */}
