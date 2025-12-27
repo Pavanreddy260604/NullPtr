@@ -362,11 +362,25 @@ const Index = () => {
                 {/* Footer */}
                 <footer className="border-t border-slate-200 dark:border-white/10 py-8 bg-white dark:bg-transparent">
                     <div className="container mx-auto px-4 text-center space-y-4">
-                        <p className="font-mono text-slate-500 text-sm select-none cursor-help hover:text-slate-400 transition-colors" onClick={handleSecretTrigger}>
-                            <span className="text-purple-600 dark:text-purple-400">&lt;NullPtr/&gt;</span>
-                            <span className="text-slate-400"> // </span>
-                            Built by engineers, for engineers 🚀
-                        </p>
+                        {isUnlocked ? (
+                            <p
+                                className="font-mono text-red-500 text-sm select-none cursor-pointer hover:text-red-600 transition-colors animate-pulse"
+                                onClick={() => {
+                                    localStorage.removeItem("second_space_secret");
+                                    // Using standard alert or simple reload for speed, but user mentioned unwanted DB requests.
+                                    // Reload is necessary to Reset state properly.
+                                    window.location.reload();
+                                }}
+                            >
+                                🔓 RESTRICTED MODE ACTIVE. CLICK TO LOCK.
+                            </p>
+                        ) : (
+                            <p className="font-mono text-slate-500 text-sm select-none cursor-help hover:text-slate-400 transition-colors" onClick={handleSecretTrigger}>
+                                <span className="text-purple-600 dark:text-purple-400">&lt;NullPtr/&gt;</span>
+                                <span className="text-slate-400"> // </span>
+                                Built by engineers, for engineers 🚀
+                            </p>
+                        )}
                         <a
                             href="https://github.com/Pavanreddy260604/study"
                             target="_blank"
