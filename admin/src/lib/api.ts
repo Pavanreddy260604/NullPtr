@@ -11,6 +11,23 @@ const api = axios.create({
   },
 });
 
+// Add a request interceptor to inject headers based on user role
+api.interceptors.request.use((config) => {
+  const storedUser = localStorage.getItem('admin_user');
+  if (storedUser) {
+    try {
+      const user = JSON.parse(storedUser);
+      // If user is 'private' (Admin), inject the master key
+      if (user.role === 'private') {
+        config.headers['x-second-space-secret'] = 'nullptr_secret_123';
+      }
+    } catch (e) {
+      console.error("Error parsing admin_user", e);
+    }
+  }
+  return config;
+});
+
 // Add a response interceptor for centralized error handling
 api.interceptors.response.use(
   (response) => response,
