@@ -6,7 +6,11 @@ import questionRoutes from "./routes/questionRouter.js";
 import uploadRouter from "./controllers/uploadController.js";
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-second-space-secret"]
+}));
 app.use(express.json());
 
 app.get("/", (req, res) => res.send("🚀 API Running Successfully!"));
