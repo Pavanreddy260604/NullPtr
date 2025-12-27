@@ -3,9 +3,10 @@ import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, BookOpen, Loader2, Play, FileQuestion, PenLine, MessageSquare } from "lucide-react";
+import { ArrowLeft, BookOpen, Loader2, Play, FileQuestion, PenLine, MessageSquare, Share2 } from "lucide-react";
 import { getSubject, getUnitsBySubject, Subject, Unit } from "@/lib/api";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { toast } from "sonner";
 
 const SubjectPage = () => {
     const { subjectId } = useParams<{ subjectId: string }>();
@@ -36,6 +37,24 @@ const SubjectPage = () => {
 
         fetchData();
     }, [subjectId]);
+
+    const handleShare = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: subject?.name || 'NullPtr Subject',
+                    text: `Check out ${subject?.name} on NullPtr!`,
+                    url: window.location.href,
+                });
+            } catch (err) {
+                // User cancelled or failed
+            }
+        } else {
+            // Fallback
+            navigator.clipboard.writeText(window.location.href);
+            toast.success("Link copied to clipboard!");
+        }
+    };
 
     if (loading) {
         return (
@@ -113,13 +132,18 @@ const SubjectPage = () => {
                                 Back
                             </Button>
                         </Link>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 md:gap-4">
                             <div className="hidden md:flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                                     <BookOpen className="w-4 h-4 text-white" />
                                 </div>
                                 <span className="font-semibold">{subject?.name}</span>
                             </div>
+
+                            <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-full">
+                                <Share2 className="w-5 h-5" />
+                            </Button>
+
                             <ThemeToggle />
                         </div>
                     </div>

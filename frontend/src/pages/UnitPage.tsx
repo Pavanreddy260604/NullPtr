@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Search, Loader2, FileQuestion, PenLine, MessageSquare, Sparkles } from "lucide-react";
+import { ArrowLeft, Search, Loader2, FileQuestion, PenLine, MessageSquare, Sparkles, Share2 } from "lucide-react";
 import { MCQCard } from "@/components/MCQCard";
 import { FillBlankCard } from "@/components/FillBlankCard";
 import { DescriptiveCard } from "@/components/DescriptiveCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { toast } from "sonner";
 import {
     getUnit,
     getMCQsByUnit,
@@ -56,6 +57,24 @@ const UnitPage = () => {
 
         fetchData();
     }, [unitId]);
+
+    const handleShare = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: unit?.title || 'NullPtr Unit',
+                    text: `Practice ${unit?.title} on NullPtr!`,
+                    url: window.location.href,
+                });
+            } catch (err) {
+                // User cancelled or failed
+            }
+        } else {
+            // Fallback
+            navigator.clipboard.writeText(window.location.href);
+            toast.success("Link copied to clipboard!");
+        }
+    };
 
     const filterQuestions = <T extends { question: string; topic?: string }>(questions: T[]): T[] => {
         if (!searchQuery.trim()) return questions;
@@ -141,11 +160,16 @@ const UnitPage = () => {
                                 Back
                             </Button>
                         </Link>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 md:gap-4">
                             <div className="text-right hidden md:block">
                                 <div className="text-xs text-slate-500">Unit {unit?.unit}</div>
                                 <div className="font-semibold text-sm">{unit?.title}</div>
                             </div>
+
+                            <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-full">
+                                <Share2 className="w-5 h-5" />
+                            </Button>
+
                             <ThemeToggle />
                         </div>
                     </div>
