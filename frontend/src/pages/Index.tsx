@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BookOpen, ArrowRight, Sparkles, GraduationCap, Trophy, Zap, Terminal, Github } from "lucide-react";
 import { getSubjects, Subject } from "@/lib/api";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SecondSpaceDialog } from "@/components/SecondSpaceDialog";
 
 // Typing animation hook
 const useTypingEffect = (text: string, speed: number = 100, delay: number = 0) => {
@@ -41,9 +42,22 @@ const Index = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    // Second Space Logic
+    const [secretClicks, setSecretClicks] = useState(0);
+    const [showSecretDialog, setShowSecretDialog] = useState(false);
+
     // Animated typing effects
     const { displayedText: nullText, isComplete: nullComplete } = useTypingEffect("Null", 150, 500);
     const { displayedText: ptrText } = useTypingEffect("Ptr", 150, nullComplete ? 0 : 2000);
+
+    const handleSecretTrigger = () => {
+        if (secretClicks + 1 >= 3) {
+            setShowSecretDialog(true);
+            setSecretClicks(0);
+        } else {
+            setSecretClicks(prev => prev + 1);
+        }
+    };
 
     useEffect(() => {
         const fetchSubjects = async () => {
@@ -87,6 +101,9 @@ const Index = () => {
             <div className="fixed top-4 right-4 z-50">
                 <ThemeToggle />
             </div>
+
+            {/* Second Space Dialog */}
+            <SecondSpaceDialog open={showSecretDialog} onOpenChange={setShowSecretDialog} />
 
             {/* Animated Background - Dark mode only */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none hidden dark:block">
@@ -291,7 +308,7 @@ const Index = () => {
                 {/* Footer */}
                 <footer className="border-t border-slate-200 dark:border-white/10 py-8 bg-white dark:bg-transparent">
                     <div className="container mx-auto px-4 text-center space-y-4">
-                        <p className="font-mono text-slate-500 text-sm">
+                        <p className="font-mono text-slate-500 text-sm select-none" onClick={handleSecretTrigger}>
                             <span className="text-purple-600 dark:text-purple-400">&lt;NullPtr/&gt;</span>
                             <span className="text-slate-400"> // </span>
                             Built by engineers, for engineers 🚀

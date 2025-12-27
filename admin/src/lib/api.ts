@@ -51,6 +51,7 @@ export interface Subject {
   code: string;
   description: string;
   thumbnail?: string;
+  visibility?: 'public' | 'private';
   units?: Unit[];
   createdAt?: string;
   updatedAt?: string;

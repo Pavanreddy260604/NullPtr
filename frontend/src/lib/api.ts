@@ -72,7 +72,16 @@ export interface Descriptive {
 /* 🔧 HELPER                                                                  */
 /* -------------------------------------------------------------------------- */
 async function fetchApi<T>(endpoint: string): Promise<T> {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+    const token = localStorage.getItem("second_space_secret");
+    const headers: HeadersInit = {
+        "Content-Type": "application/json",
+    };
+
+    if (token) {
+        headers["x-second-space-secret"] = token;
+    }
+
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, { headers });
     if (!response.ok) {
         throw new Error(`API error: ${response.statusText}`);
     }

@@ -12,6 +12,11 @@ const subjectSchema = new mongoose.Schema(
             type: String,
             trim: true
         },
+        visibility: {
+            type: String,
+            enum: ["public", "private"],
+            default: "public"
+        },
         description: {
             type: String
         },

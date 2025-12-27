@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import { Plus, Edit, Trash2, BookOpen, Search, Layers, Upload, FileDown } from 'lucide-react';
+import { Plus, Edit, Trash2, BookOpen, Search, Layers, Upload, Eye, EyeOff } from 'lucide-react';
 import { subjectApi, uploadApi, Subject } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import FormModal from '@/components/shared/FormModal';
 import ConfirmModal from '@/components/shared/ConfirmModal';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
@@ -28,10 +29,10 @@ const Subjects: React.FC = () => {
     code: '',
     description: '',
     thumbnail: '',
+    visibility: 'public',
   });
   const [isUploading, setIsUploading] = useState(false);
 
-  // ... (Keep all your existing API logic, queries, and mutations exactly the same)
   const { data: subjects, isLoading, error } = useQuery({
     queryKey: ['subjects'],
     queryFn: () => subjectApi.getAll().then(res => res.data),
@@ -70,7 +71,6 @@ const Subjects: React.FC = () => {
     onError: () => toast.error('Failed to delete subject'),
   });
 
-  // ... (Keep bulk import logic same)
   const handleBulkImport = async (items: Omit<Subject, '_id'>[]) => {
     let successCount = 0;
     for (const item of items) {
@@ -95,11 +95,12 @@ const Subjects: React.FC = () => {
     name: row.name,
     code: row.code,
     description: row.description || '',
+    visibility: 'public',
   });
 
   const openCreateModal = () => {
     setSelectedSubject(null);
-    setFormData({ name: '', code: '', description: '', thumbnail: '' });
+    setFormData({ name: '', code: '', description: '', thumbnail: '', visibility: 'public' });
     setIsModalOpen(true);
   };
 
@@ -110,6 +111,7 @@ const Subjects: React.FC = () => {
       code: subject.code,
       description: subject.description,
       thumbnail: subject.thumbnail || '',
+      visibility: subject.visibility || 'public',
     });
     setIsModalOpen(true);
   };
@@ -117,15 +119,19 @@ const Subjects: React.FC = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedSubject(null);
-    setFormData({ name: '', code: '', description: '', thumbnail: '' });
+    setFormData({ name: '', code: '', description: '', thumbnail: '', visibility: 'public' });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = {
+      ...formData,
+      visibility: formData.visibility as 'public' | 'private'
+    };
     if (selectedSubject) {
-      updateMutation.mutate({ id: selectedSubject._id, data: formData });
+      updateMutation.mutate({ id: selectedSubject._id, data: payload });
     } else {
-      createMutation.mutate(formData as Omit<Subject, '_id'>);
+      createMutation.mutate(payload as Omit<Subject, '_id'>);
     }
   };
 
@@ -153,11 +159,9 @@ const Subjects: React.FC = () => {
 
   if (isLoading) return <LoadingSpinner />;
 
-  // ... (Keep Error State same)
   if (error) {
     return (
       <div className="space-y-6 px-4 sm:px-0">
-        {/* ... existing error UI ... */}
         <div>Error loading subjects</div>
       </div>
     );
@@ -165,7 +169,6 @@ const Subjects: React.FC = () => {
 
   return (
     <div className="space-y-4 sm:space-y-6 md:space-y-8 max-w-7xl mx-auto">
-      {/* Header Section - Compact on mobile */}
       <div className="flex flex-col gap-4 sm:gap-5">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -177,14 +180,12 @@ const Subjects: React.FC = () => {
           </p>
         </motion.div>
 
-        {/* Control Toolbar - Stacks on mobile */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="flex flex-col sm:flex-row gap-3 justify-between sm:items-center"
         >
-          {/* Search Bar */}
           <div className="relative w-full sm:max-w-xs">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
@@ -195,7 +196,6 @@ const Subjects: React.FC = () => {
             />
           </div>
 
-          {/* Action Buttons - Full width on mobile */}
           <div className="flex items-center gap-2 sm:gap-3">
             <Button
               variant="outline"
@@ -217,7 +217,6 @@ const Subjects: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Subjects Grid - 1 col mobile, scales up */}
       <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
         {filteredSubjects?.map((subject, index) => (
           <motion.div
@@ -227,11 +226,15 @@ const Subjects: React.FC = () => {
             transition={{ delay: 0.1 + index * 0.05 }}
           >
             <Card
-              className="group hover:border-primary/50 active:scale-[0.98] transition-all duration-300 h-full cursor-pointer overflow-hidden border-border/60 bg-card/50 hover:bg-card hover:shadow-lg"
+              className="group hover:border-primary/50 active:scale-[0.98] transition-all duration-300 h-full cursor-pointer overflow-hidden border-border/60 bg-card/50 hover:bg-card hover:shadow-lg relative"
               onClick={() => navigate(`/subjects/${subject._id}/units`)}
             >
+              {subject.visibility === 'private' && (
+                <div className="absolute top-2 left-2 z-10 bg-red-500/90 text-white rounded-full p-1.5 shadow-lg backdrop-blur-sm" title="Private (Second Space)">
+                  <EyeOff className="w-3 h-3" />
+                </div>
+              )}
               <CardContent className="p-0 flex flex-col h-full">
-                {/* Image Section - Smaller on mobile */}
                 <div className="relative h-28 sm:h-36 md:h-40 overflow-hidden bg-muted/30">
                   {subject.thumbnail ? (
                     <img
@@ -244,7 +247,6 @@ const Subjects: React.FC = () => {
                       <BookOpen className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
                     </div>
                   )}
-                  {/* Badge */}
                   <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
                     <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-background/90 backdrop-blur-sm text-[10px] sm:text-xs font-semibold shadow-sm border border-border/50">
                       {subject.code}
@@ -252,7 +254,6 @@ const Subjects: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Content Section - Compact on mobile */}
                 <div className="p-3 sm:p-4 md:p-5 flex-1 flex flex-col space-y-2 sm:space-y-3">
                   <div>
                     <h3 className="font-semibold text-sm sm:text-base md:text-lg tracking-tight group-hover:text-primary transition-colors line-clamp-1">
@@ -293,9 +294,6 @@ const Subjects: React.FC = () => {
         ))}
       </div>
 
-      {/* Empty State if no subjects found 
-        (Optional but makes it look very professional)
-      */}
       {filteredSubjects?.length === 0 && (
         <div className="text-center py-20 border-2 border-dashed rounded-xl bg-muted/10">
           <div className="bg-muted/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -308,19 +306,44 @@ const Subjects: React.FC = () => {
         </div>
       )}
 
-      {/* Modals keep their logic but benefit from global style updates */}
       <FormModal
         isOpen={isModalOpen}
         onClose={closeModal}
         title={selectedSubject ? 'Edit Subject' : 'New Subject'}
       >
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* ... Keep existing form content ... */}
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
               <Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="visibility">Visibility (Who can see this?)</Label>
+              <Select
+                value={formData.visibility}
+                onValueChange={(value) => setFormData({ ...formData, visibility: value })}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select visibility" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="public">
+                    <div className="flex items-center gap-2">
+                      <Eye className="w-4 h-4" />
+                      <span>Public (Students)</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="private">
+                    <div className="flex items-center gap-2">
+                      <EyeOff className="w-4 h-4" />
+                      <span>Private (Second Space)</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="code">Code</Label>
               <Input id="code" value={formData.code} onChange={(e) => setFormData({ ...formData, code: e.target.value })} required />
@@ -329,7 +352,6 @@ const Subjects: React.FC = () => {
               <Label htmlFor="description">Description</Label>
               <Textarea id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={3} />
             </div>
-            {/* Thumbnail logic remains same */}
             <div className="space-y-2">
               <Label>Thumbnail</Label>
               <div className="flex gap-4 items-center border rounded-lg p-3 bg-muted/20">

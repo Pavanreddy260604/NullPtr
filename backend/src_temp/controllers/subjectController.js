@@ -21,7 +21,23 @@ export const createSubject = async (req, res) => {
 }
 export const getSubjects = async (req, res) => {
     try {
-        const subjects = await Subject.find();
+        const secret = req.headers['x-second-space-secret'];
+        // TODO: Move to .env in production
+        const serverSecret = process.env.SECOND_SPACE_SECRET || 'nullptr_secret_123';
+
+        let query = {};
+
+        // If secret provided doesn't match, only show public subjects
+        if (secret !== serverSecret) {
+            query = {
+                $or: [
+                    { visibility: 'public' },
+                    { visibility: { $exists: false } } // Handle legacy docs
+                ]
+            };
+        }
+
+        const subjects = await Subject.find(query);
         res.status(200).json(subjects);
     } catch (err) {
         res.status(500).json({ message: err.message });
