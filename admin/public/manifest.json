@@ -1,0 +1,72 @@
+{
+    "name": "NullPtr Admin",
+    "short_name": "NullPtr",
+    "description": "NullPtr Admin Panel - Manage subjects, units, and questions",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#1e1b4b",
+    "theme_color": "#8b5cf6",
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "icons": [
+        {
+            "src": "/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        }
+    ],
+    "categories": [
+        "education",
+        "productivity"
+    ],
+    "shortcuts": [
+        {
+            "name": "Subjects",
+            "short_name": "Subjects",
+            "url": "/subjects",
+            "description": "Manage subjects",
+            "icons": [
+                {
+                    "src": "/android-chrome-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Units",
+            "short_name": "Units",
+            "url": "/units",
+            "description": "Manage units",
+            "icons": [
+                {
+                    "src": "/android-chrome-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Questions",
+            "short_name": "Questions",
+            "url": "/questions",
+            "description": "Manage questions",
+            "icons": [
+                {
+                    "src": "/android-chrome-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ]
+}
