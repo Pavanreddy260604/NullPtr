@@ -243,6 +243,9 @@ export const uploadApi = {
       {
         timeout: 60_000,
         onUploadProgress,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       }
     );
   },
@@ -262,6 +265,9 @@ export const uploadApi = {
       {
         timeout: 120_000,
         onUploadProgress,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       }
     );
   },
