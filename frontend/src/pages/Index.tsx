@@ -43,6 +43,7 @@ const Index = () => {
     const [error, setError] = useState<string | null>(null);
 
     // Second Space Logic
+    const [isUnlocked, setIsUnlocked] = useState(() => !!localStorage.getItem("second_space_secret"));
     const [secretClicks, setSecretClicks] = useState(0);
     const [showSecretDialog, setShowSecretDialog] = useState(false);
 
@@ -323,7 +324,7 @@ const Index = () => {
                         </div>
 
                         {/* Second Space (Private) Section */}
-                        {privateSubjects.length > 0 && (
+                        {isUnlocked && (
                             <div className="relative pt-12 border-t border-slate-200 dark:border-white/10">
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-50 dark:bg-[#020617] px-4 text-slate-500 flex items-center gap-2 font-mono text-sm">
                                     <Lock className="w-4 h-4" />
@@ -336,7 +337,22 @@ const Index = () => {
                                         Second Space
                                     </h2>
                                 </div>
-                                <SubjectGrid items={privateSubjects} isPrivate={true} />
+                                {privateSubjects.length > 0 ? (
+                                    <SubjectGrid items={privateSubjects} isPrivate={true} />
+                                ) : (
+                                    <div className="text-center py-12 border border-dashed border-slate-800 rounded-xl bg-slate-900/50">
+                                        <p className="font-mono text-slate-400">System Unlocked. Scanning for secure data...</p>
+                                        <p className="text-slate-500 text-sm mt-2">No private subjects detected.</p>
+                                        <div className="mt-4">
+                                            <Link to="/admin" target="_blank">
+                                                <Button variant="outline" size="sm" className="gap-2">
+                                                    <Terminal className="w-4 h-4" />
+                                                    Go to Admin Panel
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
 

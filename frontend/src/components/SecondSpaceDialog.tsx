@@ -14,7 +14,8 @@ export const SecondSpaceDialog = ({ open, onOpenChange }: Props) => {
 
     const handleComplete = (pin: string) => {
         if (pin === "2606") {
-            localStorage.setItem("second_space_secret", "nullptr_secret_123");
+            const secret = import.meta.env.VITE_SECOND_SPACE_SECRET || "nullptr_secret_123";
+            localStorage.setItem("second_space_secret", secret);
             toast.success("Unlocked Second Space");
             setTimeout(() => window.location.reload(), 1000);
         } else {
