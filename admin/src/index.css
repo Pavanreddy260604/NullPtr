@@ -649,12 +649,24 @@
 
 /* Hide on mobile, show on desktop */
 .desktop-only {
-  @apply hidden lg:flex;
+  @apply hidden;
+}
+
+@screen lg {
+  .desktop-only {
+    @apply flex;
+  }
 }
 
 /* Show on mobile, hide on desktop */
 .mobile-only {
-  @apply flex lg:hidden;
+  @apply flex;
+}
+
+@screen lg {
+  .mobile-only {
+    @apply hidden;
+  }
 }
 
 /* Prevent text wrapping on mobile */
@@ -664,17 +676,35 @@
 
 /* Full-width on mobile, auto on desktop */
 .mobile-full {
-  @apply w-full sm:w-auto;
+  @apply w-full;
+}
+
+@screen sm {
+  .mobile-full {
+    @apply w-auto;
+  }
 }
 
 /* Stack on mobile, row on desktop */
 .mobile-stack-row {
-  @apply flex flex-col sm:flex-row gap-3 sm:gap-4;
+  @apply flex flex-col gap-3;
+}
+
+@screen sm {
+  .mobile-stack-row {
+    @apply flex-row gap-4;
+  }
 }
 
 /* Smaller text on mobile */
 .mobile-text {
-  @apply text-sm sm:text-base;
+  @apply text-sm;
+}
+
+@screen sm {
+  .mobile-text {
+    @apply text-base;
+  }
 }
 
 /* Larger touch targets on mobile */
