@@ -142,23 +142,24 @@ const DescriptiveEditor: React.FC<DescriptiveEditorProps> = ({
             />
 
             {/* Editor Canvas */}
-            <div className="flex-1 overflow-y-auto">
-                <div className="max-w-5xl mx-auto px-4 py-8 pb-32">
+            <div className="flex-1 overflow-y-auto bg-background">
+                <div className="max-w-3xl mx-auto px-4 sm:px-8 py-6 sm:py-8 pb-32">
                     {/* Question Title */}
                     <div className="flex items-start gap-4 mb-6 group">
-                        {/* Title Spacer (matches gutter) */}
-                        <div className="shrink-0 w-[160px]" />
+                        {/* Title Spacer (matches gutter) - Desktop Only */}
+                        <div className="shrink-0 w-[60px] hidden md:block" />
 
-                        <div className="flex-1 max-w-2xl relative">
+                        <div className="flex-1 relative">
                             <Textarea
                                 value={question}
                                 onChange={e => setQuestion(e.target.value)}
-                                className="text-3xl md:text-4xl font-bold border-0 px-0 shadow-none resize-none bg-transparent focus-visible:ring-0 min-h-[60px]"
-                                placeholder="Question title..."
+                                className="text-2xl sm:text-3xl md:text-4xl font-bold border-0 px-0 shadow-none resize-none bg-transparent focus-visible:ring-0 min-h-[60px] placeholder:text-muted-foreground/30"
+                                placeholder="Untitled Question"
                             />
                         </div>
                     </div>
-                    <div className="h-px bg-border mb-6 ml-[176px] max-w-2xl" />
+
+                    <div className="h-px bg-border/40 mb-6 md:ml-[76px]" />
 
                     {/* Blocks */}
                     <div className="space-y-2">

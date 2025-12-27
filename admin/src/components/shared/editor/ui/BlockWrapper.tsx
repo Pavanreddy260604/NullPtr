@@ -39,9 +39,9 @@ export const BlockWrapper: React.FC<BlockWrapperProps> = ({
                 {children}
             </div>
 
-            {/* Simple Control Buttons - visible on hover */}
+            {/* Simple Control Buttons - visible on hover (Desktop) */}
             <div className={cn(
-                "shrink-0 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity",
+                "shrink-0 flex-col gap-1 hidden sm:flex opacity-0 group-hover:opacity-100 transition-opacity",
                 isActive && "opacity-100"
             )}>
                 <button

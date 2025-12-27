@@ -14,8 +14,8 @@ export const EditorToolbar: React.FC<EditorToolbarProps> = ({
     onAddBlock,
 }) => {
     return (
-        <div className="flex-none border-b bg-muted/30 px-4 py-2 sticky top-14 z-10">
-            <div className="max-w-5xl mx-auto flex flex-wrap gap-1 pl-[176px]">
+        <div className="flex-none border-b bg-muted/30 px-4 py-2 sticky top-14 z-10 overflow-x-auto no-scrollbar">
+            <div className="max-w-3xl mx-auto flex gap-2 sm:gap-1 md:pl-[76px] min-w-max">
                 {blockTypes.map((type) => (
                     <Button
                         key={type.value}

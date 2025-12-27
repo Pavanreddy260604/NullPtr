@@ -96,7 +96,7 @@ const Dashboard: React.FC = () => {
   const recentSubjects = subjects?.slice(0, 3) || [];
 
   return (
-    <div className="space-y-5 sm:space-y-6 md:space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-3 sm:space-y-6 md:space-y-8 max-w-7xl mx-auto">
 
       {/* Header - Compact on mobile */}
       <div className="flex flex-col gap-1">
