@@ -45,7 +45,7 @@ export default async function handler(req, res) {
     // CORS Headers for cross-origin requests
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-second-space-secret");
 
     // Handle preflight
     if (req.method === "OPTIONS") {
@@ -95,7 +95,23 @@ export default async function handler(req, res) {
             if (!subResource) {
                 // List all subjects
                 console.log("Fetching all subjects...");
-                data = await getModel("subjects").find().lean();
+
+                const secret = req.headers['x-second-space-secret'];
+                const SERVER_SECRET = process.env.SECOND_SPACE_SECRET || 'nullptr_secret_123';
+
+                let query = {};
+                // Filter if missing secret
+                if (secret !== SERVER_SECRET) {
+                    query = {
+                        $or: [
+                            { visibility: 'public' },
+                            { visibility: { $exists: false } }, // Legacy docs
+                            { visibility: null }
+                        ]
+                    };
+                }
+
+                data = await getModel("subjects").find(query).lean();
             } else if (isValidId(subResource)) {
                 // Get single subject by ID
                 console.log("Fetching subject by ID:", subResource);
