@@ -1235,66 +1235,67 @@ const Questions: React.FC = () => {
   const isAnyLoading = isLoading || isImportingData || isUploadingGlobal || isUploadingImages || isBulkDeleting;
 
   return (
-    <div className="space-y-4 sm:space-y-6 px-0 max-w-7xl mx-auto">
-      {/* --- 1. DUAL DROPDOWN HEADER --- */}
-      <div className="flex flex-col gap-6 border-b pb-6">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="icon" onClick={() => navigate(-1)} className="h-8 w-8 sm:h-10 sm:w-10 rounded-full shrink-0">
-              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
-            </Button>
-            <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight truncate">Question Manager</h1>
-              <p className="text-xs sm:text-sm text-muted-foreground truncate">Select Subject & Unit to manage content.</p>
-            </div>
+    <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto">
+      {/* --- 1. PAGE HEADER --- */}
+      <div className="flex flex-col gap-4 sm:gap-5 border-b pb-4 sm:pb-6">
+        {/* Title Row */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Button variant="outline" size="icon" onClick={() => navigate(-1)} className="h-9 w-9 sm:h-10 sm:w-10 rounded-full shrink-0">
+            <ArrowLeft className="w-4 h-4 text-muted-foreground" />
+          </Button>
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight truncate">Question Manager</h1>
+            <p className="text-[10px] sm:text-xs text-muted-foreground truncate">Select Subject & Unit to manage content.</p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="w-full sm:w-[200px] md:w-[250px]">
-              <Label className="text-[10px] uppercase font-bold text-muted-foreground mb-1 block">1. Subject</Label>
-              <Select value={selectedSubjectId} onValueChange={(v) => setSelectedSubjectId(v)}>
-                <SelectTrigger className="h-10 bg-background">
-                  <div className="flex gap-2 items-center">
-                    <BookOpen className="w-4 h-4 text-muted-foreground" />
-                    <SelectValue placeholder="Select Subject..." />
+        </div>
+
+        {/* Subject & Unit Selectors - Full width stack on mobile */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <Label className="text-[10px] uppercase font-bold text-muted-foreground mb-1.5 block">1. Subject</Label>
+            <Select value={selectedSubjectId} onValueChange={(v) => setSelectedSubjectId(v)}>
+              <SelectTrigger className="h-11 sm:h-10 bg-background text-base sm:text-sm">
+                <div className="flex gap-2 items-center">
+                  <BookOpen className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <SelectValue placeholder="Select Subject..." />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                {allSubjects?.map((s: any) => (
+                  <SelectItem key={s._id} value={s._id} className="py-3 sm:py-2">
+                    {s.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-[10px] uppercase font-bold text-muted-foreground mb-1.5 block">2. Unit</Label>
+            <Select
+              value={unitId || ""}
+              onValueChange={(v) => navigate(`/questions/${v}`)}
+              disabled={!selectedSubjectId}
+            >
+              <SelectTrigger className="h-11 sm:h-10 bg-background text-base sm:text-sm">
+                <div className="flex gap-2 items-center">
+                  <Layers className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <SelectValue placeholder={!selectedSubjectId ? "Select Subject First" : "Select Unit..."} />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                {availableUnits?.map((u: any) => (
+                  <SelectItem key={u._id} value={u._id} className="py-3 sm:py-2">
+                    <span className="text-muted-foreground mr-2">#{u.unit}</span>
+                    {u.title}
+                  </SelectItem>
+                ))}
+                {availableUnits?.length === 0 && (
+                  <div className="p-2 text-center text-sm text-muted-foreground">
+                    No units found
                   </div>
-                </SelectTrigger>
-                <SelectContent>
-                  {allSubjects?.map((s: any) => (
-                    <SelectItem key={s._id} value={s._id}>
-                      {s.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="w-full sm:w-[200px] md:w-[250px]">
-              <Label className="text-[10px] uppercase font-bold text-muted-foreground mb-1 block">2. Unit</Label>
-              <Select
-                value={unitId || ""}
-                onValueChange={(v) => navigate(`/questions/${v}`)}
-                disabled={!selectedSubjectId}
-              >
-                <SelectTrigger className="h-10 bg-background">
-                  <div className="flex gap-2 items-center">
-                    <Layers className="w-4 h-4 text-muted-foreground" />
-                    <SelectValue placeholder={!selectedSubjectId ? "Select Subject First" : "Select Unit..."} />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  {availableUnits?.map((u: any) => (
-                    <SelectItem key={u._id} value={u._id}>
-                      <span className="text-muted-foreground mr-2">#{u.unit}</span>
-                      {u.title}
-                    </SelectItem>
-                  ))}
-                  {availableUnits?.length === 0 && (
-                    <div className="p-2 text-center text-sm text-muted-foreground">
-                      No units found
-                    </div>
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
+                )}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
@@ -1304,62 +1305,63 @@ const Questions: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-xl bg-muted/5"
+          className="flex flex-col items-center justify-center py-12 sm:py-20 border-2 border-dashed rounded-xl bg-muted/5 px-4"
         >
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-            <MousePointerClick className="w-8 h-8 text-primary" />
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primary/10 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+            <MousePointerClick className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
           </div>
-          <h2 className="text-xl font-semibold">Ready to Edit</h2>
-          <p className="text-muted-foreground text-center mt-2 max-w-md">
+          <h2 className="text-base sm:text-xl font-semibold text-center">Ready to Edit</h2>
+          <p className="text-muted-foreground text-xs sm:text-sm text-center mt-2 max-w-md">
             Please use dropdowns above to select a <strong>Subject</strong> and a
-            <strong>Unit</strong>. The questions list will appear here.
+            <strong> Unit</strong>. The questions list will appear here.
           </p>
         </motion.div>
       ) : (
-        <div className="space-y-6">
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-3 justify-between items-stretch sm:items-center bg-card/50 p-2 sm:p-1 rounded-lg border">
+        <div className="space-y-4 sm:space-y-6">
+          {/* Toolbar - Stacks on mobile */}
+          <div className="flex flex-col gap-3">
+            {/* Tabs Row */}
             <Tabs
               value={activeTab}
               onValueChange={(v: TabType) => setActiveTab(v)}
-              className="w-full sm:w-auto"
+              className="w-full"
             >
-              <TabsList className="h-9 w-full sm:w-auto">
-                {/* FIX: Fix Tabs count (length crash) */}
-                <TabsTrigger value="mcq" className="text-xs">
-                  MCQ ({Array.isArray(mcqs) ? mcqs.length : 0})
+              <TabsList className="h-10 sm:h-9 w-full grid grid-cols-3">
+                <TabsTrigger value="mcq" className="text-xs sm:text-sm">
+                  MCQ <span className="hidden sm:inline ml-1">({Array.isArray(mcqs) ? mcqs.length : 0})</span>
                 </TabsTrigger>
-                <TabsTrigger value="fillblank" className="text-xs">
-                  Fill ({Array.isArray(fill) ? fill.length : 0})
+                <TabsTrigger value="fillblank" className="text-xs sm:text-sm">
+                  Fill <span className="hidden sm:inline ml-1">({Array.isArray(fill) ? fill.length : 0})</span>
                 </TabsTrigger>
-                <TabsTrigger value="descriptive" className="text-xs">
-                  Desc ({Array.isArray(desc) ? desc.length : 0})
+                <TabsTrigger value="descriptive" className="text-xs sm:text-sm">
+                  Desc <span className="hidden sm:inline ml-1">({Array.isArray(desc) ? desc.length : 0})</span>
                 </TabsTrigger>
               </TabsList>
             </Tabs>
-            <div className="flex items-center gap-2 w-full">
+
+            {/* Search + Actions Row */}
+            <div className="flex items-center gap-2">
               <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Search..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-8 h-9 text-sm bg-background/50"
+                  className="pl-9 h-11 sm:h-10 text-base sm:text-sm bg-background/50"
                 />
               </div>
-              {/* FIX: Disable actions while loading */}
-              <Button onClick={openCreate} size="sm" className="h-9 px-3 shrink-0" disabled={isAnyLoading}>
-                <Plus className="w-3.5 h-3.5 sm:mr-1" />
+              <Button onClick={openCreate} className="h-11 sm:h-10 px-3 sm:px-4 shrink-0" disabled={isAnyLoading}>
+                <Plus className="w-4 h-4 sm:mr-1.5" />
                 <span className="hidden sm:inline">Add</span>
               </Button>
               <Button
                 variant="secondary"
-                size="sm"
-                className="h-9 px-3 shrink-0"
+                className="h-11 sm:h-10 px-3 sm:px-4 shrink-0"
                 onClick={() => setIsBulkModalOpen(true)}
                 disabled={isAnyLoading}
               >
-                <Upload className="w-3.5 h-3.5 sm:mr-1" />
-                <span className="hidden sm:inline">Bulk Import</span>
+                <Upload className="w-4 h-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">Import</span>
               </Button>
             </div>
           </div>
@@ -1367,28 +1369,27 @@ const Questions: React.FC = () => {
           {isLoading ? (
             <LoadingSpinner />
           ) : (
-            <div className="grid gap-3">
-              {/* 🚀 NEW: Select All Header */}
+            <div className="space-y-3">
+              {/* Select All Header */}
               {filtered.length > 0 && (
-                <div className="flex items-center gap-4 px-4 py-2 bg-muted/30 rounded-lg border border-transparent hover:border-border transition-colors">
+                <div className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-2.5 sm:py-2 bg-muted/30 rounded-lg border border-transparent hover:border-border transition-colors">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    className="w-5 h-5 sm:w-4 sm:h-4 rounded border-gray-300 text-primary focus:ring-primary"
                     checked={filtered.length > 0 && selectedIds.size === filtered.length}
                     onChange={(e) => handleSelectAll(e.target.checked)}
                   />
-                  <span className="text-sm font-medium text-muted-foreground">Select All</span>
-                  {/* 🚀 NEW: Bulk Delete Button */}
+                  <span className="text-xs sm:text-sm font-medium text-muted-foreground">Select All</span>
                   {selectedIds.size > 0 && (
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={handleBulkDelete}
                       disabled={isAnyLoading}
-                      className="animate-in fade-in slide-in-from-right-5"
+                      className="h-8 sm:h-9 text-xs sm:text-sm animate-in fade-in slide-in-from-right-5"
                     >
-                      {isBulkDeleting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
-                      Delete Selected ({selectedIds.size})
+                      {isBulkDeleting ? <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin mr-1.5" /> : <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5" />}
+                      Delete ({selectedIds.size})
                     </Button>
                   )}
                 </div>

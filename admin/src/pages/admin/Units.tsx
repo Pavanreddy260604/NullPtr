@@ -165,36 +165,36 @@ const Units: React.FC = () => {
   if (subjectsLoading) return <LoadingSpinner />;
 
   return (
-    <div className="space-y-6 sm:space-y-8 px-0 max-w-7xl mx-auto">
-      {/* Header Section */}
-      <div className="flex flex-col gap-6">
+    <div className="space-y-4 sm:space-y-6 md:space-y-8 max-w-7xl mx-auto">
+      {/* Header Section - Compact on mobile */}
+      <div className="flex flex-col gap-4 sm:gap-5">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Units</h1>
-          <p className="text-muted-foreground mt-1 text-xs sm:text-sm md:text-base">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground">Units</h1>
+          <p className="text-muted-foreground mt-0.5 text-xs sm:text-sm">
             Organize content into manageable learning modules.
           </p>
         </motion.div>
 
-        {/* Modern Toolbar */}
+        {/* Control Toolbar - Stacks on mobile */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="flex flex-col lg:flex-row gap-4 justify-between lg:items-center"
+          className="flex flex-col gap-3"
         >
-          {/* Left Side: Subject Filter + Search */}
-          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+          {/* Subject Selector + Search Row */}
+          <div className="flex flex-col sm:flex-row gap-3">
             <div className="w-full sm:w-[280px]">
               <Select
                 value={selectedSubjectId}
                 onValueChange={setSelectedSubjectId}
               >
-                <SelectTrigger className="h-10 w-full bg-background border-input/60 focus:ring-primary/20">
+                <SelectTrigger className="h-11 sm:h-10 w-full bg-background border-input/60 focus:ring-primary/20 text-base sm:text-sm">
                   <div className="flex items-center gap-2 truncate">
-                    <BookOpen className="w-4 h-4 text-muted-foreground" />
+                    <BookOpen className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                     <span className="truncate">
                       {selectedSubject ? selectedSubject.name : "Select a Subject"}
                     </span>
@@ -202,7 +202,7 @@ const Units: React.FC = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {subjects?.map(subject => (
-                    <SelectItem key={subject._id} value={subject._id}>
+                    <SelectItem key={subject._id} value={subject._id} className="py-3 sm:py-2">
                       <span className="font-medium">{subject.code}</span>
                       <span className="mx-2 text-muted-foreground">-</span>
                       {subject.name}
@@ -213,24 +213,23 @@ const Units: React.FC = () => {
             </div>
 
             {selectedSubjectId && (
-              <div className="relative w-full sm:w-[300px]">
+              <div className="relative flex-1 sm:max-w-[300px]">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Search units..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className="pl-9 h-10 bg-background/50 border-input/60 focus:bg-background transition-all"
+                  className="pl-9 h-11 sm:h-10 bg-background/50 border-input/60 focus:bg-background transition-all text-base sm:text-sm"
                 />
               </div>
             )}
           </div>
 
-          {/* Right Side: Actions */}
+          {/* Add Unit Button - Full width on mobile */}
           <Button
             onClick={openCreateModal}
-            variant="default"
             disabled={!selectedSubjectId}
-            className="h-10 gap-2 px-6 shadow-sm hover:shadow-md transition-all w-full sm:w-auto"
+            className="h-11 sm:h-10 gap-2 px-4 sm:px-6 shadow-sm hover:shadow-md transition-all w-full sm:w-auto sm:self-end"
           >
             <Plus className="w-4 h-4" />
             Add Unit
@@ -258,7 +257,7 @@ const Units: React.FC = () => {
           {unitsLoading ? (
             <LoadingSpinner />
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {filteredUnits?.map((unit, index) => (
                 <motion.div
                   key={unit._id}
@@ -267,51 +266,52 @@ const Units: React.FC = () => {
                   transition={{ delay: 0.1 + index * 0.05 }}
                 >
                   <Card
-                    className="group hover:border-primary/50 transition-all duration-300 border-border/60 bg-card/50 hover:bg-card hover:shadow-sm"
+                    className="group hover:border-primary/50 active:scale-[0.99] transition-all duration-300 border-border/60 bg-card/50 hover:bg-card hover:shadow-sm"
                   >
-                    <CardContent className="p-4 sm:p-5">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                        {/* Unit Number Badge */}
-                        <div className="flex-shrink-0 flex items-center">
-                          <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-primary/10 text-primary flex flex-col items-center justify-center border border-primary/20">
-                            <span className="text-xs font-semibold uppercase tracking-wider opacity-70">Unit</span>
-                            <span className="text-xl sm:text-2xl font-bold leading-none">{unit.unit || index + 1}</span>
+                    <CardContent className="p-3 sm:p-4 md:p-5">
+                      <div className="flex flex-col gap-3">
+                        {/* Top Row: Unit badge + Title */}
+                        <div className="flex items-start gap-3 sm:gap-4">
+                          {/* Unit Number Badge - Compact on mobile */}
+                          <div className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 rounded-lg sm:rounded-xl bg-primary/10 text-primary flex flex-col items-center justify-center border border-primary/20 flex-shrink-0">
+                            <span className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-wider opacity-70">Unit</span>
+                            <span className="text-lg sm:text-xl md:text-2xl font-bold leading-none">{unit.unit || index + 1}</span>
                           </div>
-                        </div>
 
-                        {/* Content */}
-                        <div className="flex-1 min-w-0 space-y-1">
-                          <h3 className="font-semibold text-lg truncate group-hover:text-primary transition-colors">
-                            {unit.title}
-                          </h3>
-                          <p className="text-sm text-muted-foreground line-clamp-1">
-                            {unit.subtitle || 'No subtitle provided'}
-                          </p>
-                          <div className="flex items-center gap-4 pt-1">
-                            <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-md">
-                              <HelpCircle className="w-3 h-3" />
-                              <span>{unit.questionCount || 0} Questions</span>
+                          {/* Content */}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-sm sm:text-base md:text-lg truncate group-hover:text-primary transition-colors">
+                              {unit.title}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1 mt-0.5">
+                              {unit.subtitle || 'No subtitle provided'}
+                            </p>
+                            <div className="flex items-center gap-2 sm:gap-4 mt-1 sm:mt-2">
+                              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-muted-foreground bg-muted/50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md">
+                                <HelpCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                                <span>{unit.questionCount || 0} Questions</span>
+                              </div>
                             </div>
                           </div>
                         </div>
 
-                        {/* Action Area */}
-                        <div className="flex items-center justify-between sm:justify-end gap-3 pt-4 sm:pt-0 border-t sm:border-0 border-border/50">
+                        {/* Bottom Row: Actions - Full width on mobile */}
+                        <div className="flex items-center justify-between gap-2 pt-2 sm:pt-3 border-t border-border/40">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => navigate(`/questions/${unit._id}`)}
-                            className="h-9 gap-2 group/btn"
+                            className="h-9 sm:h-10 gap-1.5 sm:gap-2 flex-1 sm:flex-none group/btn text-xs sm:text-sm"
                           >
                             <span>Questions</span>
-                            <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+                            <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
                           </Button>
 
-                          <div className="flex items-center gap-1 border-l pl-3 ml-1 border-border/50">
+                          <div className="flex items-center gap-0.5 sm:gap-1">
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                              className="h-9 w-9 sm:h-10 sm:w-10 text-muted-foreground hover:text-foreground"
                               onClick={() => openEditModal(unit)}
                             >
                               <Edit className="w-4 h-4" />
@@ -319,7 +319,7 @@ const Units: React.FC = () => {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                              className="h-9 w-9 sm:h-10 sm:w-10 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                               onClick={() => {
                                 setSelectedUnit(unit);
                                 setIsDeleteModalOpen(true);
@@ -336,12 +336,12 @@ const Units: React.FC = () => {
               ))}
 
               {filteredUnits?.length === 0 && (
-                <div className="text-center py-16 border-2 border-dashed rounded-xl bg-muted/10">
-                  <div className="bg-muted/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Layers className="w-8 h-8 text-muted-foreground" />
+                <div className="text-center py-12 sm:py-16 border-2 border-dashed rounded-xl bg-muted/10">
+                  <div className="bg-muted/30 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <Layers className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
                   </div>
-                  <h3 className="text-lg font-medium">No units found</h3>
-                  <p className="text-muted-foreground text-sm mt-1 max-w-xs mx-auto">
+                  <h3 className="text-base sm:text-lg font-medium">No units found</h3>
+                  <p className="text-muted-foreground text-xs sm:text-sm mt-1 max-w-xs mx-auto px-4">
                     {searchTerm
                       ? `No results for "${searchTerm}"`
                       : `Get started by adding the first unit to ${selectedSubject?.name}`}

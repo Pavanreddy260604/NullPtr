@@ -164,67 +164,61 @@ const Subjects: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 sm:space-y-8 px-0 max-w-7xl mx-auto">
-      {/* Modern Header Section 
-        Changes:
-        1. Separated Title from Controls
-        2. Flexbox row for Search + Buttons
-      */}
-      <div className="flex flex-col gap-6">
+    <div className="space-y-4 sm:space-y-6 md:space-y-8 max-w-7xl mx-auto">
+      {/* Header Section - Compact on mobile */}
+      <div className="flex flex-col gap-4 sm:gap-5">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Subjects</h1>
-          <p className="text-muted-foreground mt-1 text-xs sm:text-sm md:text-base">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground">Subjects</h1>
+          <p className="text-muted-foreground mt-0.5 text-xs sm:text-sm">
             Manage your curriculum and learning paths.
           </p>
         </motion.div>
 
-        {/* Control Toolbar */}
+        {/* Control Toolbar - Stacks on mobile */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="flex flex-col sm:flex-row gap-4 justify-between sm:items-center bg-card/50 p-1 rounded-lg sm:bg-transparent sm:p-0"
+          className="flex flex-col sm:flex-row gap-3 justify-between sm:items-center"
         >
-          {/* Search Bar - Wider and cleaner */}
+          {/* Search Bar */}
           <div className="relative w-full sm:max-w-xs">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name or code..."
+              placeholder="Search subjects..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 h-10 bg-background/50 border-input/60 focus:bg-background transition-all"
+              className="pl-9 h-11 sm:h-10 bg-background/50 border-input/60 focus:bg-background transition-all text-base sm:text-sm"
             />
           </div>
 
-          {/* Action Buttons - Compact and Modern */}
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          {/* Action Buttons - Full width on mobile */}
+          <div className="flex items-center gap-2 sm:gap-3">
             <Button
               variant="outline"
               onClick={() => setIsBulkImportOpen(true)}
-              className="flex-1 sm:flex-none h-10 gap-2 text-muted-foreground hover:text-foreground border-dashed"
+              className="flex-1 sm:flex-none h-11 sm:h-10 gap-2 text-muted-foreground hover:text-foreground border-dashed"
             >
               <Upload className="w-4 h-4" />
-              <span className="hidden sm:inline">Import</span>
-              <span className="sm:hidden">Import</span>
+              <span>Import</span>
             </Button>
 
             <Button
               onClick={openCreateModal}
-              variant="default" // or "gradient" if you have that configured
-              className="flex-1 sm:flex-none h-10 gap-2 px-6 shadow-sm hover:shadow-md transition-all"
+              className="flex-1 sm:flex-none h-11 sm:h-10 gap-2 px-4 sm:px-6 shadow-sm hover:shadow-md transition-all"
             >
               <Plus className="w-4 h-4" />
-              Add Subject
+              <span className="sm:inline">Add Subject</span>
             </Button>
           </div>
         </motion.div>
       </div>
 
-      {/* Subjects Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {/* Subjects Grid - 1 col mobile, scales up */}
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
         {filteredSubjects?.map((subject, index) => (
           <motion.div
             key={subject._id}
@@ -233,12 +227,12 @@ const Subjects: React.FC = () => {
             transition={{ delay: 0.1 + index * 0.05 }}
           >
             <Card
-              className="group hover:border-primary/50 transition-all duration-300 h-full cursor-pointer overflow-hidden border-border/60 bg-card/50 hover:bg-card hover:shadow-lg"
+              className="group hover:border-primary/50 active:scale-[0.98] transition-all duration-300 h-full cursor-pointer overflow-hidden border-border/60 bg-card/50 hover:bg-card hover:shadow-lg"
               onClick={() => navigate(`/subjects/${subject._id}/units`)}
             >
               <CardContent className="p-0 flex flex-col h-full">
-                {/* Image Section */}
-                <div className="relative h-40 overflow-hidden bg-muted/30">
+                {/* Image Section - Smaller on mobile */}
+                <div className="relative h-28 sm:h-36 md:h-40 overflow-hidden bg-muted/30">
                   {subject.thumbnail ? (
                     <img
                       src={subject.thumbnail}
@@ -247,48 +241,48 @@ const Subjects: React.FC = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground/20">
-                      <BookOpen className="w-12 h-12" />
+                      <BookOpen className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
                     </div>
                   )}
                   {/* Badge */}
-                  <div className="absolute top-3 right-3">
-                    <span className="px-2.5 py-1 rounded-md bg-background/90 backdrop-blur-sm text-xs font-semibold shadow-sm border border-border/50">
+                  <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
+                    <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-background/90 backdrop-blur-sm text-[10px] sm:text-xs font-semibold shadow-sm border border-border/50">
                       {subject.code}
                     </span>
                   </div>
                 </div>
 
-                {/* Content Section */}
-                <div className="p-5 flex-1 flex flex-col space-y-3">
+                {/* Content Section - Compact on mobile */}
+                <div className="p-3 sm:p-4 md:p-5 flex-1 flex flex-col space-y-2 sm:space-y-3">
                   <div>
-                    <h3 className="font-semibold text-lg tracking-tight group-hover:text-primary transition-colors">
+                    <h3 className="font-semibold text-sm sm:text-base md:text-lg tracking-tight group-hover:text-primary transition-colors line-clamp-1">
                       {subject.name}
                     </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mt-1 h-10">
+                    <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 mt-0.5 sm:mt-1 min-h-[2rem] sm:min-h-[2.5rem]">
                       {subject.description || 'No description available'}
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 mt-auto border-t border-border/40">
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
-                      <Layers className="w-3.5 h-3.5" />
+                  <div className="flex items-center justify-between pt-2 sm:pt-3 md:pt-4 mt-auto border-t border-border/40">
+                    <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-muted-foreground font-medium">
+                      <Layers className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                       <span>{subject.units?.length || 0} Units</span>
                     </div>
 
-                    <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-muted" onClick={() => openEditModal(subject)}>
-                        <Edit className="w-3.5 h-3.5" />
+                    <div className="flex items-center gap-0.5 sm:gap-1" onClick={(e) => e.stopPropagation()}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9 hover:bg-muted" onClick={() => openEditModal(subject)}>
+                        <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+                        className="h-8 w-8 sm:h-9 sm:w-9 hover:bg-destructive/10 hover:text-destructive"
                         onClick={() => {
                           setSelectedSubject(subject);
                           setIsDeleteModalOpen(true);
                         }}
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       </Button>
                     </div>
                   </div>
