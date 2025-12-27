@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, ArrowRight, Sparkles, GraduationCap, Trophy, Zap, Terminal, Github } from "lucide-react";
+import { BookOpen, ArrowRight, Sparkles, GraduationCap, Trophy, Zap, Terminal, Github, Lock, UserSecret } from "lucide-react";
 import { getSubjects, Subject } from "@/lib/api";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SecondSpaceDialog } from "@/components/SecondSpaceDialog";
@@ -74,12 +74,17 @@ const Index = () => {
         fetchSubjects();
     }, []);
 
+    const publicSubjects = subjects.filter(s => s.visibility !== 'private');
+    const privateSubjects = subjects.filter(s => s.visibility === 'private');
+
     const gradients = [
         "from-violet-500 via-purple-500 to-fuchsia-500",
         "from-cyan-500 via-blue-500 to-indigo-500",
         "from-orange-500 via-red-500 to-pink-500",
         "from-emerald-500 via-teal-500 to-cyan-500",
         "from-amber-500 via-orange-500 to-red-500",
+        "from-emerald-500 via-teal-500 to-cyan-500",
+        "from-purple-500 via-indigo-500 to-blue-500",
     ];
 
     const stats = [
@@ -94,6 +99,64 @@ const Index = () => {
         "delete ptr;",
         "ptr = new int[10];",
     ];
+
+    const SubjectGrid = ({ items, isPrivate = false }: { items: Subject[], isPrivate?: boolean }) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {items.map((subject, index) => (
+                <Link
+                    key={subject._id}
+                    to={`/subjects/${subject._id}`}
+                    className="group"
+                >
+                    <Card className={`relative h-full overflow-hidden bg-white dark:bg-white/5 backdrop-blur-md border-slate-200 dark:border-white/10 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl dark:hover:shadow-purple-500/20 hover:-translate-y-2 active:scale-95 ${isPrivate ? 'border-red-500/20 dark:border-red-500/20' : ''}`}>
+                        {/* Gradient Overlay */}
+                        <div className={`absolute inset-0 bg-gradient-to-br ${gradients[index % gradients.length]} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
+
+                        {isPrivate && (
+                            <div className="absolute top-0 right-0 p-2 z-20">
+                                <Lock className="w-4 h-4 text-red-500 opacity-50" />
+                            </div>
+                        )}
+
+                        <div className="relative p-6 space-y-4">
+                            {/* Icon */}
+                            {subject.thumbnail ? (
+                                <img
+                                    src={subject.thumbnail}
+                                    alt={subject.name}
+                                    className="w-16 h-16 rounded-2xl object-cover ring-2 ring-slate-200 dark:ring-white/20"
+                                />
+                            ) : (
+                                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${gradients[index % gradients.length]} flex items-center justify-center shadow-lg`}>
+                                    <BookOpen className="w-8 h-8 text-white" />
+                                </div>
+                            )}
+
+                            {/* Content */}
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
+                                    {subject.name}
+                                </h3>
+                                {subject.description && (
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">
+                                        {subject.description}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* CTA */}
+                            <div className="pt-2">
+                                <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 font-medium">
+                                    <span>Start Learning</span>
+                                    <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform duration-300" />
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+                </Link>
+            ))}
+        </div>
+    );
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-white overflow-hidden transition-colors">
@@ -211,104 +274,79 @@ const Index = () => {
 
                 {/* Subjects Grid */}
                 <section className="container mx-auto px-4 pb-24">
-                    <div className="max-w-6xl mx-auto">
-                        <div className="flex items-center justify-center gap-3 mb-12">
-                            <GraduationCap className="w-8 h-8 text-purple-600 dark:text-purple-400" />
-                            <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white">
-                                Choose Your Subject
-                            </h2>
+                    <div className="max-w-6xl mx-auto space-y-16">
+
+                        {/* Public Subjects Section */}
+                        <div>
+                            <div className="flex items-center justify-center gap-3 mb-12">
+                                <GraduationCap className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                                <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white">
+                                    Curriculum
+                                </h2>
+                            </div>
+
+                            {loading ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                                        <Card key={i} className="p-6 bg-white dark:bg-white/5 border-slate-200 dark:border-white/10">
+                                            <Skeleton className="w-16 h-16 rounded-2xl mb-4" />
+                                            <Skeleton className="h-6 w-3/4 mb-2" />
+                                            <Skeleton className="h-4 w-full mb-1" />
+                                            <Skeleton className="h-4 w-2/3" />
+                                            <Skeleton className="h-8 w-32 mt-4" />
+                                        </Card>
+                                    ))}
+                                </div>
+                            ) : error ? (
+                                <div className="text-center py-20">
+                                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-500/20 mb-4">
+                                        <span className="text-2xl">⚠️</span>
+                                    </div>
+                                    <p className="text-red-600 dark:text-red-400 mb-4 font-mono">// Error: {error}</p>
+                                    <Button
+                                        onClick={() => window.location.reload()}
+                                        className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                                    >
+                                        Retry
+                                    </Button>
+                                </div>
+                            ) : subjects.length === 0 ? (
+                                <div className="text-center py-20">
+                                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-800 mb-4">
+                                        <BookOpen className="w-8 h-8 text-slate-400 dark:text-slate-500" />
+                                    </div>
+                                    <p className="text-slate-500 font-mono">// No subjects found</p>
+                                </div>
+                            ) : (
+                                <SubjectGrid items={publicSubjects} />
+                            )}
                         </div>
 
-                        {loading ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {[1, 2, 3, 4, 5, 6].map((i) => (
-                                    <Card key={i} className="p-6 bg-white dark:bg-white/5 border-slate-200 dark:border-white/10">
-                                        <Skeleton className="w-16 h-16 rounded-2xl mb-4" />
-                                        <Skeleton className="h-6 w-3/4 mb-2" />
-                                        <Skeleton className="h-4 w-full mb-1" />
-                                        <Skeleton className="h-4 w-2/3" />
-                                        <Skeleton className="h-8 w-32 mt-4" />
-                                    </Card>
-                                ))}
-                            </div>
-                        ) : error ? (
-                            <div className="text-center py-20">
-                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-500/20 mb-4">
-                                    <span className="text-2xl">⚠️</span>
+                        {/* Second Space (Private) Section */}
+                        {privateSubjects.length > 0 && (
+                            <div className="relative pt-12 border-t border-slate-200 dark:border-white/10">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-50 dark:bg-[#020617] px-4 text-slate-500 flex items-center gap-2 font-mono text-sm">
+                                    <Lock className="w-4 h-4" />
+                                    <span>RESTRICTED AREA</span>
                                 </div>
-                                <p className="text-red-600 dark:text-red-400 mb-4 font-mono">// Error: {error}</p>
-                                <Button
-                                    onClick={() => window.location.reload()}
-                                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                                >
-                                    Retry
-                                </Button>
-                            </div>
-                        ) : subjects.length === 0 ? (
-                            <div className="text-center py-20">
-                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-800 mb-4">
-                                    <BookOpen className="w-8 h-8 text-slate-400 dark:text-slate-500" />
+
+                                <div className="flex items-center justify-center gap-3 mb-12">
+                                    <UserSecret className="w-8 h-8 text-red-500" />
+                                    <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white">
+                                        Second Space
+                                    </h2>
                                 </div>
-                                <p className="text-slate-500 font-mono">// No subjects found</p>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {subjects.map((subject, index) => (
-                                    <Link
-                                        key={subject._id}
-                                        to={`/subjects/${subject._id}`}
-                                        className="group"
-                                    >
-                                        <Card className="relative h-full overflow-hidden bg-white dark:bg-white/5 backdrop-blur-md border-slate-200 dark:border-white/10 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl dark:hover:shadow-purple-500/20 hover:-translate-y-2 active:scale-95">
-                                            {/* Gradient Overlay */}
-                                            <div className={`absolute inset-0 bg-gradient-to-br ${gradients[index % gradients.length]} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
-
-                                            <div className="relative p-6 space-y-4">
-                                                {/* Icon */}
-                                                {subject.thumbnail ? (
-                                                    <img
-                                                        src={subject.thumbnail}
-                                                        alt={subject.name}
-                                                        className="w-16 h-16 rounded-2xl object-cover ring-2 ring-slate-200 dark:ring-white/20"
-                                                    />
-                                                ) : (
-                                                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${gradients[index % gradients.length]} flex items-center justify-center shadow-lg`}>
-                                                        <BookOpen className="w-8 h-8 text-white" />
-                                                    </div>
-                                                )}
-
-                                                {/* Content */}
-                                                <div>
-                                                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
-                                                        {subject.name}
-                                                    </h3>
-                                                    {subject.description && (
-                                                        <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">
-                                                            {subject.description}
-                                                        </p>
-                                                    )}
-                                                </div>
-
-                                                {/* CTA */}
-                                                <div className="pt-2">
-                                                    <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 font-medium">
-                                                        <span>Start Learning</span>
-                                                        <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform duration-300" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Card>
-                                    </Link>
-                                ))}
+                                <SubjectGrid items={privateSubjects} isPrivate={true} />
                             </div>
                         )}
+
                     </div>
                 </section>
 
                 {/* Footer */}
                 <footer className="border-t border-slate-200 dark:border-white/10 py-8 bg-white dark:bg-transparent">
                     <div className="container mx-auto px-4 text-center space-y-4">
-                        <p className="font-mono text-slate-500 text-sm select-none" onClick={handleSecretTrigger}>
+                        <p className="font-mono text-slate-500 text-sm select-none cursor-help hover:text-slate-400 transition-colors" onClick={handleSecretTrigger}>
                             <span className="text-purple-600 dark:text-purple-400">&lt;NullPtr/&gt;</span>
                             <span className="text-slate-400"> // </span>
                             Built by engineers, for engineers 🚀
