@@ -1,0 +1,793 @@
+{
+    "descriptives": [
+        {
+            "question": "1.c Explain about digital identification and key escrow technique.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Digital Identification and Key Escrow Technique"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Digital Identification"
+                },
+                {
+                    "type": "text",
+                    "content": "Digital identification is the process of verifying the identity of a user, device, or entity in the digital world. Just as a passport or driver's license proves identity in the physical world, digital identification uses electronic credentials to authenticate entities in online communications, transactions, and access control systems."
+                },
+                {
+                    "type": "text",
+                    "content": "Key Components of Digital Identification:"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Digital Certificates – Electronic documents issued by a Certificate Authority (CA) that bind a public key to an identity. They contain the holder's name, public key, issuing CA, validity period, and a digital signature from the CA",
+                        "Public Key Infrastructure (PKI) – The framework of policies, hardware, software, and procedures needed to create, manage, distribute, and revoke digital certificates",
+                        "Digital Signatures – Cryptographic mechanisms that prove the authenticity and integrity of a message or document. The sender signs using their private key, and anyone can verify using the sender's public key",
+                        "Biometric Identification – Uses unique biological traits (fingerprints, facial recognition, iris scans) for identity verification in digital systems",
+                        "Multi-Factor Authentication (MFA) – Combines something you know (password), something you have (token/phone), and something you are (biometrics) for stronger identification"
+                    ]
+                },
+                {
+                    "type": "text",
+                    "content": "How Digital Certificates Work:"
+                },
+                {
+                    "type": "code",
+                    "content": "1. User generates a public-private key pair\n2. User sends a Certificate Signing Request (CSR) to a Certificate Authority (CA)\n3. CA verifies the user's identity\n4. CA issues a digital certificate containing:\n   - User's identity (name, organization)\n   - User's public key\n   - CA's digital signature\n   - Validity period\n5. Others verify the certificate using the CA's public key"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Key Escrow Technique"
+                },
+                {
+                    "type": "text",
+                    "content": "Key escrow is a cryptographic arrangement where the encryption keys needed to decrypt data are held 'in escrow' (kept securely) by a trusted third party. This ensures that encrypted data can be accessed under specific legal or emergency circumstances — even if the original key holder is unavailable or uncooperative."
+                },
+                {
+                    "type": "text",
+                    "content": "How Key Escrow Works:"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "A user encrypts data using their encryption key",
+                        "A copy of the encryption key (or a key recovery key) is deposited with a trusted escrow agent",
+                        "The escrow agent stores the key securely with strict access controls",
+                        "If needed (court order, lost key, employee departure), the escrow agent releases the key to authorized parties",
+                        "The authorized party uses the escrowed key to decrypt the data"
+                    ]
+                },
+                {
+                    "type": "text",
+                    "content": "Applications of Key Escrow:"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Law enforcement access – Governments may require key escrow to access encrypted communications during criminal investigations (controversial)",
+                        "Corporate data recovery – Companies escrow employee encryption keys to recover business data if an employee leaves or loses their key",
+                        "National security – Intelligence agencies advocate for key escrow to prevent terrorists and criminals from using unbreakable encryption",
+                        "Regulatory compliance – Industries like finance and healthcare may require key escrow to meet data accessibility regulations"
+                    ]
+                },
+                {
+                    "type": "callout",
+                    "content": "Key escrow is highly controversial. Privacy advocates argue it creates a 'backdoor' — if escrow agents are compromised, all escrowed keys are exposed. The 1990s 'Clipper Chip' proposal by the US government (mandatory key escrow in phones) was ultimately rejected due to privacy concerns.",
+                    "label": "Controversy"
+                }
+            ]
+        },
+        {
+            "question": "2.c What are the legal restrictions on cryptography? Explain the different alternatives for creating and storing keys.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Legal Restrictions on Cryptography"
+                },
+                {
+                    "type": "text",
+                    "content": "Cryptography, while essential for digital security, is subject to legal regulations in many countries due to its dual-use nature — it protects legitimate communications but can also be used to conceal criminal activity from law enforcement."
+                },
+                {
+                    "type": "subheading",
+                    "content": "Types of Legal Restrictions"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Export Controls – Many countries restrict the export of strong encryption technology. The US Wassenaar Arrangement limits export of encryption software with key lengths above certain thresholds to specific countries",
+                        "Import Controls – Some nations (China, Russia, India) require government approval before importing encryption products or mandate registration of encryption tools",
+                        "Usage Restrictions – Certain countries ban or restrict the use of strong encryption by civilians. For example, some Middle Eastern and Asian nations limit encryption key lengths or require government-approved algorithms",
+                        "Key Disclosure Laws – Laws in the UK (RIPA Act), Australia, and other countries can compel individuals to surrender encryption keys to law enforcement under court order — refusal can result in imprisonment",
+                        "Mandatory Backdoors – Some governments have proposed or enacted laws requiring technology companies to build decryption capabilities into their products for law enforcement access",
+                        "Licensing Requirements – Some countries require individuals or businesses to obtain licenses before using or developing encryption software"
+                    ]
+                },
+                {
+                    "type": "callout",
+                    "content": "The tension between national security (governments wanting access to encrypted communications) and privacy rights (citizens wanting unbreakable encryption) is one of the defining debates of the digital age — often called the 'Crypto Wars.'",
+                    "label": "The Crypto Wars"
+                },
+                {
+                    "type": "heading",
+                    "content": "Alternatives for Creating and Storing Keys"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Key Creation Methods"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Random Number Generators (RNG) – Keys are generated using cryptographically secure random number generators (CSPRNG) that produce unpredictable values. Hardware RNGs use physical phenomena (thermal noise, radioactive decay) for true randomness",
+                        "Key Derivation Functions (KDF) – Keys are derived from passwords or passphrases using functions like PBKDF2, bcrypt, or Argon2 that add salt and computational complexity to resist brute-force attacks",
+                        "Diffie-Hellman Key Exchange – Two parties generate a shared secret key over an insecure channel without ever transmitting the key itself. Each party contributes a partial key, and the shared secret is computed independently by both",
+                        "Key Pair Generation – Asymmetric algorithms (RSA, ECC) generate mathematically linked public-private key pairs. The public key is shared openly, while the private key is kept secret"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "Key Storage Methods"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Hardware Security Modules (HSM) – Tamper-resistant physical devices dedicated to secure key storage and cryptographic operations. Used by banks, CAs, and government agencies for the highest security",
+                        "Key Management Systems (KMS) – Cloud-based services (AWS KMS, Azure Key Vault, Google Cloud KMS) that generate, store, and manage encryption keys with centralized access policies and audit logging",
+                        "Encrypted Key Stores – Keys stored in encrypted files on disk, protected by a master password or passphrase. Examples include PKCS#12 keystores and PGP keyrings",
+                        "Smart Cards and Tokens – Portable hardware devices (USB tokens, smart cards) that store keys securely and perform cryptographic operations on-device — the private key never leaves the hardware",
+                        "Split Key Storage – The key is split into multiple parts using Shamir's Secret Sharing. No single person holds the complete key — a minimum number of parts (threshold) must be combined to reconstruct it"
+                    ]
+                },
+                {
+                    "type": "callout",
+                    "content": "The golden rule of key management: the security of an encryption system depends entirely on the security of the keys. The strongest algorithm is worthless if the keys are poorly managed or stored.",
+                    "label": "Fundamental Principle"
+                }
+            ]
+        },
+        {
+            "question": "3.c Discuss about risk analysis and best practices to minimize or mitigate it.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Risk Analysis and Mitigation Best Practices"
+                },
+                {
+                    "type": "text",
+                    "content": "Risk analysis is the systematic process of identifying, assessing, and prioritizing potential threats to an organization's information assets, systems, and operations. It forms the foundation of an effective security strategy by determining where resources should be focused."
+                },
+                {
+                    "type": "subheading",
+                    "content": "The Risk Analysis Process"
+                },
+                {
+                    "type": "text",
+                    "content": "Step 1: Asset Identification"
+                },
+                {
+                    "type": "text",
+                    "content": "Catalog all valuable assets — servers, databases, applications, user data, intellectual property, and network infrastructure. Assign a value to each asset based on its importance to business operations and the impact of its loss."
+                },
+                {
+                    "type": "text",
+                    "content": "Step 2: Threat Identification"
+                },
+                {
+                    "type": "text",
+                    "content": "Identify potential threats to each asset — cyberattacks (malware, DDoS, phishing), natural disasters, insider threats, hardware failures, human error, and supply chain compromises."
+                },
+                {
+                    "type": "text",
+                    "content": "Step 3: Vulnerability Assessment"
+                },
+                {
+                    "type": "text",
+                    "content": "Evaluate weaknesses in current systems that threats could exploit — unpatched software, weak passwords, misconfigured firewalls, lack of encryption, insufficient access controls, and missing security awareness training."
+                },
+                {
+                    "type": "text",
+                    "content": "Step 4: Risk Calculation"
+                },
+                {
+                    "type": "code",
+                    "content": "Risk = Threat Probability × Impact Severity\n\nExample:\n  Threat: SQL Injection attack\n  Probability: High (public-facing app with user inputs)\n  Impact: Critical (database contains user PII and payment data)\n  Risk Level: HIGH PRIORITY — requires immediate mitigation"
+                },
+                {
+                    "type": "text",
+                    "content": "Step 5: Risk Prioritization"
+                },
+                {
+                    "type": "text",
+                    "content": "Rank all identified risks by severity and prioritize mitigation efforts. High-probability, high-impact risks demand immediate action; low-probability, low-impact risks may be accepted or deferred."
+                },
+                {
+                    "type": "subheading",
+                    "content": "Risk Mitigation Strategies"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Risk Avoidance – Eliminate the risky activity entirely (e.g., don't store credit card numbers if not necessary)",
+                        "Risk Reduction – Implement controls to lower probability or impact (firewalls, encryption, training)",
+                        "Risk Transfer – Shift risk to a third party (cyber insurance, outsourcing to managed security providers)",
+                        "Risk Acceptance – Acknowledge and accept low-level risks where mitigation cost exceeds potential loss"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "Best Practices for Minimizing Risk"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Implement defense in depth — layer multiple security controls (firewall + IDS + encryption + access control)",
+                        "Keep all systems patched and updated — known vulnerabilities are the most exploited attack vector",
+                        "Enforce the principle of least privilege — users and services get only minimum required permissions",
+                        "Conduct regular security audits and penetration testing to find vulnerabilities proactively",
+                        "Deploy comprehensive logging and monitoring with real-time alerting for suspicious activity",
+                        "Establish and practice an incident response plan — documentation, roles, communication protocols",
+                        "Provide regular security awareness training to all employees to combat social engineering",
+                        "Maintain tested, encrypted backups following the 3-2-1 strategy for disaster recovery",
+                        "Use encryption for data at rest and in transit — AES-256 for storage, TLS 1.3 for communication"
+                    ]
+                }
+            ]
+        },
+        {
+            "question": "4.c Discuss computer-based identification techniques.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Computer-Based Identification Techniques"
+                },
+                {
+                    "type": "text",
+                    "content": "Computer-based identification techniques are methods used by systems to verify the identity of users, devices, or processes before granting access. These techniques fall into three fundamental categories: something you know, something you have, and something you are."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Knowledge-Based Identification (Something You Know)"
+                },
+                {
+                    "type": "text",
+                    "content": "The most traditional form of identification — users prove their identity by providing information that only they should know."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Passwords – The most common method; users enter a secret string to authenticate. Vulnerable to brute-force, dictionary attacks, and phishing",
+                        "PINs (Personal Identification Numbers) – Short numeric codes used for ATMs, device unlock, and transaction verification",
+                        "Security Questions – Challenge-response questions like 'What is your mother's maiden name?' — often weak because answers are publicly discoverable on social media",
+                        "Passphrases – Longer, sentence-like passwords ('correct-horse-battery-staple') that are both stronger and more memorable than random character strings"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Token-Based Identification (Something You Have)"
+                },
+                {
+                    "type": "text",
+                    "content": "Users prove identity by possessing a physical or digital token that is difficult to duplicate."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Smart Cards – Chip-embedded cards that store cryptographic keys and perform authentication operations on-card",
+                        "Hardware Tokens – Devices like YubiKey or RSA SecurID that generate one-time passwords (OTP) or use FIDO2 protocols for phishing-resistant authentication",
+                        "Software Tokens – Mobile authenticator apps (Google Authenticator, Microsoft Authenticator) that generate time-based one-time passwords (TOTP)",
+                        "Digital Certificates – X.509 certificates stored on machines or smart cards that cryptographically prove identity",
+                        "Mobile Phone (SMS/Push) – Verification codes sent via SMS or push notifications — convenient but vulnerable to SIM-swapping attacks"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Biometric Identification (Something You Are)"
+                },
+                {
+                    "type": "text",
+                    "content": "Uses unique physiological or behavioral characteristics of the user for identification — extremely difficult to forge or share."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Fingerprint Recognition – Scans unique ridge patterns; widely used in smartphones and access control systems",
+                        "Facial Recognition – Maps facial geometry using cameras and AI; used in device unlock (Face ID) and surveillance",
+                        "Iris/Retina Scanning – Scans unique patterns in the eye; highest accuracy among biometrics, used in high-security facilities",
+                        "Voice Recognition – Analyzes vocal characteristics (pitch, cadence, tone) for speaker verification",
+                        "Keystroke Dynamics – Measures typing patterns (speed, pressure, rhythm) to identify users by how they type",
+                        "Gait Analysis – Identifies individuals by their walking pattern — emerging technique used in surveillance"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Multi-Factor Authentication (MFA)"
+                },
+                {
+                    "type": "text",
+                    "content": "MFA combines two or more identification techniques from different categories for significantly stronger security. For example: password (knowledge) + authenticator app (possession), or PIN (knowledge) + fingerprint (biometric). Compromising one factor alone is insufficient to gain access."
+                },
+                {
+                    "type": "callout",
+                    "content": "Microsoft reports that MFA blocks 99.9% of automated account compromise attacks. It is the single most effective security measure an organization can implement.",
+                    "label": "Impact"
+                }
+            ]
+        },
+        {
+            "question": "4.d How to secure web applications on the internet?",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Securing Web Applications on the Internet"
+                },
+                {
+                    "type": "text",
+                    "content": "Web applications are prime targets for attackers because they are publicly accessible, handle sensitive data, and often contain exploitable vulnerabilities. A comprehensive security strategy addresses multiple layers — from code-level defenses to infrastructure hardening."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Input Validation and Sanitization"
+                },
+                {
+                    "type": "text",
+                    "content": "Never trust user input. Validate all inputs on both client and server side for type, length, format, and range. Sanitize inputs to strip malicious content. Use parameterized queries (prepared statements) for database operations to prevent SQL Injection, and encode output to prevent XSS."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Authentication and Session Management"
+                },
+                {
+                    "type": "text",
+                    "content": "Implement strong authentication — enforce complex passwords, offer multi-factor authentication, and use secure password hashing (bcrypt, Argon2). Manage sessions securely with HttpOnly/Secure/SameSite cookies, regenerate session IDs after login, set session timeouts, and invalidate sessions on logout."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. HTTPS Everywhere"
+                },
+                {
+                    "type": "text",
+                    "content": "Enforce HTTPS (TLS 1.2/1.3) for all communications. Use HSTS (HTTP Strict Transport Security) headers to prevent protocol downgrade attacks. Obtain SSL/TLS certificates from trusted Certificate Authorities. Never transmit sensitive data over plain HTTP."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Access Control (Authorization)"
+                },
+                {
+                    "type": "text",
+                    "content": "Enforce the principle of least privilege — users should only access what they need. Implement Role-Based Access Control (RBAC) or Attribute-Based Access Control (ABAC). Verify authorization on every request server-side — never rely on client-side checks alone."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Security Headers"
+                },
+                {
+                    "type": "code",
+                    "content": "Content-Security-Policy: default-src 'self'     # Prevents XSS by controlling script sources\nX-Content-Type-Options: nosniff                  # Prevents MIME-type sniffing\nX-Frame-Options: DENY                            # Prevents clickjacking\nStrict-Transport-Security: max-age=31536000      # Forces HTTPS\nX-XSS-Protection: 1; mode=block                  # Legacy XSS filter"
+                },
+                {
+                    "type": "subheading",
+                    "content": "6. Web Application Firewall (WAF)"
+                },
+                {
+                    "type": "text",
+                    "content": "Deploy a WAF (Cloudflare, AWS WAF, ModSecurity) to filter and monitor HTTP traffic. WAFs detect and block common attack patterns — SQL injection, XSS, CSRF, and bot traffic — before they reach the application."
+                },
+                {
+                    "type": "subheading",
+                    "content": "7. Regular Security Testing"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Static Application Security Testing (SAST) – Analyzes source code for vulnerabilities",
+                        "Dynamic Application Security Testing (DAST) – Tests running applications for exploitable flaws",
+                        "Penetration Testing – Simulated attacks by security professionals to find real-world vulnerabilities",
+                        "Dependency Scanning – Checks third-party libraries for known vulnerabilities (npm audit, Snyk)"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "8. Keep Everything Updated"
+                },
+                {
+                    "type": "text",
+                    "content": "Regularly update frameworks, libraries, dependencies, web servers, and operating systems. Known vulnerabilities in outdated components are the most commonly exploited attack vector. Automate dependency scanning and patching wherever possible."
+                }
+            ]
+        },
+        {
+            "question": "5.c Discuss web security threats.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Web Security Threats"
+                },
+                {
+                    "type": "text",
+                    "content": "Web security threats are malicious activities and attack techniques that target web applications, servers, and users. Understanding these threats is essential for building effective defenses."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Injection Attacks"
+                },
+                {
+                    "type": "text",
+                    "content": "Injection attacks occur when untrusted data is sent to an interpreter as part of a command or query. SQL Injection manipulates database queries to extract or modify data. Command Injection executes arbitrary OS commands on the server. LDAP Injection targets directory services."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Cross-Site Scripting (XSS)"
+                },
+                {
+                    "type": "text",
+                    "content": "XSS injects malicious JavaScript into web pages viewed by other users. Stored XSS persists on the server, reflected XSS is embedded in URLs, and DOM-based XSS manipulates client-side JavaScript. XSS enables session hijacking, credential theft, and user redirection to malicious sites."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Cross-Site Request Forgery (CSRF)"
+                },
+                {
+                    "type": "text",
+                    "content": "CSRF forces authenticated users to perform unintended actions (fund transfers, password changes) by tricking their browser into sending forged requests to a target site. The attack exploits the browser's automatic inclusion of cookies with every request to a domain."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Distributed Denial of Service (DDoS)"
+                },
+                {
+                    "type": "text",
+                    "content": "DDoS attacks overwhelm web servers with massive volumes of traffic from thousands of compromised machines (botnets), making the service unavailable to legitimate users. Volumetric attacks flood bandwidth, protocol attacks exploit TCP/IP weaknesses, and application-layer attacks target specific endpoints."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Man-in-the-Middle (MitM) Attacks"
+                },
+                {
+                    "type": "text",
+                    "content": "MitM attackers intercept communication between a user and a server — eavesdropping on sensitive data, modifying messages in transit, or injecting malicious content. Common on unsecured public Wi-Fi networks. HTTPS and certificate pinning are the primary defenses."
+                },
+                {
+                    "type": "subheading",
+                    "content": "6. Phishing and Social Engineering"
+                },
+                {
+                    "type": "text",
+                    "content": "Phishing uses fake websites, emails, or messages that impersonate legitimate services to trick users into revealing credentials, financial information, or personal data. Spear phishing targets specific individuals with personalized, convincing attacks."
+                },
+                {
+                    "type": "subheading",
+                    "content": "7. Session Hijacking"
+                },
+                {
+                    "type": "text",
+                    "content": "Attackers steal or predict session tokens (via XSS, network sniffing, or brute-force) to impersonate authenticated users. Once hijacked, the attacker has full access to the victim's session — accounts, data, and actions."
+                },
+                {
+                    "type": "subheading",
+                    "content": "8. Malware and Drive-By Downloads"
+                },
+                {
+                    "type": "text",
+                    "content": "Compromised websites serve malware to visitors through exploits in browsers, plugins, or embedded scripts. Drive-by downloads install malware simply by visiting a page — no user interaction required."
+                },
+                {
+                    "type": "callout",
+                    "content": "The OWASP Top 10 is the industry-standard list of the most critical web application security risks, updated regularly based on real-world attack data. Every web developer should be familiar with it.",
+                    "label": "Reference"
+                }
+            ]
+        },
+        {
+            "question": "5.d Elaborate about working cryptographic systems and protocols.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Working Cryptographic Systems and Protocols"
+                },
+                {
+                    "type": "text",
+                    "content": "Cryptographic systems transform readable data (plaintext) into unreadable data (ciphertext) using mathematical algorithms and keys. They form the backbone of digital security — protecting data confidentiality, integrity, authentication, and non-repudiation across all internet communications."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Symmetric Key Cryptography"
+                },
+                {
+                    "type": "text",
+                    "content": "Uses a single shared key for both encryption and decryption. Both the sender and receiver must possess the same secret key. Symmetric algorithms are fast and efficient for encrypting large volumes of data."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "AES (Advanced Encryption Standard) – The most widely used symmetric algorithm; supports 128, 192, and 256-bit keys. Used in HTTPS, VPNs, disk encryption, and Wi-Fi security",
+                        "DES / 3DES – Older standards; DES (56-bit) is deprecated, 3DES applies DES three times for stronger security but is being phased out",
+                        "ChaCha20 – Modern stream cipher used in TLS 1.3 and mobile devices where AES hardware acceleration isn't available"
+                    ]
+                },
+                {
+                    "type": "callout",
+                    "content": "The key distribution problem is the main weakness of symmetric cryptography — how do you securely share the secret key with the other party without it being intercepted?",
+                    "label": "Key Challenge"
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Asymmetric Key Cryptography (Public Key)"
+                },
+                {
+                    "type": "text",
+                    "content": "Uses a mathematically linked key pair — a public key (shared openly) for encryption and a private key (kept secret) for decryption. Solves the key distribution problem but is computationally slower than symmetric encryption."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "RSA – Based on the difficulty of factoring large prime numbers; used for key exchange, digital signatures, and certificate signing. Common key sizes: 2048-4096 bits",
+                        "Elliptic Curve Cryptography (ECC) – Provides equivalent security to RSA with much smaller keys (256-bit ECC ≈ 3072-bit RSA), making it faster and ideal for mobile and IoT devices",
+                        "Diffie-Hellman – Key exchange protocol allowing two parties to establish a shared secret over an insecure channel without transmitting the key"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Hash Functions"
+                },
+                {
+                    "type": "text",
+                    "content": "Hash functions produce a fixed-size digest (fingerprint) from any input data. They are one-way — the original data cannot be recovered from the hash. Used for password storage, data integrity verification, and digital signatures."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "SHA-256 / SHA-3 – Secure Hash Algorithms used for data integrity, blockchain, and certificate signing",
+                        "bcrypt / Argon2 – Password-specific hashing functions with built-in salting and computational cost to resist brute-force attacks",
+                        "MD5 – Deprecated due to collision vulnerabilities; should not be used for security purposes"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Cryptographic Protocols"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "TLS (Transport Layer Security) – Secures web traffic (HTTPS). Uses asymmetric encryption for key exchange, symmetric encryption for data transfer, and hashing for integrity",
+                        "IPSec – Secures IP-level communication for VPNs; operates in transport mode (payload only) or tunnel mode (entire packet encrypted)",
+                        "PGP/GPG – Pretty Good Privacy; used for email encryption and file signing using public-key cryptography",
+                        "SSH – Secure Shell; encrypts remote server access sessions using asymmetric key exchange and symmetric data encryption",
+                        "Kerberos – Network authentication protocol using tickets and symmetric keys to verify identity without transmitting passwords"
+                    ]
+                },
+                {
+                    "type": "heading",
+                    "content": "How TLS Handshake Works"
+                },
+                {
+                    "type": "code",
+                    "content": "Client → Server: ClientHello (supported cipher suites, TLS version)\nServer → Client: ServerHello (chosen cipher suite) + Certificate + Public Key\nClient: Verifies certificate with CA\nClient → Server: Pre-master secret encrypted with server's public key\nBoth: Derive symmetric session keys from pre-master secret\nAll further communication: Encrypted with fast symmetric keys (AES)"
+                }
+            ]
+        },
+        {
+            "question": "6.c Discuss the purpose of SSL, PCT, and SET protocols.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "SSL, PCT, and SET Protocols"
+                },
+                {
+                    "type": "text",
+                    "content": "SSL, PCT, and SET are security protocols designed to protect different aspects of internet communication — SSL secures general web traffic, PCT was an enhanced alternative to SSL, and SET specifically secured online payment transactions."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. SSL (Secure Sockets Layer)"
+                },
+                {
+                    "type": "text",
+                    "content": "SSL, developed by Netscape in 1995, was the first widely adopted protocol for securing internet communications. It provides encryption, authentication, and data integrity for data transmitted between web browsers and servers."
+                },
+                {
+                    "type": "text",
+                    "content": "Purpose and Features:"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Confidentiality – Encrypts data in transit using symmetric encryption (AES, RC4) so interceptors cannot read it",
+                        "Authentication – Uses digital certificates issued by Certificate Authorities to verify server (and optionally client) identity",
+                        "Data Integrity – Uses message authentication codes (HMAC) to detect any tampering with transmitted data",
+                        "Session Establishment – The SSL handshake negotiates cipher suites, exchanges keys, and establishes a secure session"
+                    ]
+                },
+                {
+                    "type": "callout",
+                    "content": "SSL versions 1.0, 2.0, and 3.0 are now deprecated due to discovered vulnerabilities (POODLE, BEAST, DROWN). SSL has been succeeded by TLS (Transport Layer Security) — TLS 1.2 and TLS 1.3 are the current standards.",
+                    "label": "Current Status"
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. PCT (Private Communication Technology)"
+                },
+                {
+                    "type": "text",
+                    "content": "PCT was developed by Microsoft in 1995 as an improvement over SSL 2.0. It aimed to address specific security weaknesses found in early SSL versions while maintaining compatibility."
+                },
+                {
+                    "type": "text",
+                    "content": "Purpose and Improvements over SSL:"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Separated authentication from encryption — allowed independent algorithm selection for each, providing more flexibility",
+                        "Stronger key derivation — used more robust methods for generating session keys from the master secret",
+                        "Better error handling — did not expose specific error types that could help attackers identify vulnerabilities",
+                        "Efficient reconnection — supported faster session resumption without full re-handshake",
+                        "Fixed SSL 2.0 vulnerabilities — addressed weaknesses in MAC computation and cipher suite negotiation"
+                    ]
+                },
+                {
+                    "type": "text",
+                    "content": "PCT was primarily supported in Microsoft Internet Explorer and Windows. It was eventually superseded by TLS, which incorporated many of PCT's improvements along with SSL's best features."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. SET (Secure Electronic Transaction)"
+                },
+                {
+                    "type": "text",
+                    "content": "SET was developed jointly by Visa and Mastercard in 1996 specifically for securing credit card transactions over the internet. Unlike SSL (which secures the communication channel), SET secured the transaction itself — ensuring all parties in a payment chain were authenticated."
+                },
+                {
+                    "type": "text",
+                    "content": "Purpose and Features:"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Cardholder Authentication – Verifies the buyer's identity using digital certificates, preventing unauthorized card use",
+                        "Merchant Authentication – Verifies the merchant is legitimate and authorized to accept card payments",
+                        "Confidentiality – The merchant never sees the card number (it's encrypted for the payment gateway only), and the bank never sees order details",
+                        "Integrity – Digital signatures ensure transaction data cannot be altered in transit",
+                        "Dual Signature – A unique mechanism where the buyer signs both order information and payment information separately, linking them cryptographically while keeping each hidden from the other party"
+                    ]
+                },
+                {
+                    "type": "heading",
+                    "content": "Comparison"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "SSL → General-purpose web security (any HTTPS communication)",
+                        "PCT → Enhanced alternative to SSL 2.0 with better key derivation and error handling",
+                        "SET → Specific to credit card payments with multi-party authentication and dual signatures"
+                    ]
+                }
+            ]
+        },
+        {
+            "question": "6.d Classify the attributes of security testing measures. What is the Secure Socket Layer architecture?",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Attributes of Security Testing Measures"
+                },
+                {
+                    "type": "text",
+                    "content": "Security testing validates that a system is protected against threats and vulnerabilities. The attributes of security testing can be classified into the following core categories, each targeting a specific aspect of security."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Confidentiality Testing"
+                },
+                {
+                    "type": "text",
+                    "content": "Verifies that sensitive information is accessible only to authorized users. Tests include checking encryption of data at rest and in transit, access control enforcement, data masking in logs and error messages, and prevention of unauthorized data disclosure."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Integrity Testing"
+                },
+                {
+                    "type": "text",
+                    "content": "Ensures that data cannot be modified by unauthorized parties. Tests include verifying hash checksums, testing for SQL injection and data manipulation vulnerabilities, validating input sanitization, and checking database transaction integrity."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Authentication Testing"
+                },
+                {
+                    "type": "text",
+                    "content": "Validates the identity verification mechanism. Tests include brute-force resistance, password policy enforcement, MFA implementation, session token security, and credential storage (hashing algorithms and salting)."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Authorization Testing"
+                },
+                {
+                    "type": "text",
+                    "content": "Verifies that users can only access resources and actions permitted by their role. Tests include privilege escalation attempts (horizontal and vertical), IDOR (Insecure Direct Object Reference) testing, role-based access control (RBAC) validation, and API endpoint authorization."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Availability Testing"
+                },
+                {
+                    "type": "text",
+                    "content": "Ensures the system remains operational under stress and attack. Tests include DDoS simulation, load testing, failover and redundancy verification, and resource exhaustion testing."
+                },
+                {
+                    "type": "subheading",
+                    "content": "6. Non-Repudiation Testing"
+                },
+                {
+                    "type": "text",
+                    "content": "Verifies that actions can be traced to their origin and cannot be denied. Tests include audit log completeness, digital signature verification, transaction logging, and timestamp integrity."
+                },
+                {
+                    "type": "heading",
+                    "content": "Secure Socket Layer (SSL) Architecture"
+                },
+                {
+                    "type": "text",
+                    "content": "The SSL architecture operates between the Application Layer and Transport Layer of the TCP/IP model. It consists of two main sub-layers with distinct protocol components."
+                },
+                {
+                    "type": "subheading",
+                    "content": "SSL Protocol Stack"
+                },
+                {
+                    "type": "code",
+                    "content": "┌──────────────────────────────────────────────────────┐\n│              Application Layer (HTTP, FTP)            │\n├────────────┬──────────┬──────────┬───────────────────┤\n│  Handshake │  Change  │  Alert   │   Application     │\n│  Protocol  │  Cipher  │ Protocol │   Data Protocol   │\n│            │  Spec    │          │                   │\n├────────────┴──────────┴──────────┴───────────────────┤\n│              SSL Record Protocol                      │\n├──────────────────────────────────────────────────────┤\n│              Transport Layer (TCP)                    │\n└──────────────────────────────────────────────────────┘"
+                },
+                {
+                    "type": "subheading",
+                    "content": "SSL Record Protocol (Lower Layer)"
+                },
+                {
+                    "type": "text",
+                    "content": "The foundation layer that provides two key services for all SSL communications:"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Fragmentation – Breaks application data into manageable blocks (max 16KB)",
+                        "Compression – Optionally compresses data blocks to reduce size",
+                        "MAC (Message Authentication Code) – Appends a hash to ensure data integrity",
+                        "Encryption – Encrypts the block + MAC using the negotiated symmetric cipher",
+                        "Header Addition – Adds content type, version, and length information for the receiver"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "Upper Layer Protocols"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Handshake Protocol – Establishes the SSL session: negotiates cipher suites, authenticates the server (and optionally client) via certificates, and performs key exchange to derive shared session keys",
+                        "Change Cipher Spec Protocol – A single-message protocol that signals the transition from unencrypted to encrypted communication using the newly negotiated keys",
+                        "Alert Protocol – Communicates errors and warnings between parties. Fatal alerts (unexpected_message, bad_record_mac) immediately terminate the session. Warning alerts (close_notify) indicate graceful closure",
+                        "Application Data Protocol – Transparently transmits application data (HTTP requests/responses) through the SSL Record Protocol's encryption pipeline"
+                    ]
+                },
+                {
+                    "type": "callout",
+                    "content": "The SSL/TLS handshake completes in just 2 round-trips (TLS 1.2) or 1 round-trip (TLS 1.3), adding minimal latency while establishing full encryption, authentication, and integrity protection for the session.",
+                    "label": "Performance"
+                }
+            ]
+        }
+    ]
+}

