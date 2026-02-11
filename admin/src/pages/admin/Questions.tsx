@@ -1681,11 +1681,25 @@ const Questions: React.FC = () => {
                   const template = {
                     descriptives: [
                       {
-                        question: "Explain the concept shown in the diagram.",
-                        topic: "General",
+                        question: "Explain the process of photosynthesis in detail.",
+                        topic: "Biology",
                         answer: [
-                          { type: "text", content: "Your explanation here..." },
-                          { type: "diagram", ref: "your-image-filename.png" },
+                          { type: "heading", content: "Photosynthesis Overview" },
+                          { type: "text", content: "Photosynthesis is the process by which green plants convert sunlight into chemical energy." },
+                          { type: "subheading", content: "Key Steps" },
+                          { type: "list", items: ["Light-dependent reactions", "Calvin cycle (light-independent reactions)", "Carbon fixation"] },
+                          { type: "diagram", ref: "photosynthesis-diagram.png" },
+                          { type: "callout", content: "Remember: Photosynthesis occurs in the chloroplasts.", label: "Important" },
+                          { type: "code", content: "6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂" },
+                        ],
+                      },
+                      {
+                        question: "What is an operating system?",
+                        topic: "Computer Science",
+                        answer: [
+                          { type: "heading", content: "Definition" },
+                          { type: "text", content: "An operating system (OS) is system software that manages computer hardware and software resources." },
+                          { type: "list", items: ["Process management", "Memory management", "File system", "I/O management"] },
                         ],
                       },
                     ],
