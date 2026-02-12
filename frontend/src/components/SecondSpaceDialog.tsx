@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from "sonner";
 import { Lock } from "lucide-react";
-import { safeStorage } from "@/lib/api";
+import { safeStorage, API_BASE_URL } from "@/lib/api";
 
 interface Props {
     open: boolean;
@@ -21,9 +21,6 @@ export const SecondSpaceDialog = ({ open, onOpenChange }: Props) => {
             return;
         }
         try {
-            const rawApiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
-            const API_BASE_URL = rawApiUrl.endsWith("/") ? rawApiUrl.slice(0, -1) : rawApiUrl;
-
             const res = await fetch(`${API_BASE_URL}/verify-pin`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
