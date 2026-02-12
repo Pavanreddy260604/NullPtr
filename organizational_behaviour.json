@@ -1,0 +1,687 @@
+{
+    "descriptives": [
+        {
+            "question": "1.c Explain the need and importance of Organizational Behaviour in organizations",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Need and Importance of Organizational Behaviour (OB)"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Meaning of Organizational Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "Organizational Behaviour (OB) is the study of human behaviour at work and within organizations. It examines how individuals and groups behave and how this behaviour affects organizational performance and effectiveness."
+                },
+                {
+                    "type": "heading",
+                    "content": "Need of Organizational Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "The need for OB arises because organizations depend on people, and understanding human behaviour is essential for achieving organizational goals."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Understanding and Predicting Human Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "OB helps managers understand why people behave the way they do in organizations. It moves beyond common sense and uses a systematic approach to predict employee behaviour."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Improving Management Effectiveness"
+                },
+                {
+                    "type": "text",
+                    "content": "OB provides models such as autocratic, custodial, supportive, collegial, and system models, which help managers lead, motivate, and manage employees effectively."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Boosting Productivity and Performance"
+                },
+                {
+                    "type": "text",
+                    "content": "By understanding motivation, job satisfaction, and group behaviour, OB helps align employee behaviour with organizational goals, thereby improving productivity."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Enhancing Employee Satisfaction"
+                },
+                {
+                    "type": "text",
+                    "content": "OB focuses on employee needs like security, recognition, and belongingness, which reduces absenteeism and turnover."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Managing Change and Diversity"
+                },
+                {
+                    "type": "text",
+                    "content": "Due to globalization and technological change, OB helps managers handle workforce diversity, flexibility, and rapid organizational change effectively."
+                },
+                {
+                    "type": "code",
+                    "content": "          NEED OF OB\n               |\n ------------------------------------------------\n |            |            |            |        |\nUnderstanding Improving   Productivity  Employee  Managing\nBehavior     Management   & Performance Satisfaction Change"
+                },
+                {
+                    "type": "heading",
+                    "content": "Importance of Organizational Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "The importance of OB lies in its contribution to organizational efficiency and effectiveness."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Understanding and Prediction of Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "OB explains and predicts human behaviour, helping managers anticipate employee reactions to policies and changes."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Motivation and Performance"
+                },
+                {
+                    "type": "text",
+                    "content": "OB helps understand employee motivation, leading to higher job satisfaction, efficiency, and productivity."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Leadership and Management"
+                },
+                {
+                    "type": "text",
+                    "content": "It provides insights into leadership styles and managerial behaviour, enabling better coordination and handling of diverse work situations."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Human Resource and Talent Management"
+                },
+                {
+                    "type": "text",
+                    "content": "OB guides recruitment, training, retention, and development of employees while supporting engagement and work–life balance."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Ethical and Healthy Work Climate"
+                },
+                {
+                    "type": "text",
+                    "content": "OB promotes ethical behaviour and positive attitudes, creating a healthy organizational environment."
+                },
+                {
+                    "type": "subheading",
+                    "content": "6. Adaptability and Global Competitiveness"
+                },
+                {
+                    "type": "text",
+                    "content": "OB helps organizations adapt to globalization, competition, and technological changes by fostering flexibility and innovation."
+                },
+                {
+                    "type": "subheading",
+                    "content": "7. Optimal Utilization of Resources"
+                },
+                {
+                    "type": "text",
+                    "content": "By understanding people’s skills, attitudes, and work styles, OB ensures effective utilization of human resources."
+                },
+                {
+                    "type": "code",
+                    "content": "        ORGANIZATIONAL BEHAVIOUR\n                    |\n -------------------------------------------------------\n |        |        |        |        |        |         |\nPredict  Motivate  Leadership HRM   Ethics  Adaptability Resource\nBehavior Performance & Control      Climate             Utilization"
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "Organizational Behaviour is essential for understanding, predicting, and influencing human behaviour in organizations. It helps managers improve effectiveness, employee satisfaction, productivity, and adaptability in a dynamic and competitive environment."
+                }
+            ]
+        },
+        {
+            "question": "2.c Discuss the nature and scope of Organizational Behaviour",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Nature and Scope of Organizational Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "Organizational Behaviour (OB) is the study of human behaviour in organizational settings. It examines how individuals and groups behave and how organizational structure, culture, and environment influence their behaviour. OB aims to understand, predict, and influence behaviour to improve organizational effectiveness."
+                },
+                {
+                    "type": "heading",
+                    "content": "Nature of Organizational Behaviour"
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Interdisciplinary Approach"
+                },
+                {
+                    "type": "text",
+                    "content": "OB integrates knowledge from psychology, sociology, social psychology, anthropology, and political science to study human behaviour at the workplace."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Separate Field of Study"
+                },
+                {
+                    "type": "text",
+                    "content": "OB is a distinct field of study and not limited to a single discipline. It has a multi-disciplinary orientation rather than a single theoretical foundation."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Applied Science"
+                },
+                {
+                    "type": "text",
+                    "content": "OB focuses on solving practical organizational problems related to human behaviour by applying research findings. It is concerned with applied research rather than pure theory."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Normative Science"
+                },
+                {
+                    "type": "text",
+                    "content": "OB prescribes how people should behave to achieve socially accepted organizational goals. It emphasizes the application of research findings to improve organizational practices."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Humanistic and Optimistic Approach"
+                },
+                {
+                    "type": "text",
+                    "content": "OB considers employees as human beings with emotions, feelings, and potential. It believes that people are creative, productive, and capable of growth when provided with a supportive environment."
+                },
+                {
+                    "type": "subheading",
+                    "content": "6. Total System Approach"
+                },
+                {
+                    "type": "text",
+                    "content": "OB views organizations as a complete system where individuals, groups, structure, and environment interact with each other. It studies behaviour using a socio-psychological framework."
+                },
+                {
+                    "type": "code",
+                    "content": "            NATURE OF OB\n                   |\n -------------------------------------------------\n |        |        |        |        |            |\nInter-  Applied  Normative Humanistic  Total\ndisciplinary Science  Science  Approach   System"
+                },
+                {
+                    "type": "heading",
+                    "content": "Scope of Organizational Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "The scope of OB refers to the areas of study covered under organizational behaviour. It is divided into three levels."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Individual Level Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "This level studies individual behaviour in organizations. It includes personality, perception, attitudes, motivation, learning, job satisfaction, and values of employees."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Group Level Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "This level focuses on interactions among individuals in groups. It includes group dynamics, communication, leadership, power, politics, and conflict management."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Organizational Level Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "This level studies the organization as a whole. It includes organizational structure, culture, change, environment, and their impact on employee behaviour and performance."
+                },
+                {
+                    "type": "code",
+                    "content": "          SCOPE OF OB\n                |\n -----------------------------------\n |               |                 |\nIndividual     Group        Organizational\nBehaviour     Behaviour        Behaviour"
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "Organizational Behaviour is an applied, interdisciplinary, and human-centered field of study. Its nature helps in understanding human behaviour systematically, while its scope covers individual, group, and organizational levels. Together, they help organizations improve performance, employee satisfaction, and overall effectiveness."
+                }
+            ]
+        },
+        {
+            "question": "3.c Explain the framework of Organizational Behaviour",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Framework of Organizational Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "The framework of Organizational Behaviour is built upon three distinct levels of analysis, which help in understanding how behavior is shaped within an organization."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Levels of OB Analysis"
+                },
+                {
+                    "type": "text",
+                    "content": "a) Individual Level: Focuses on understanding individual behavior, including personality, motivation, perception, learning, and attitudes."
+                },
+                {
+                    "type": "text",
+                    "content": "b) Group Level: Examines how people interact in groups, covering leadership, communication, group dynamics, power, and conflict."
+                },
+                {
+                    "type": "text",
+                    "content": "c) Organizational Level: This level examines the organization as a whole. It includes organizational structure, culture, technology, organizational change, and external environment. This level explains how organizational systems and policies affect employee behaviour."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Key Elements of Organizational Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "According to the OB framework, behaviour in organizations is influenced by four key elements:"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "People: People include individuals and groups working in the organization. Their attitudes, emotions, and behaviour directly affect performance.",
+                        "Structure: Structure refers to official relationships, authority, responsibility, and hierarchy within the organization. It defines how tasks are divided and coordinated.",
+                        "Technology: Technology includes physical, economic, and technical resources used in the organization. It affects work methods and employee behaviour.",
+                        "Environment: Environment includes political, legal, social, and natural factors outside the organization that influence organizational functioning and behaviour."
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "              ORGANIZATIONAL BEHAVIOUR\n                          |\n        ------------------------------------------------\n        |                     |                        |\n   Individual Level        Group Level         Organizational Level\n (Personality,            (Leadership,         (Structure, Culture,\n  Motivation,              Communication,       Technology,\n  Perception)              Group Dynamics)      Environment)\n                          |\n        ------------------------------------------------\n        |        |           |                    |\n      People   Structure   Technology        Environment"
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "The framework of Organizational Behaviour provides a systematic approach to understanding human behaviour in organizations. By integrating individual, group, and organizational levels along with key elements like people, structure, technology, and environment, OB helps managers improve organizational effectiveness and employee performance."
+                }
+            ]
+        },
+        {
+            "question": "4.c Explain Autocratic and Custodial models of organizational behaviour",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Autocratic and Custodial Models of Organizational Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "Organizational Behaviour models explain how managers manage employees and how employees respond in an organization. Among the five OB models, the Autocratic model and Custodial model are important traditional models."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Autocratic Model"
+                },
+                {
+                    "type": "text",
+                    "content": "The Autocratic model is based on power and authority. In this model, managers have complete control over employees and decision-making. Employees are expected to obey orders given by superiors. The manager’s leadership style is authoritarian, and employees depend on the boss for direction. Employees’ basic needs are met, but performance is usually minimum because motivation is low."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Based on power",
+                        "Manager leads with authority",
+                        "Employees must obey",
+                        "Employee mindset depends on the boss",
+                        "Performance result is minimum"
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "      Manager (Power & Authority)\n                |\n            Employees\n           (Obedience)"
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Custodial Model"
+                },
+                {
+                    "type": "text",
+                    "content": "The Custodial model is based on economic resources. In this model, organizations provide employees with security, benefits, and facilities such as salary, welfare, and incentives. Employees depend on the organization rather than the manager. Although employees feel secure, they show passive cooperation and do not work as a team, focusing mainly on personal benefits."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Based on economic resources (money)",
+                        "Managerial focus on benefits and security",
+                        "Employees seek security and welfare",
+                        "Psychological dependence on organization",
+                        "Performance results in passive cooperation"
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "     Organization (Money & Benefits)\n                  |\n              Employees\n               (Security)"
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "The Autocratic model emphasizes control and authority, while the Custodial model focuses on employee security and benefits. Both models meet basic employee needs but are limited in motivating employees for higher performance."
+                }
+            ]
+        },
+        {
+            "question": "4.d Explain supportive and collegial models of organizational behaviour",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Supportive and Collegial Models of Organizational Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "Organizational Behaviour models describe how managers relate to employees and how employees respond at work. Among them, the Supportive model and Collegial model focus on employee development and teamwork rather than control or money."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Supportive Model"
+                },
+                {
+                    "type": "text",
+                    "content": "The Supportive model is based on leadership. In this model, managers support and encourage employees to perform better. The focus is on motivating employees, developing their skills, and creating a positive work environment. Employees feel involved in their work and are motivated to improve performance. Their needs for status and recognition are satisfied, resulting in higher motivation."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Based on leadership",
+                        "Managers provide guidance and support",
+                        "Employees feel involved",
+                        "Needs for status and recognition are met",
+                        "Performance results in motivation"
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "        Manager (Leadership & Support)\n                    |\n               Employees\n              (Motivated)"
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Collegial Model"
+                },
+                {
+                    "type": "text",
+                    "content": "The Collegial model is based on partnership and teamwork. In this model, employees work cooperatively as a team rather than under strict supervision. Managers and employees act as partners. Employees show self-discipline, responsibility, and moderate enthusiasm toward work. This model encourages mutual respect and collaboration."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Based on partnership",
+                        "Emphasis on teamwork",
+                        "Employees act responsibly",
+                        "Self-discipline and cooperation",
+                        "Performance shows moderate enthusiasm"
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "        Manager  ↔  Employees\n            (Teamwork & Partnership)"
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "The Supportive model emphasizes leadership and employee motivation, while the Collegial model focuses on teamwork and partnership. Both models encourage positive behaviour and improved performance compared to traditional control-based models."
+                }
+            ]
+        },
+        {
+            "question": "5.c Explain Organizational Behavior as an interdisciplinary approach.",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Organizational Behavior as an Interdisciplinary Approach"
+                },
+                {
+                    "type": "text",
+                    "content": "Organizational Behaviour (OB) is considered an interdisciplinary approach because it integrates knowledge from different disciplines to study human behaviour at the workplace. A discipline is an accepted field of science based on a theoretical foundation, whereas OB draws concepts and principles from multiple disciplines to understand and analyze organizational behaviour."
+                },
+                {
+                    "type": "text",
+                    "content": "OB combines theories and research findings from psychology, sociology, social psychology, anthropology, and political science. Psychology contributes to understanding individual behaviour such as personality, perception, learning, and motivation. Sociology helps in studying group behaviour, social relationships, and organizational structure. Social psychology explains interaction between individuals and groups. Anthropology contributes to understanding organizational culture and values, while political science helps analyze power, authority, and conflict in organizations."
+                },
+                {
+                    "type": "text",
+                    "content": "By integrating knowledge from these disciplines, OB provides a comprehensive understanding of human behaviour in organizations and helps managers solve practical problems effectively."
+                },
+                {
+                    "type": "code",
+                    "content": "                 ORGANIZATIONAL BEHAVIOUR\n                              |\n ------------------------------------------------------------\n |            |             |              |               |\nPsychology  Sociology  Social Psychology  Anthropology  Political\n                                                      Science"
+                }
+            ]
+        },
+        {
+            "question": "5.d Explain relevance of Organizational Behaviour to managers",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Relevance of Organizational Behaviour to Managers"
+                },
+                {
+                    "type": "text",
+                    "content": "Organizational Behaviour (OB) is highly relevant to managers because it helps them understand, predict, and control human behaviour in organizations. Since managers work through people, knowledge of OB enables them to manage employees effectively and achieve organizational goals."
+                },
+                {
+                    "type": "text",
+                    "content": "OB helps managers understand and predict employee behaviour, allowing them to anticipate reactions to decisions, policies, and organizational changes. It assists managers in motivating employees, leading to higher job satisfaction, efficiency, and productivity. Through OB, managers gain insights into leadership styles and managerial behaviour, which improves coordination, communication, and team effectiveness."
+                },
+                {
+                    "type": "text",
+                    "content": "OB is also relevant in human resource management, guiding managers in recruitment, training, development, and retention of employees. Further, OB helps managers create a positive and ethical work environment, manage workforce diversity, and adapt to globalization and technological changes effectively."
+                },
+                {
+                    "type": "code",
+                    "content": "              ORGANIZATIONAL BEHAVIOUR\n                          |\n        ------------------------------------------------\n        |            |             |                 |\n   Understanding   Motivation   Leadership &     HR & Ethical\n    Behaviour     & Performance  Coordination     Management"
+                }
+            ]
+        },
+        {
+            "question": "6.c Explain the role of Organizational Behavior in improving organizational effectiveness",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Role of Organizational Behavior in Improving Organizational Effectiveness"
+                },
+                {
+                    "type": "text",
+                    "content": "Organizational Behaviour (OB) plays a vital role in improving organizational effectiveness by understanding, predicting, and influencing human behaviour in organizations. Since organizations achieve goals through people, effective management of behaviour leads to better performance and outcomes."
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Understanding and Predicting Human Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "OB helps managers understand how individuals and groups behave at work. This understanding enables prediction of employee responses to managerial decisions and organizational changes, leading to better planning and control."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Improving Motivation and Performance"
+                },
+                {
+                    "type": "text",
+                    "content": "By studying motivation, attitudes, and job satisfaction, OB helps managers motivate employees effectively. Motivated employees work more efficiently, resulting in higher productivity and improved organizational performance."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Effective Leadership and Management"
+                },
+                {
+                    "type": "text",
+                    "content": "OB provides insights into leadership styles and managerial behaviour. This helps managers lead teams effectively, improve coordination, and handle diverse work situations, thereby enhancing organizational effectiveness."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Better Human Resource Management"
+                },
+                {
+                    "type": "text",
+                    "content": "OB supports effective recruitment, training, development, and retention of employees. Proper utilization of human resources improves efficiency and reduces absenteeism and turnover."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Positive Work Environment and Adaptability"
+                },
+                {
+                    "type": "text",
+                    "content": "OB promotes ethical behaviour, positive attitudes, and healthy interpersonal relationships. It also helps organizations adapt to globalization, technological changes, and workforce diversity, ensuring long-term effectiveness."
+                },
+                {
+                    "type": "code",
+                    "content": "        ORGANIZATIONAL BEHAVIOUR\n                    |\n ------------------------------------------------\n |        |        |        |        |           |\nUnderstand Motivate Leadership   HRM     Adaptability\nBehaviour Performance & Control\n                    |\n         ORGANIZATIONAL EFFECTIVENESS"
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "Organizational Behaviour improves organizational effectiveness by enhancing understanding of human behaviour, motivating employees, strengthening leadership, optimizing human resources, and creating a positive work environment. Thus, OB is essential for achieving organizational goals efficiently and effectively."
+                }
+            ]
+        },
+        {
+            "question": "6.d Discuss challenges and opportunities of Organizational Behaviour in modern organizations",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Challenges and Opportunities of Organizational Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "Modern organizations operate in a dynamic environment characterized by globalization, technological change, workforce diversity, and intense competition. Organizational Behaviour (OB) helps managers understand and manage human behaviour to overcome challenges and utilize opportunities for improving organizational effectiveness."
+                },
+                {
+                    "type": "heading",
+                    "content": "Challenges of Organizational Behaviour"
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Globalization"
+                },
+                {
+                    "type": "text",
+                    "content": "Organizations are no longer limited by national boundaries. Managers must handle employees from different cultures, values, and backgrounds, which makes managing behaviour more complex."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Workforce Diversity"
+                },
+                {
+                    "type": "text",
+                    "content": "Modern organizations are increasingly diverse in terms of gender, race, ethnicity, and culture. Managing diverse attitudes, perceptions, and expectations is a major challenge for managers."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Rapid Technological Changes"
+                },
+                {
+                    "type": "text",
+                    "content": "Technological advancement requires employees to continuously adapt to new systems and work methods. Resistance to change and skill gaps create behavioural challenges."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Managing Change"
+                },
+                {
+                    "type": "text",
+                    "content": "Frequent organizational changes create stress, uncertainty, and resistance among employees, affecting morale and performance."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Employee Attitudes and Motivation"
+                },
+                {
+                    "type": "text",
+                    "content": "Managing varying employee attitudes, job satisfaction levels, absenteeism, and turnover is a continuing challenge in organizations."
+                },
+                {
+                    "type": "heading",
+                    "content": "Opportunities of Organizational Behaviour"
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Improved Understanding of Human Behaviour"
+                },
+                {
+                    "type": "text",
+                    "content": "OB provides scientific knowledge to understand, predict, and influence employee behaviour, helping managers take better decisions."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Effective Management of Diversity"
+                },
+                {
+                    "type": "text",
+                    "content": "When managed positively, workforce diversity increases creativity, innovation, and better decision-making by providing multiple perspectives."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Better Adaptation to Change"
+                },
+                {
+                    "type": "text",
+                    "content": "OB helps organizations manage change effectively by motivating employees and reducing resistance, ensuring flexibility and adaptability."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Enhanced Productivity and Quality"
+                },
+                {
+                    "type": "text",
+                    "content": "OB supports quality management through continuous improvement in productivity, job satisfaction, and organizational citizenship behaviour."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Improved Organizational Effectiveness"
+                },
+                {
+                    "type": "text",
+                    "content": "By optimizing human resources, improving leadership, and promoting ethical behaviour, OB enhances overall organizational effectiveness."
+                },
+                {
+                    "type": "code",
+                    "content": "        ORGANIZATIONAL BEHAVIOUR\n                    |\n        --------------------------------\n        |                              |\n     Challenges                    Opportunities\n        |                              |\n Globalization                 Understanding Behaviour\n Workforce Diversity           Innovation & Creativity\n Technological Change           Adaptability\n Resistance to Change           Higher Productivity"
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "Modern organizations face several behavioural challenges due to globalization, diversity, and technological change. Organizational Behaviour provides opportunities to manage these challenges effectively by improving understanding of human behaviour, enhancing productivity, and achieving organizational effectiveness."
+                }
+            ]
+        }
+    ]
+}
