@@ -47,10 +47,10 @@ const registerSafeSW = () => {
     try {
         // Detect if storage is restricted BEFORE trying SW
         if (typeof window.indexedDB === 'undefined' || window.indexedDB === null) {
-            throw new Error("IDB Missing");
+            return () => { };
         }
 
-        // Critical: In some browsers, trying to open IDB throws "Access to storage is not allowed"
+        // Active probe
         window.indexedDB.open("__sw_test_probe__");
 
         return registerSW({
@@ -60,12 +60,11 @@ const registerSafeSW = () => {
                 }
             },
             onOfflineReady() {
-                console.log('App is ready to work offline');
+                // Silently ready
             },
         });
     } catch (e) {
-        // console.warn("🛡️ Storage access restricted. Service Worker disabled.", e);
-        return () => { }; // Return no-op
+        return () => { };
     }
 };
 

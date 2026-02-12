@@ -13,48 +13,52 @@ import NotFound from "./pages/NotFound";
 import { InstallPWA } from "@/components/InstallPWA";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 
-// ✅ Global Error Suppression for restricted storage contexts
-// Detects and mutes the frequent "Access to storage is not allowed" crash in Chrome/Safari
+// ✅ 1. Absolute Top: Global Error Suppression
+// Prevents libraries (like Service Workers or Query Persistence) from crashing the app
 if (typeof window !== 'undefined') {
-  const muteStorageError = (e: any) => {
-    const msg = e?.message || (typeof e === 'string' ? e : '');
-    if (msg.includes('Access to storage is not allowed') || msg.includes('SecurityError')) {
-      // console.warn("🛡️ Muted storage access error:", msg);
-      return true;
-    }
-    return false;
+  const isStorageError = (e: any) => {
+    const msg = (e?.message || (typeof e === 'string' ? e : '')).toLowerCase();
+    return msg.includes('access to storage is not allowed') ||
+      msg.includes('securityerror') ||
+      msg.includes('idbdatabase');
   };
 
   window.addEventListener('unhandledrejection', (event) => {
-    if (muteStorageError(event.reason)) event.preventDefault();
-  });
+    if (isStorageError(event.reason)) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }, true);
+
   window.addEventListener('error', (event) => {
-    if (muteStorageError(event.error)) event.stopImmediatePropagation();
+    if (isStorageError(event.error) || isStorageError(event.message)) {
+      event.stopImmediatePropagation();
+    }
   }, true);
 }
 
-// ✅ Check if storage (IndexedDB & LocalStorage) is actually allowed
+// ✅ 2. Active Handshake Storage Check
 const checkStorageAccess = () => {
   const status = { local: false, idb: false };
 
   try {
-    // 1. Check LocalStorage (Real vs Polyfill)
-    const testKey = "__real_storage_test__";
-    window.localStorage.setItem(testKey, "1");
-    window.localStorage.removeItem(testKey);
-    status.local = !(window.localStorage as any).__is_fallback;
+    // LocalStorage Check: Must be REAL and WRITABLE
+    if (typeof window.localStorage !== 'undefined' && !(window.localStorage as any).__is_fallback) {
+      const testKey = "__handshake_test__";
+      window.localStorage.setItem(testKey, "1");
+      window.localStorage.removeItem(testKey);
+      status.local = true;
+    }
   } catch (e) {
     status.local = false;
   }
 
   try {
-    // 2. Check IndexedDB Usability
-    // In many browsers, just calling .open() doesn't throw, but accessing indexedDB property might.
+    // IndexedDB Check: Must allow OPENING a connection
+    // Passive check (typeof) is not enough; restricted browsers throw on .open()
     if (typeof window.indexedDB !== 'undefined' && window.indexedDB !== null) {
-      // Proactive probe: Try to open a dummy DB. 
-      // In some restricted contexts, this throws a SecurityError immediately.
-      const request = window.indexedDB.open("__storage_test_probe__");
-      if (request) status.idb = true;
+      const probe = window.indexedDB.open("__handshake_probe__");
+      if (probe) status.idb = true;
     }
   } catch (e) {
     status.idb = false;
@@ -66,7 +70,9 @@ const checkStorageAccess = () => {
 const storage = checkStorageAccess();
 const storageAllowed = storage.local && storage.idb;
 
-console.log(`💾 [Storage] Local: ${storage.local}, IDB: ${storage.idb} -> Allowed: ${storageAllowed}`);
+if (typeof window !== 'undefined') {
+  console.log(`🛡️ [Resilience] Storage Allowed: ${storageAllowed} (Local: ${storage.local}, IDB: ${storage.idb})`);
+}
 
 // Safe storage for next-themes to prevent crashes
 const safeThemeStorage = {
