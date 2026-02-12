@@ -13,7 +13,6 @@ import AdminLayout from "./components/layout/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Subjects from "./pages/admin/Subjects";
 import Units from "./pages/admin/Units";
-import QuestionsList from "./pages/admin/QuestionsList";
 import Questions from "./pages/admin/Questions";
 import NotFound from "./pages/NotFound";
 
