@@ -12,6 +12,17 @@ import { DescriptiveCard } from "@/components/DescriptiveCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { toast } from "sonner";
 import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
     getUnit,
     getMCQsByUnit,
     getFillBlanksByUnit,
@@ -80,7 +91,7 @@ const UnitPage = () => {
     const descriptives = data?.descriptives || [];
     const loading = isLoading;
 
-    const handleDownloadPDF = () => {
+    const handleDownloadPDF = (options: { includeAnswers: boolean, includeExplanations: boolean, sections: { mcqs: boolean, fbs: boolean, descs: boolean } }) => {
         if (!unit || !subject) {
             toast.error("Data not ready for export");
             return;
@@ -92,17 +103,22 @@ const UnitPage = () => {
                     title: unit.title,
                     unit: unit.unit,
                     subjectName: subject.name,
-                    mcqs: mcqs.map(m => ({ ...m, type: 'mcq' })),
-                    fillBlanks: fillBlanks.map(f => ({ ...f, type: 'fb' })),
-                    descriptives: descriptives.map(d => ({ ...d, type: 'desc' })),
+                    mcqs: options.sections.mcqs ? mcqs.map(m => ({ ...m, type: 'mcq' })) : [],
+                    fillBlanks: options.sections.fbs ? fillBlanks.map(f => ({ ...f, type: 'fb' })) : [],
+                    descriptives: options.sections.descs ? descriptives.map(d => ({ ...d, type: 'desc' })) : [],
+                    options: {
+                        includeAnswers: options.includeAnswers,
+                        includeExplanations: options.includeExplanations
+                    }
                 });
             }, {
-                loading: 'Preparing PDF...',
-                success: 'Download started!',
+                loading: 'Preparing PDF Study Guide...',
+                success: 'Study Guide generated successfully!',
                 error: 'Failed to generate PDF',
             });
         } catch (e) {
-            toast.error("PDF generation failed");
+            console.error(e);
+            toast.error("An unexpected error occurred during PDF generation.");
         }
     };
 
@@ -214,9 +230,11 @@ const UnitPage = () => {
                                 <div className="font-semibold text-sm">{unit?.title}</div>
                             </div>
 
-                            <Button variant="ghost" size="icon" onClick={handleDownloadPDF} className="rounded-full text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20" title="Download PDF">
-                                <FileDown className="w-5 h-5" />
-                            </Button>
+                            <PDFExportDialog
+                                onExport={handleDownloadPDF}
+                                isLoading={isLoading}
+                                unitTitle={unit?.title}
+                            />
 
                             <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-full">
                                 <Share2 className="w-5 h-5" />
@@ -384,5 +402,94 @@ const EmptyState = ({ icon: Icon, message }: { icon: any; message: string }) => 
         <p className="text-slate-500">{message}</p>
     </div>
 );
+
+// PDF Export Dialog Component
+const PDFExportDialog = ({ onExport, isLoading, unitTitle }: { onExport: any, isLoading: boolean, unitTitle?: string }) => {
+    const [includeAnswers, setIncludeAnswers] = useState(true);
+    const [includeExplanations, setIncludeExplanations] = useState(true);
+    const [sections, setSections] = useState({
+        mcqs: true,
+        fbs: true,
+        descs: true
+    });
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20" title="Download PDF">
+                    <FileDown className="w-5 h-5" />
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10">
+                <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                        <Sparkles className="w-5 h-5 text-purple-500" />
+                        Export Study Guide
+                    </DialogTitle>
+                    <DialogDescription>
+                        Customize your PDF guide for "{unitTitle}".
+                    </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-6 py-4">
+                    {/* Sections */}
+                    <div className="space-y-4">
+                        <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-200">Include Sections</h4>
+                        <div className="grid gap-3">
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="mcqs" className="cursor-pointer">Multiple Choice Questions</Label>
+                                <Switch id="mcqs" checked={sections.mcqs} onCheckedChange={(v) => setSections(s => ({ ...s, mcqs: v }))} />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="fbs" className="cursor-pointer">Fill in the Blanks</Label>
+                                <Switch id="fbs" checked={sections.fbs} onCheckedChange={(v) => setSections(s => ({ ...s, fbs: v }))} />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="descs" className="cursor-pointer">Descriptive Q&A</Label>
+                                <Switch id="descs" checked={sections.descs} onCheckedChange={(v) => setSections(s => ({ ...s, descs: v }))} />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="h-px bg-slate-200 dark:bg-white/10" />
+
+                    {/* Options */}
+                    <div className="space-y-4">
+                        <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-200">Options</h4>
+                        <div className="grid gap-3">
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="answers">Include Answer Key</Label>
+                                    <p className="text-[10px] text-slate-500">Show correct options/answers in the guide</p>
+                                </div>
+                                <Switch id="answers" checked={includeAnswers} onCheckedChange={setIncludeAnswers} />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="explanations">Include Diagrams & Notes</Label>
+                                    <p className="text-[10px] text-slate-500">Add detailed explanations where available</p>
+                                </div>
+                                <Switch id="explanations" checked={includeExplanations} onCheckedChange={setIncludeExplanations} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <DialogFooter className="sm:justify-between items-center">
+                    <div className="text-[10px] font-mono text-slate-400 hidden sm:block">
+                        FORMAT: PDF / SYNC: LIVE
+                    </div>
+                    <Button
+                        onClick={() => onExport({ includeAnswers, includeExplanations, sections })}
+                        disabled={isLoading || (!sections.mcqs && !sections.fbs && !sections.descs)}
+                        className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-none shadow-lg shadow-purple-500/20"
+                    >
+                        Generate PDF Guide
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+};
 
 export default UnitPage;

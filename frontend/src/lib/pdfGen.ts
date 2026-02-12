@@ -16,6 +16,10 @@ export interface PDFUnitData {
     mcqs: PDFQuestion[];
     fillBlanks: PDFQuestion[];
     descriptives: PDFQuestion[];
+    options?: {
+        includeAnswers: boolean;
+        includeExplanations: boolean;
+    }
 }
 
 export const generateUnitPDF = (data: PDFUnitData) => {
@@ -64,7 +68,7 @@ export const generateUnitPDF = (data: PDFUnitData) => {
     y += 15;
 
     const renderSection = (title: string, questions: PDFQuestion[]) => {
-        if (questions.length === 0) return;
+        if (!questions || questions.length === 0) return;
 
         checkPageBreak(20);
         doc.setFont("helvetica", "bold");
@@ -175,16 +179,18 @@ export const generateUnitPDF = (data: PDFUnitData) => {
                 });
             } else if (q.correctAnswer !== undefined) {
                 // MCQ or FB Correct Answer
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(10);
-                doc.setTextColor(34, 197, 94); // Green accent
-                const ansText = q.type === 'mcq'
-                    ? `Correct Option: ${String.fromCharCode(64 + (Number(q.correctAnswer) + 1))}`
-                    : `Answer: ${q.correctAnswer}`;
+                if (data.options?.includeAnswers) {
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(10);
+                    doc.setTextColor(34, 197, 94); // Green accent
+                    const ansText = q.type === 'mcq'
+                        ? `Correct Option: ${String.fromCharCode(64 + (Number(q.correctAnswer) + 1))}`
+                        : `Answer: ${q.correctAnswer}`;
 
-                checkPageBreak(10);
-                doc.text(ansText, margin, y);
-                y += 8;
+                    checkPageBreak(10);
+                    doc.text(ansText, margin, y);
+                    y += 8;
+                }
             } else if (typeof q.answer === 'string' && q.answer) {
                 // Simple string answer
                 doc.setFont("helvetica", "normal");
