@@ -1,0 +1,56 @@
+[
+    {
+        "question": "Explain personality types and factors influencing personality",
+        "answer": "### Introduction\nPersonality refers to the relatively stable set of characteristics that influence an individual’s behaviour and lend it consistency. It represents the dynamic organization of psycho-physical systems that determine how a person adjusts to the environment.\n\n### I. Personality Types (Five Personality Traits)\n1. **Neuroticism**: Tendency to experience negative emotions (anxiety, anger). High = unstable, Low = stable/calm.\n2. **Extraversion**: Sociability/assertiveness. Extroverts are outgoing; Introverts prefer solitude.\n3. **Openness to Experience**: Reflects imagination and curiosity.\n4. **Agreeableness**: Being cooperative and trusting.\n5. **Conscientiousness**: Self-discipline and responsibility.\n\n### II. Factors Influencing Personality\n1. **Heredity**: Genetic traits from parents (physical/basic emotional responses).\n2. **Environment**: Family, social groups, culture (e.g., Indian culture values).\n3. **Situation**: Behaviour varies in different contexts (e.g., park vs. office).",
+        "unit": "unit-ii",
+        "subject": "OB"
+    },
+    {
+        "question": "Explain the learning process and learning theories",
+        "answer": "### Introduction\nLearning is a relatively permanent change in behaviour resulting from experience.\n\n### I. Learning Process\n1. **Motive**: Internal drive.\n2. **Stimuli**: External triggers.\n3. **Response**: Reaction to stimuli.\n4. **Reinforcement**: Strengthening desired behavior.\n5. **Retention**: Remembering for future use.\n\n### II. Learning Theories\n1. **Classical Conditioning (Pavlov)**: Learning through association (e.g., Bell + Food = Salivation).\n2. **Cognitive Learning (Tolman)**: Focuses on mental processes like thinking and memory maps.",
+        "unit": "unit-ii",
+        "subject": "OB"
+    },
+    {
+        "question": "Explain perception and interpersonal perception with suitable examples",
+        "answer": "### I. Perception\nProcess of receiving, selecting, and interpreting sensory stimuli. \n*Example*: A student perceiving a professor as 'good' while another sees them as 'poor'.\n\n### II. Interpersonal Perception\nHow individuals interpret the behaviour of others. Influenced by errors:\n1. **Stereotyping**: Beliefs about groups.\n2. **Halo Effect**: Overall impression (e.g., one good task = efficient employee).\n3. **Projection**: Assuming others think like you.\n4. **Primacy Effect**: First impressions dominate.",
+        "unit": "unit-ii",
+        "subject": "OB"
+    },
+    {
+        "question": "Explain Emotional Intelligence and its theories",
+        "answer": "### Introduction\nAbility to manage one's own and others' emotions.\n\n### Components of Emotional Intelligence\n1. **Self-Awareness**: Recognizing own emotions.\n2. **Self-Regulation**: Controlling impulses.\n3. **Motivation**: Directing emotions toward goals.\n4. **Empathy**: Sharing feelings of others.\n5. **Social Skills**: Relationship management.",
+        "unit": "unit-ii",
+        "subject": "OB"
+    },
+    {
+        "question": "Explain emotions and emotional labour in organizations",
+        "answer": "### I. Emotions\nShort-lived feelings influencing behavior (e.g., happiness leads to enthusiasm).\n\n### II. Emotional Labour\nManaging emotions as part of the job.\n1. **Surface Acting**: Faking emotions (e.g., forced smile).\n2. **Deep Acting**: Genuine internal change to match expected display.",
+        "unit": "unit-ii",
+        "subject": "OB"
+    },
+    {
+        "question": "Explain attitudes, their components and formation",
+        "answer": "### Components (ABC Model)\n1. **Cognitive**: Beliefs (e.g., 'hard work = promotion').\n2. **Affective**: Feelings (e.g., 'I love my job').\n3. **Behavioral**: Intention (e.g., 'I will work harder').\n\n### Formation Factors\n* Family influence, Education, Social Environment, Peers, Workplace, Media.",
+        "unit": "unit-ii",
+        "subject": "OB"
+    },
+    {
+        "question": "Explain measurement of attitudes and values",
+        "answer": "### Attitude Measurement\n1. **Questionnaires**: Structured questions.\n2. **Interviews**: Deep insights.\n3. **Observation**: Inferring from behavior.\n4. **Rating Scales**: Likert, Semantic Differential, Thurstone.\n\n### Value Measurement\nAnalyzing beliefs and preferences. Relationship: Values shape attitudes, which influence behaviour.",
+        "unit": "unit-ii",
+        "subject": "OB"
+    },
+    {
+        "question": "Explain motivation and its effects on work behaviour",
+        "answer": "### Definition\nDerived from 'movere' (to move). Internal states driving behaviour toward goals.\n\n### Effects\n1. **Increased Productivity**: Harder work.\n2. **Job Satisfaction**: Fulfilling needs.\n3. **Quality**: Attention/commitment.\n4. **Reduced Absenteeism**: Loyalty to organization.",
+        "unit": "unit-ii",
+        "subject": "OB"
+    },
+    {
+        "question": "Explain organizational misbehaviour and management intervention",
+        "answer": "### Misbehaviour Types\nAbsenteeism, Indiscipline, Low Productivity.\n\n### Management Interventions\n1. **OB Mod**: Use of Positive/Negative reinforcement, Punishment, Extinction.\n2. **Counseling/Training**: Corrective support.",
+        "unit": "unit-ii",
+        "subject": "OB"
+    }
+]

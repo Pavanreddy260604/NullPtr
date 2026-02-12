@@ -19,6 +19,8 @@ import {
     getSubject,
     safeStorage,
 } from "@/lib/api";
+import { generateUnitPDF } from "@/lib/pdfGen";
+import { FileDown } from "lucide-react";
 
 const UnitPage = () => {
     const { unitId } = useParams<{ unitId: string }>();
@@ -77,6 +79,32 @@ const UnitPage = () => {
     const fillBlanks = data?.fillBlanks || [];
     const descriptives = data?.descriptives || [];
     const loading = isLoading;
+
+    const handleDownloadPDF = () => {
+        if (!unit || !subject) {
+            toast.error("Data not ready for export");
+            return;
+        }
+
+        try {
+            toast.promise(async () => {
+                generateUnitPDF({
+                    title: unit.title,
+                    unit: unit.unit,
+                    subjectName: subject.name,
+                    mcqs: mcqs.map(m => ({ ...m, type: 'mcq' })),
+                    fillBlanks: fillBlanks.map(f => ({ ...f, type: 'fb' })),
+                    descriptives: descriptives.map(d => ({ ...d, type: 'desc' })),
+                });
+            }, {
+                loading: 'Preparing PDF...',
+                success: 'Download started!',
+                error: 'Failed to generate PDF',
+            });
+        } catch (e) {
+            toast.error("PDF generation failed");
+        }
+    };
 
     const handleShare = async () => {
         if (navigator.share) {
@@ -185,6 +213,10 @@ const UnitPage = () => {
                                 <div className="text-xs text-slate-500">Unit {unit?.unit}</div>
                                 <div className="font-semibold text-sm">{unit?.title}</div>
                             </div>
+
+                            <Button variant="ghost" size="icon" onClick={handleDownloadPDF} className="rounded-full text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20" title="Download PDF">
+                                <FileDown className="w-5 h-5" />
+                            </Button>
 
                             <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-full">
                                 <Share2 className="w-5 h-5" />

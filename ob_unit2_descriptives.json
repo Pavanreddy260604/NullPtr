@@ -1,0 +1,376 @@
+{
+    "descriptives": [
+        {
+            "question": "1.c Explain personality types and factors influencing personality",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Personality Types and Factors Influencing Personality"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Introduction"
+                },
+                {
+                    "type": "text",
+                    "content": "Personality refers to the relatively stable set of characteristics that influence an individual’s behaviour and lend it consistency. It represents the dynamic organization of psycho-physical systems that determine how a person adjusts to the environment."
+                },
+                {
+                    "type": "heading",
+                    "content": "I. Personality Types (Five Personality Traits)"
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Neuroticism"
+                },
+                {
+                    "type": "text",
+                    "content": "Tendency to experience negative emotions (anxiety, anger). High = unstable; Low = calm/stable."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Extraversion"
+                },
+                {
+                    "type": "text",
+                    "content": "Characterized by sociability and assertiveness. Extroverts are outgoing; introverts are reserved."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Openness to Experience"
+                },
+                {
+                    "type": "text",
+                    "content": "Reflects imagination, creativity, and curiosity toward new ideas."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Agreeableness"
+                },
+                {
+                    "type": "text",
+                    "content": "Being cooperative and compassionate. Highly agreeable people are altruistic."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Conscientiousness"
+                },
+                {
+                    "type": "text",
+                    "content": "Indicates self-discipline and achievement orientation. Organized and goal-focused."
+                },
+                {
+                    "type": "code",
+                    "content": "          PERSONALITY TYPES\n                  |\n -------------------------------------------------\n |        |           |           |              |\nNeurotic Extraversion Openness  Agreeableness Conscientiousness"
+                },
+                {
+                    "type": "heading",
+                    "content": "II. Factors Influencing Personality"
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Heredity"
+                },
+                {
+                    "type": "text",
+                    "content": "Genetic traits inherited from parents (physical, temperament)."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Environment"
+                },
+                {
+                    "type": "text",
+                    "content": "Family, social groups, culture, and education (e.g., Indian culture values)."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Situation"
+                },
+                {
+                    "type": "text",
+                    "content": "Behaviour varies. For example, behaving differently in a park vs. an office interview."
+                },
+                {
+                    "type": "code",
+                    "content": "          PERSONALITY\n               |\n      -------------------------\n      |           |           |\n   Heredity   Environment   Situation"
+                }
+            ]
+        },
+        {
+            "question": "2.c Explain the learning process and learning theories",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Learning Process and Theories"
+                },
+                {
+                    "type": "text",
+                    "content": "Learning is a relatively permanent change in behaviour resulting from experience."
+                },
+                {
+                    "type": "subheading",
+                    "content": "I. Learning Process"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Motive: Internal drive.",
+                        "Stimuli: External triggers.",
+                        "Response: Reaction.",
+                        "Reinforcement: Strengthening behavior.",
+                        "Retention: Remembering for future use."
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "Motive → Stimuli → Response → Reinforcement → Retention"
+                },
+                {
+                    "type": "subheading",
+                    "content": "II. Learning Theories"
+                },
+                {
+                    "type": "text",
+                    "content": "1. Classical Conditioning (Pavlov): Learning via association (Bell + Food = Salivation)."
+                },
+                {
+                    "type": "text",
+                    "content": "2. Cognitive Learning (Tolman): Focuses on mental maps, thinking, and memory processes."
+                }
+            ]
+        },
+        {
+            "question": "3.c Explain perception and interpersonal perception with suitable examples",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Perception & Interpersonal Perception"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Perceptual Process"
+                },
+                {
+                    "type": "code",
+                    "content": "Stimuli → Selection → Organization → Interpretation → Checking → Reaction"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Interpersonal Perception Biases"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Stereotyping: Group beliefs.",
+                        "Halo Effect: Overall impression bias.",
+                        "Projection: Assuming others are like you.",
+                        "Primacy Effect: First impressions dominate."
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "Person A  →  Observation  →  Interpretation  →  Judgment of Person B"
+                }
+            ]
+        },
+        {
+            "question": "4.c Explain Emotional Intelligence and its theories",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Emotional Intelligence (EI)"
+                },
+                {
+                    "type": "text",
+                    "content": "EI refers to the ability to understand and manage emotions in oneself and others."
+                },
+                {
+                    "type": "subheading",
+                    "content": "Components (Theory) of EI"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Self-Awareness: Recognizing own moods.",
+                        "Self-Regulation: Controlling impulses.",
+                        "Motivation: Directing emotions toward goals.",
+                        "Empathy: Understanding others' feelings.",
+                        "Social Skills: Managing relationships."
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "           EMOTIONAL INTELLIGENCE\n                      |\n ------------------------------------------------\n |            |           |          |           |\nSelf-Awareness Self-Reg   Motivation Empathy  Social Skills"
+                }
+            ]
+        },
+        {
+            "question": "5.c Explain emotions and emotional labour in organizations",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Emotions and Emotional Labour"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Emotions"
+                },
+                {
+                    "type": "text",
+                    "content": "Short-lived feelings responses to situations (e.g., happiness, frustration)."
+                },
+                {
+                    "type": "subheading",
+                    "content": "Emotional Labour"
+                },
+                {
+                    "type": "text",
+                    "content": "Managing emotions as part of a job. Includes Surface Acting (faking display) and Deep Acting (trying to change internal feelings)."
+                },
+                {
+                    "type": "code",
+                    "content": "          EMOTIONS → EMOTIONAL LABOUR\n                         |\n                 -------------------\n                 |                 |\n            Surface Acting    Deep Acting"
+                }
+            ]
+        },
+        {
+            "question": "6.c Explain attitudes, their components and formation",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Attitudes"
+                },
+                {
+                    "type": "subheading",
+                    "content": "ABC Components"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Cognitive: Beliefs/Knowledge.",
+                        "Affective: Feelings/Emotions.",
+                        "Behavioral: Intention to act."
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "Attitude Formation"
+                },
+                {
+                    "type": "text",
+                    "content": "Formed through Family, Education, Society, Peer groups, Workplace, and Media."
+                },
+                {
+                    "type": "code",
+                    "content": "Family → Education → Peers → Workplace → ATTITUDE"
+                }
+            ]
+        },
+        {
+            "question": "7.c Explain measurement of attitudes and values",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Measurement of attitudes and values"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Attitude Measurement Methods"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Questionnaires & Interviews.",
+                        "Observation of behavior.",
+                        "Rating Scales (Likert, Semantic Differential, Thurstone)."
+                    ]
+                },
+                {
+                    "type": "subheading",
+                    "content": "Values"
+                },
+                {
+                    "type": "text",
+                    "content": "Basic beliefs about right/wrong. Types: Personal, Social, Moral, Work, Organizational."
+                },
+                {
+                    "type": "code",
+                    "content": "VALUES → ATTITUDES → BEHAVIOUR"
+                }
+            ]
+        },
+        {
+            "question": "8.c Explain motivation and its effects on work behaviour",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Motivation"
+                },
+                {
+                    "type": "text",
+                    "content": "Process energizing behavior toward goal achievement."
+                },
+                {
+                    "type": "subheading",
+                    "content": "Effects on Behavior"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Increased Productivity.",
+                        "Improved Job Satisfaction.",
+                        "Higher Work Quality.",
+                        "Reduced Absenteeism & Turnover."
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "Need → Drive → Behaviour → Goal Achievement → Satisfaction"
+                }
+            ]
+        },
+        {
+            "question": "9.c Explain organizational misbehaviour and management intervention",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Organizational Misbehaviour"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Types"
+                },
+                {
+                    "type": "text",
+                    "content": "Absenteeism, Indiscipline, and Low Productivity."
+                },
+                {
+                    "type": "subheading",
+                    "content": "Management Intervention"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Counseling & Training.",
+                        "Disciplinary Actions.",
+                        "OB Modification (Reinforcement, Punishment, Extinction)."
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "MISBEHAVIOUR → COUNSELING / OB MOD → IMPROVEMENT"
+                }
+            ]
+        }
+    ]
+}

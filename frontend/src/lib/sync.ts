@@ -62,18 +62,35 @@ export async function syncSubject(queryClient: QueryClient, subjectId: string) {
 /**
  * Prefetches the entire curriculum (All subjects and their contents)
  */
-export async function syncAll(queryClient: QueryClient, subjects: Subject[], onProgress?: (msg: string) => void) {
+export async function syncAll(
+    queryClient: QueryClient,
+    subjects: Subject[],
+    onProgress?: (progress: number, status: string) => void
+) {
     let successCount = 0;
+    const total = subjects.length;
 
-    for (let i = 0; i < subjects.length; i++) {
+    for (let i = 0; i < total; i++) {
         const subject = subjects[i];
-        if (onProgress) onProgress(`Syncing ${i + 1}/${subjects.length}: ${subject.name}...`);
+        const baseProgress = (i / total) * 100;
+
+        if (onProgress) {
+            onProgress(baseProgress, `Syncing: ${subject.name}...`);
+        }
 
         try {
             await syncSubject(queryClient, subject._id);
             successCount++;
+
+            // Increment progress slightly after success
+            if (onProgress) {
+                onProgress(((i + 1) / total) * 100, `Completed: ${subject.name}`);
+            }
         } catch (e) {
-            // Continue with next subject even if one fails
+            console.error(`Failed to sync ${subject.name}:`, e);
+            if (onProgress) {
+                onProgress(((i + 1) / total) * 100, `Failed: ${subject.name}`);
+            }
         }
     }
 

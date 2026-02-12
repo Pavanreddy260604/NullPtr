@@ -9,6 +9,7 @@ import { getSubjects, getSubject, getUnitsBySubject, Subject, safeStorage } from
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SecondSpaceDialog } from "@/components/SecondSpaceDialog";
 import { syncAll } from "@/lib/sync";
+import { SyncIndicator } from "@/components/SyncIndicator";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -58,8 +59,61 @@ const Index = () => {
     const [secretClicks, setSecretClicks] = useState(0);
     const [showSecretDialog, setShowSecretDialog] = useState(false);
 
-    const [isSyncing, setIsSyncing] = useState(false);
+    // --- Sync State ---
+    const [syncState, setSyncState] = useState({
+        isSyncing: false,
+        progress: 0,
+        status: "Idle",
+        isComplete: false,
+        isError: false
+    });
     const [isSynced, setIsSynced] = useState(() => !!safeStorage.getItem("full_sync_completed"));
+
+    // ... (rest of the logic)
+
+    const handleSync = async () => {
+        if (syncState.isSyncing) return;
+
+        setSyncState({
+            isSyncing: true,
+            progress: 0,
+            status: "Initializing download...",
+            isComplete: false,
+            isError: false
+        });
+
+        try {
+            const success = await syncAll(queryClient, subjects, (progress, status) => {
+                setSyncState(prev => ({ ...prev, progress, status }));
+            });
+
+            if (success) {
+                safeStorage.setItem("full_sync_completed", "true");
+                setIsSynced(true);
+                setSyncState(prev => ({
+                    ...prev,
+                    isSyncing: false,
+                    isComplete: true,
+                    progress: 100,
+                    status: "All content ready for offline use."
+                }));
+            } else {
+                setSyncState(prev => ({
+                    ...prev,
+                    isSyncing: false,
+                    isError: true,
+                    status: "Some subjects failed to download."
+                }));
+            }
+        } catch (e) {
+            setSyncState(prev => ({
+                ...prev,
+                isSyncing: false,
+                isError: true,
+                status: "Network error during sync."
+            }));
+        }
+    };
 
     // Animated typing effects
     const { displayedText: nullText, isComplete: nullComplete } = useTypingEffect("Null", 150, 500);
@@ -222,27 +276,11 @@ const Index = () => {
                                     variant="outline"
                                     size="sm"
                                     className="h-9 px-4 rounded-full bg-white/5 border-slate-200 dark:border-white/10 hover:bg-white/10 text-slate-600 dark:text-slate-400 gap-2 transition-all group"
-                                    onClick={async () => {
-                                        if (isSyncing) return;
-                                        setIsSyncing(true);
-                                        const toastId = toast.loading("Downloading curriculum for offline use...");
-                                        try {
-                                            await syncAll(queryClient, subjects, (msg) => {
-                                                toast.loading(msg, { id: toastId });
-                                            });
-                                            safeStorage.setItem("full_sync_completed", "true");
-                                            setIsSynced(true);
-                                            toast.success("Ready for Offline! All content downloaded.", { id: toastId });
-                                        } catch (e) {
-                                            toast.error("Download partial failure. Please check connection.", { id: toastId });
-                                        } finally {
-                                            setIsSyncing(false);
-                                        }
-                                    }}
-                                    disabled={isSyncing || loading}
+                                    onClick={handleSync}
+                                    disabled={syncState.isSyncing || loading}
                                 >
-                                    <CloudDownload className={cn("w-4 h-4", isSyncing && "animate-bounce")} />
-                                    <span>{isSyncing ? "Downloading..." : "Download for Offline"}</span>
+                                    <CloudDownload className={cn("w-4 h-4", syncState.isSyncing && "animate-bounce")} />
+                                    <span>{syncState.isSyncing ? "Downloading..." : "Download for Offline"}</span>
                                 </Button>
                             ) : (
                                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-xs font-mono text-green-500">
@@ -443,6 +481,15 @@ const Index = () => {
                     </div>
                 </footer>
             </div>
+
+            {/* Sync Indicator */}
+            <SyncIndicator
+                isSyncing={syncState.isSyncing}
+                progress={syncState.progress}
+                status={syncState.status}
+                isComplete={syncState.isComplete}
+                isError={syncState.isError}
+            />
 
             {/* Custom CSS for animations */}
             <style>{`

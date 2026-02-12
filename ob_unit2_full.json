@@ -1,0 +1,564 @@
+{
+    "descriptives": [
+        {
+            "question": "1.c Explain personality types and factors influencing personality",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Personality Types and Factors Influenceing Personality"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Introduction"
+                },
+                {
+                    "type": "text",
+                    "content": "Personality refers to the relatively stable set of characteristics that influence an individual’s behaviour and lend it consistency. It represents the dynamic organization of psycho-physical systems that determine how a person adjusts to the environment."
+                },
+                {
+                    "type": "heading",
+                    "content": "I. Personality Types (Five Personality Traits)"
+                },
+                {
+                    "type": "text",
+                    "content": "Unit–II explains personality types using the Five Personality Traits model:"
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Neuroticism"
+                },
+                {
+                    "type": "text",
+                    "content": "The tendency to experience negative emotions such as anxiety, anger, and depression. High neuroticism individuals are emotionally unstable and tense, while low neuroticism individuals are calm and emotionally stable."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Extraversion"
+                },
+                {
+                    "type": "text",
+                    "content": "Characterized by sociability, assertiveness, activity, and positive emotions. Extroverts are outgoing and energetic, while introverts are reserved and prefer solitude."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Openness to Experience"
+                },
+                {
+                    "type": "text",
+                    "content": "Reflects imagination, creativity, curiosity, and openness to new ideas and experiences. People high in openness show intellectual curiosity."
+                },
+                {
+                    "type": "subheading",
+                    "content": "4. Agreeableness"
+                },
+                {
+                    "type": "text",
+                    "content": "Refers to being cooperative, compassionate, trusting, and kind. Highly agreeable individuals are altruistic and sympathetic."
+                },
+                {
+                    "type": "subheading",
+                    "content": "5. Conscientiousness"
+                },
+                {
+                    "type": "text",
+                    "content": "Indicates self-discipline, responsibility, and achievement orientation. Highly conscientious people are organized and goal-focused."
+                },
+                {
+                    "type": "code",
+                    "content": "          PERSONALITY TYPES\n                  |\n -------------------------------------------------\n |        |           |           |              |\nNeurotic Extraversion Openness  Agreeableness Conscientiousness"
+                },
+                {
+                    "type": "heading",
+                    "content": "II. Factors Influencing Personality"
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Heredity"
+                },
+                {
+                    "type": "text",
+                    "content": "Genetic traits inherited from parents. Physical characteristics, temperament, and basic emotional responses are influenced by heredity."
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Environment"
+                },
+                {
+                    "type": "text",
+                    "content": "Includes family background, social groups, culture, and education. For example, Indian culture emphasizes family closeness and social values."
+                },
+                {
+                    "type": "subheading",
+                    "content": "3. Situation"
+                },
+                {
+                    "type": "text",
+                    "content": "Personality expression varies according to situations. An individual behaves differently in a park versus a job interview."
+                },
+                {
+                    "type": "code",
+                    "content": "          PERSONALITY\n               |\n      -------------------------\n      |           |           |\n   Heredity   Environment   Situation"
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "Personality is a stable pattern of behaviour shaped by heredity, environment, and situation. Understanding it helps organizations predict employee behaviour and manage individuals effectively."
+                }
+            ]
+        },
+        {
+            "question": "2.c Explain the learning process and learning theories",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "The Learning Process and Learning Theories"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Introduction"
+                },
+                {
+                    "type": "text",
+                    "content": "Learning is defined as any relatively permanent change in behaviour that occurs as a result of experience. In organizations, learning helps employees acquire knowledge and appropriate work behaviour."
+                },
+                {
+                    "type": "heading",
+                    "content": "I. Learning Process"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Motive: The internal drive or need that encourages learning.",
+                        "Stimuli: External objects, events, or situations that trigger learning.",
+                        "Response: Reaction or behaviour of the learner towards the stimuli.",
+                        "Reinforcement: Strengthening learning by encouraging desired behaviour.",
+                        "Retention: The ability to remember and retain what has been learned for future use."
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "Motive → Stimuli → Response → Reinforcement → Retention"
+                },
+                {
+                    "type": "heading",
+                    "content": "II. Learning Theories"
+                },
+                {
+                    "type": "subheading",
+                    "content": "1. Classical Conditioning Theory (Pavlov)"
+                },
+                {
+                    "type": "text",
+                    "content": "Explains learning as a process of forming an association between a stimulus and a response. Pavlov demonstrated this with a bell causing salivation in dogs."
+                },
+                {
+                    "type": "code",
+                    "content": "Food (US) → Salivation (UR)\nBell + Food → Salivation\nBell (CS) → Salivation (CR)"
+                },
+                {
+                    "type": "subheading",
+                    "content": "2. Cognitive Learning Theory (Tolman)"
+                },
+                {
+                    "type": "text",
+                    "content": "Focuses on mental processes like thinking, memory, and perception. Individuals form cognitive structures or mental maps based on experience."
+                },
+                {
+                    "type": "code",
+                    "content": "Experience → Thinking & Expectation → Learning → Behaviour"
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "Learning is a continuous process involving association (Classical) and mental expectation (Cognitive). Understanding this helps organizations improve employee performance."
+                }
+            ]
+        },
+        {
+            "question": "3.c Explain perception and interpersonal perception with suitable examples",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Perception and Interpersonal Perception"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Introduction"
+                },
+                {
+                    "type": "text",
+                    "content": "Perception is a key cognitive factor where people interpreted the same stimulus differently. It is the process of organizing sensory impressions to give meaning to the environment."
+                },
+                {
+                    "type": "subheading",
+                    "content": "Perceptual Process"
+                },
+                {
+                    "type": "code",
+                    "content": "Stimuli → Selection → Organization → Interpretation → Checking → Reaction"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Interpersonal Perception"
+                },
+                {
+                    "type": "text",
+                    "content": "How individuals perceive and interpret the behaviour, attitudes, and intentions of others. Influenced by errors like Stereotyping, Halo Effect, and Projection."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Example 1: A manager rating an employee efficient based on one good task (Halo Effect).",
+                        "Example 2: An interviewer judging a candidate on the first few minutes (Primacy Effect)."
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "Person A  →  Observation  →  Interpretation  →  Judgment of Person B"
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "Perception focuses on sensory info; Interpersonal perception focuses on others' behaviour. Recognizing biases helps managers reduce errors and improve communication."
+                }
+            ]
+        },
+        {
+            "question": "4.c Explain Emotional Intelligence and its theories",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Emotional Intelligence (EI)"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Introduction"
+                },
+                {
+                    "type": "text",
+                    "content": "Emotional Intelligence refers to the ability to understand and manage emotions—both one’s own and those of others. It plays a major role in relationships and performance at work."
+                },
+                {
+                    "type": "subheading",
+                    "content": "Components (Theory) of EI"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Self-Awareness: Recognizing one's own moods and their effects.",
+                        "Self-Regulation: Controlling or directing disruptive impulses.",
+                        "Motivation: Passion to work for reasons beyond money or status.",
+                        "Empathy: Understanding the emotional makeup of other people.",
+                        "Social Skills: Proficiency in managing relationships and building networks."
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "           EMOTIONAL INTELLIGENCE\n                      |\n ------------------------------------------------\n |            |           |          |           |\nSelf-Awareness Self-Reg   Motivation Empathy  Social Skills"
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "EI is crucial for effective leadership and teamwork. Understanding these five components helps employees perform effectively and maintain a healthy work environment."
+                }
+            ]
+        },
+        {
+            "question": "4.d Explain emotions and emotional labour in organizations",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Emotions and Emotional Labour"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Introduction"
+                },
+                {
+                    "type": "text",
+                    "content": "Emotions are short-term feelings that influence employee behaviour, attitudes, and performance. In many jobs, employees must manage these feelings—this is called Emotional Labour."
+                },
+                {
+                    "type": "heading",
+                    "content": "I. Emotions"
+                },
+                {
+                    "type": "text",
+                    "content": "Emotions affect decision-making and interpersonal relationships. Positive emotions improve motivation, while negative emotions may lead to stress."
+                },
+                {
+                    "type": "heading",
+                    "content": "II. Emotional Labour"
+                },
+                {
+                    "type": "text",
+                    "content": "Managing emotions as a job requirement. It occurs in two ways:"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Surface Acting: Faking or suppressing emotions (e.g., a customer service agent smiling while tired).",
+                        "Deep Acting: Changing internal feelings to genuinely show the required emotion (e.g., a teacher developing true patience)."
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "          EMOTIONS → EMOTIONAL LABOUR\n                         |\n                 -------------------\n                 |                 |\n            Surface Acting    Deep Acting"
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "Understanding emotions and emotional labour helps organizations improve customer interaction and overall employee effectiveness."
+                }
+            ]
+        },
+        {
+            "question": "5.c Explain attitudes, their components and formation",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Attitudes, Their Components and Formation"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Introduction"
+                },
+                {
+                    "type": "text",
+                    "content": "Attitude is a learned tendency to respond positively or negatively toward an object, person, or situation. It strongly influences employee performance."
+                },
+                {
+                    "type": "heading",
+                    "content": "I. Components of Attitude (ABC Model)"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Cognitive: Beliefs, opinions, and knowledge (e.g., 'hard work leads to promotion').",
+                        "Affective: Feelings and emotions (e.g., 'I am happy with my boss').",
+                        "Behavioral: Intention to act in a certain way (e.g., 'I will work harder')."
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "Cognitive (Beliefs) + Affective (Feelings) = Behavioral (Action)"
+                },
+                {
+                    "type": "heading",
+                    "content": "II. Formation of Attitudes"
+                },
+                {
+                    "type": "text",
+                    "content": "Attitudes are formed through learning from:"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Family influence and values.",
+                        "Education and knowledge development.",
+                        "Social environment and cultural norms.",
+                        "Peer groups and shared experiences.",
+                        "Workplace experiences (leadership, rewards).",
+                        "Mass media and community opinion."
+                    ]
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "Understanding how attitudes are formed and the interaction of their ABC components helps managers predict and influence employee behaviour."
+                }
+            ]
+        },
+        {
+            "question": "5.d Explain measurement of attitudes and values",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Measurement of Attitudes and Values"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Introduction"
+                },
+                {
+                    "type": "text",
+                    "content": "In Organizational Behaviour, attitudes and values strongly influence performance. Therefore, it is important for managers to measure them."
+                },
+                {
+                    "type": "heading",
+                    "content": "I. Measurement of Attitudes"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Questionnaires: Structured feelings and opinions surveys.",
+                        "Interviews: Deep insights through direct conversation.",
+                        "Observation: Studying employee behaviour in situations.",
+                        "Rating Scales: Likert Scale, Semantic Differential Scale, Thurstone Scale."
+                    ]
+                },
+                {
+                    "type": "heading",
+                    "content": "II. Values"
+                },
+                {
+                    "type": "text",
+                    "content": "Values are deep beliefs about right/wrong. They guide attitudes and decisions."
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Personal Values",
+                        "Social Values",
+                        "Moral Values",
+                        "Work Values",
+                        "Organizational Values"
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "VALUES → ATTITUDES → BEHAVIOUR"
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "Measuring attitudes and values helps managers understand employee drivers and improve organizational effectiveness."
+                }
+            ]
+        },
+        {
+            "question": "6.c Explain motivation and its effects on work behaviour",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Motivation and its Effects on Work Behaviour"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Introduction"
+                },
+                {
+                    "type": "text",
+                    "content": "The word motivation comes from the Latin 'movere' (to move). It is the state within a person that drives behaviour toward goals."
+                },
+                {
+                    "type": "heading",
+                    "content": "I. Motivation Process"
+                },
+                {
+                    "type": "code",
+                    "content": "Need → Drive → Behaviour → Goal Achievement → Satisfaction"
+                },
+                {
+                    "type": "heading",
+                    "content": "II. Effects on Work Behaviour"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Increased Productivity: Harder and more efficient work.",
+                        "Improved Job Satisfaction: Fulfillment of employee needs.",
+                        "Better Quality: Greater commitment and accuracy.",
+                        "Reduced Absenteeism: Loyalty to the organization."
+                    ]
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "Motivation is an internal force that activates behaviour. It is crucial for high performance and employee commitment."
+                }
+            ]
+        },
+        {
+            "question": "6.d Explain organizational misbehaviour and management intervention",
+            "topic": "Organizational Behaviour",
+            "answer": [
+                {
+                    "type": "heading",
+                    "content": "Organizational Misbehaviour and Management Intervention"
+                },
+                {
+                    "type": "subheading",
+                    "content": "Introduction"
+                },
+                {
+                    "type": "text",
+                    "content": "Misbehaviour refers to actions that deviate from rules and norms, affecting productivity and discipline."
+                },
+                {
+                    "type": "heading",
+                    "content": "I. Types of Misbehaviour"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Absenteeism",
+                        "Indiscipline",
+                        "Low Productivity"
+                    ]
+                },
+                {
+                    "type": "heading",
+                    "content": "II. Management Intervention (OB Mod)"
+                },
+                {
+                    "type": "text",
+                    "content": "Systematic use of reinforcement to improve behaviour:"
+                },
+                {
+                    "type": "list",
+                    "items": [
+                        "Positive Reinforcement: Rewarding good behavior.",
+                        "Negative Reinforcement: Removing unpleasant conditions.",
+                        "Punishment: Penalties for bad behavior.",
+                        "Extinction: Withholding rewards to stop behavior."
+                    ]
+                },
+                {
+                    "type": "code",
+                    "content": "MISBEHAVIOUR → COUNSELING / TRAINING / OB MOD → IMPROVEMENT"
+                },
+                {
+                    "type": "heading",
+                    "content": "Conclusion"
+                },
+                {
+                    "type": "text",
+                    "content": "Through proper intervention, managers can correct deviant behavior and restore organizational effectiveness."
+                }
+            ]
+        }
+    ]
+}
