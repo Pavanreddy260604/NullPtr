@@ -10,7 +10,6 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { SecondSpaceDialog } from "@/components/SecondSpaceDialog";
 import { syncAll } from "@/lib/sync";
 import { SyncIndicator } from "@/components/SyncIndicator";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 // Typing animation hook

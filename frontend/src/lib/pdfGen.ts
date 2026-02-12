@@ -26,11 +26,11 @@ export interface PDFUnitData {
 const COLORS = {
     PRIMARY: [79, 70, 229],    // Indigo (Focus & Authority)
     SECONDARY: [124, 58, 237], // Purple (Creativity)
-    TEXT: [30, 41, 59],       // Slate 800 (Contrast)
-    MUTED: [100, 116, 139],    // Slate 500 (Cleanliness)
-    ACCENT: [16, 185, 129],    // Emerald (Success/Correct)
-    BG_CARD: [248, 250, 252],  // Slate 50 (Chunking Background)
-    BORDER: [226, 232, 240],   // Slate 200 (Subtle Separation)
+    TEXT: [15, 23, 42],       // Slate 900 (Deep Contrast)
+    MUTED: [71, 85, 105],     // Slate 600 (Clear Labels)
+    ACCENT: [5, 150, 105],    // Emerald 600 (Stronger Correct)
+    BG_CARD: [241, 245, 249],  // Slate 100 (Visible Chunking)
+    BORDER: [51, 65, 85],     // Slate 700 (Dark/Strong Dividers)
 };
 
 export const generateUnitPDF = (data: PDFUnitData) => {
@@ -130,59 +130,43 @@ export const generateUnitPDF = (data: PDFUnitData) => {
 
         checkPageBreak(30);
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(18);
+        doc.setFontSize(20);
         doc.setTextColor(...(COLORS.PRIMARY as [number, number, number]));
 
         // --- Section Title ---
-        doc.text(`${icon} ${title.toUpperCase()}`, margin, y);
+        doc.text(`${icon} ${title}`, margin, y);
         y += 4;
         doc.setDrawColor(...(COLORS.PRIMARY as [number, number, number]));
-        doc.setLineWidth(1);
-        doc.line(margin, y, margin + 25, y);
-        y += 12;
+        doc.setLineWidth(1.5);
+        doc.line(margin, y, margin + 40, y);
+        y += 15;
 
         questions.forEach((q, idx) => {
-            // 1. Calculate Question Height
+            // Calculate Question Height
             doc.setFont("helvetica", "bold");
-            doc.setFontSize(10);
-            const qLines = doc.splitTextToSize(`${q.question}`, contentWidth - 25);
-            const qHeaderHeight = (qLines.length * 5) + 12;
+            doc.setFontSize(11);
+            const qLines = doc.splitTextToSize(`${idx + 1}. ${q.question}`, contentWidth - 10);
+            const qBlockHeight = (qLines.length * 7) + 8;
 
-            // 2. Check Page Break
-            checkPageBreak(qHeaderHeight + 20); // Minimum space for Header + Start of Answer
+            checkPageBreak(qBlockHeight + 20);
 
-            const cardStartY = y;
+            const startY = y;
 
-            // --- Question Header Box (Instructional Contrast) ---
-            doc.setFillColor(...(COLORS.PRIMARY as [number, number, number]));
-            doc.rect(margin, y, contentWidth, qHeaderHeight, 'F');
+            // --- Question Block (Aesthetic Shading) ---
+            doc.setFillColor(...(COLORS.BG_CARD as [number, number, number]));
+            doc.rect(margin, y, contentWidth, qBlockHeight, 'F');
 
-            // Q-Badge
-            doc.setFillColor(255, 255, 255);
-            doc.rect(margin + 4, y + 4, 8, 8, 'F');
-            doc.setFontSize(8);
-            doc.setTextColor(...(COLORS.PRIMARY as [number, number, number]));
-            doc.text("Q", margin + 6, y + 9.5);
+            doc.setTextColor(...(COLORS.TEXT as [number, number, number]));
+            doc.text(qLines, margin + 5, y + 8);
+            y += qBlockHeight + 6;
 
-            // Question Text (White for high contrast)
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(10);
-            doc.setTextColor(255, 255, 255);
-            doc.text(qLines, margin + 16, y + 9);
-
-            y += qHeaderHeight;
-
-            // --- Answer Area ---
-            const answerAreaStartY = y;
-            y += 8; // Padding top
-
-            // Optional Topic (Mini-badge)
+            // Optional Topic
             if (q.topic) {
                 doc.setFont("helvetica", "bold");
-                doc.setFontSize(7);
+                doc.setFontSize(8);
                 doc.setTextColor(...(COLORS.MUTED as [number, number, number]));
                 doc.text(`SUBJECT TOPIC: ${q.topic.toUpperCase()}`, margin + 5, y);
-                y += 6;
+                y += 8;
             }
 
             // Options (for MCQs)
@@ -196,20 +180,11 @@ export const generateUnitPDF = (data: PDFUnitData) => {
                     doc.text(`${char}) ${opt}`, margin + 10, y);
                     y += 6;
                 });
-                y += 4;
+                y += 6;
             }
 
-            // Answer Content (Block-elements / Specific Answers)
-            const renderAnswerBadge = () => {
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(8);
-                doc.setTextColor(...(COLORS.ACCENT as [number, number, number]));
-                doc.text("EXPLANATION / ANSWER:", margin + 5, y);
-                y += 6;
-            };
-
+            // Answer Content
             if (q.answer && Array.isArray(q.answer)) {
-                renderAnswerBadge();
                 q.answer.forEach(block => {
                     doc.setFont("helvetica", "normal");
 
@@ -217,28 +192,28 @@ export const generateUnitPDF = (data: PDFUnitData) => {
                         case 'heading':
                             y += 2;
                             doc.setFont("helvetica", "bold");
-                            doc.setFontSize(10);
+                            doc.setFontSize(11);
                             doc.setTextColor(...(COLORS.PRIMARY as [number, number, number]));
                             checkPageBreak(10);
                             doc.text(block.content, margin + 5, y);
-                            y += 6;
+                            y += 8;
                             break;
                         case 'subheading':
                             doc.setFont("helvetica", "bold");
-                            doc.setFontSize(9);
+                            doc.setFontSize(10);
                             doc.setTextColor(...(COLORS.SECONDARY as [number, number, number]));
                             checkPageBreak(8);
                             doc.text(block.content, margin + 5, y);
-                            y += 5;
+                            y += 6;
                             break;
                         case 'text':
                             doc.setFont("helvetica", "normal");
                             doc.setFontSize(10);
                             doc.setTextColor(...(COLORS.TEXT as [number, number, number]));
                             const textLines = doc.splitTextToSize(block.content, contentWidth - 10);
-                            checkPageBreak(textLines.length * 5.5 + 4);
+                            checkPageBreak(textLines.length * 6 + 4);
                             doc.text(textLines, margin + 5, y);
-                            y += (textLines.length * 5.5) + 3;
+                            y += (textLines.length * 6) + 4;
                             break;
                         case 'list':
                             doc.setFont("helvetica", "normal");
@@ -246,18 +221,18 @@ export const generateUnitPDF = (data: PDFUnitData) => {
                             doc.setTextColor(...(COLORS.TEXT as [number, number, number]));
                             block.items.forEach((item: string) => {
                                 const itemLines = doc.splitTextToSize(`• ${item}`, contentWidth - 15);
-                                checkPageBreak(itemLines.length * 5.5 + 2);
+                                checkPageBreak(itemLines.length * 6 + 2);
                                 doc.text(itemLines, margin + 10, y);
-                                y += (itemLines.length * 5.5);
+                                y += (itemLines.length * 6);
                             });
-                            y += 3;
+                            y += 4;
                             break;
                         case 'code':
                             doc.setFont("courier", "normal");
                             doc.setFontSize(9);
                             doc.setTextColor(...(COLORS.TEXT as [number, number, number]));
                             const codeLines = block.content.split('\n');
-                            const boxHeight = (codeLines.length * 4.5) + 6;
+                            const boxHeight = (codeLines.length * 5) + 6;
                             checkPageBreak(boxHeight + 5);
 
                             doc.setFillColor(...(COLORS.BG_CARD as [number, number, number]));
@@ -266,7 +241,7 @@ export const generateUnitPDF = (data: PDFUnitData) => {
 
                             codeLines.forEach((line: string) => {
                                 doc.text(line, margin + 9, y);
-                                y += 4.5;
+                                y += 5;
                             });
                             y += 6;
                             break;
@@ -277,31 +252,28 @@ export const generateUnitPDF = (data: PDFUnitData) => {
                 doc.setFontSize(10);
                 doc.setTextColor(...(COLORS.ACCENT as [number, number, number]));
                 const ansText = q.type === 'mcq'
-                    ? `✔ CORRECT OPTION: ${String.fromCharCode(64 + (Number(q.correctAnswer) + 1))}`
-                    : `✔ CORRECT ANSWER: ${q.correctAnswer}`;
+                    ? `✔ Correct Option: ${String.fromCharCode(64 + (Number(q.correctAnswer) + 1))}`
+                    : `✔ Correct Answer: ${q.correctAnswer}`;
 
                 checkPageBreak(10);
                 doc.text(ansText, margin + 5, y);
-                y += 8;
+                y += 10;
             } else if (typeof q.answer === 'string' && q.answer) {
-                renderAnswerBadge();
                 doc.setFont("helvetica", "normal");
                 doc.setFontSize(10);
                 doc.setTextColor(...(COLORS.TEXT as [number, number, number]));
-                const ansLines = doc.splitTextToSize(q.answer, contentWidth - 10);
-                checkPageBreak(ansLines.length * 5.5 + 5);
+                const ansLines = doc.splitTextToSize(`Ans: ${q.answer}`, contentWidth - 10);
+                checkPageBreak(ansLines.length * 6 + 5);
                 doc.text(ansLines, margin + 5, y);
-                y += (ansLines.length * 5.5) + 4;
+                y += (ansLines.length * 6) + 6;
             }
 
-            const cardEndY = y;
-
-            // --- Draw Learning Card Border (Absolute Separation) ---
+            // --- Dark Divider (High Contrast Separation) ---
+            y += 4;
             doc.setDrawColor(...(COLORS.BORDER as [number, number, number]));
-            doc.setLineWidth(0.5);
-            doc.rect(margin, cardStartY, contentWidth, cardEndY - cardStartY, 'D');
-
-            y += 12; // Gap between cards
+            doc.setLineWidth(0.8);
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 15;
         });
 
         y += 10;

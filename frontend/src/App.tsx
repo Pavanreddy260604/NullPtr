@@ -10,6 +10,7 @@ import { get, set, del } from 'idb-keyval';
 import Index from "./pages/Index";
 import SubjectPage from "./pages/SubjectPage";
 import UnitPage from "./pages/UnitPage";
+import DevTest from "./pages/DevTest";
 import NotFound from "./pages/NotFound";
 import { InstallPWA } from "@/components/InstallPWA";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
@@ -118,6 +119,7 @@ const AppContent = () => (
         <Route path="/" element={<Index />} />
         <Route path="/subjects/:subjectId" element={<SubjectPage />} />
         <Route path="/units/:unitId" element={<UnitPage />} />
+        <Route path="/dev/test-pdf" element={<DevTest />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
