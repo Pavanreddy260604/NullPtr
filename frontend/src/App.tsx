@@ -93,7 +93,7 @@ const persister = {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24 * 7, // 7 days (Matches PWA cache)
+      gcTime: 1000 * 60 * 60 * 24 * 30, // 30 days (Long-term offline support)
       staleTime: 1000 * 60 * 60 * 2,   // 2 hours
       retry: storageAllowed ? 3 : 1,   // Less retries if offline/restricted
     },
@@ -127,7 +127,7 @@ const App = () => (
     {storageAllowed ? (
       <PersistQueryClientProvider
         client={queryClient}
-        persistOptions={{ persister, maxAge: 1000 * 60 * 60 * 24 * 7 }}
+        persistOptions={{ persister, maxAge: 1000 * 60 * 60 * 24 * 30 }}
       >
         <AppContent />
       </PersistQueryClientProvider>

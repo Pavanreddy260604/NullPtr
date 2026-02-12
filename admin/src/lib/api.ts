@@ -19,7 +19,7 @@ api.interceptors.request.use((config) => {
       const user = JSON.parse(storedUser);
       // If user is 'private' (Admin), inject the master key
       if (user.role === 'private') {
-        config.headers['x-second-space-secret'] = 'nullptr_secret_123';
+        config.headers['x-second-space-secret'] = import.meta.env.VITE_SECOND_SPACE_SECRET || 'nullptr_secret_123';
       }
     } catch (e) {
       console.error("Error parsing admin_user", e);

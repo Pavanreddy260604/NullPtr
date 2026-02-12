@@ -59,6 +59,7 @@ const Index = () => {
     const [showSecretDialog, setShowSecretDialog] = useState(false);
 
     const [isSyncing, setIsSyncing] = useState(false);
+    const [isSynced, setIsSynced] = useState(() => !!safeStorage.getItem("full_sync_completed"));
 
     // Animated typing effects
     const { displayedText: nullText, isComplete: nullComplete } = useTypingEffect("Null", 150, 500);
@@ -215,31 +216,40 @@ const Index = () => {
                                 <span className="w-2 h-4 bg-green-500 animate-pulse ml-1"></span>
                             </div>
 
-                            {/* Sync All Button */}
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-9 px-4 rounded-full bg-white/5 border-slate-200 dark:border-white/10 hover:bg-white/10 text-slate-600 dark:text-slate-400 gap-2 transition-all group"
-                                onClick={async () => {
-                                    if (isSyncing) return;
-                                    setIsSyncing(true);
-                                    const toastId = toast.loading("Starting Full Curriculum Sync...");
-                                    try {
-                                        await syncAll(queryClient, subjects, (msg) => {
-                                            toast.loading(msg, { id: toastId });
-                                        });
-                                        toast.success("Offline Sync Complete! You can now study without internet.", { id: toastId });
-                                    } catch (e) {
-                                        toast.error("Sync partial failure. Please check connection.", { id: toastId });
-                                    } finally {
-                                        setIsSyncing(false);
-                                    }
-                                }}
-                                disabled={isSyncing || loading}
-                            >
-                                <CloudDownload className={cn("w-4 h-4", isSyncing && "animate-bounce")} />
-                                <span>{isSyncing ? "Syncing..." : "Download Everything"}</span>
-                            </Button>
+                            {/* Sync All Button / Success Badge */}
+                            {!isSynced ? (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-9 px-4 rounded-full bg-white/5 border-slate-200 dark:border-white/10 hover:bg-white/10 text-slate-600 dark:text-slate-400 gap-2 transition-all group"
+                                    onClick={async () => {
+                                        if (isSyncing) return;
+                                        setIsSyncing(true);
+                                        const toastId = toast.loading("Downloading curriculum for offline use...");
+                                        try {
+                                            await syncAll(queryClient, subjects, (msg) => {
+                                                toast.loading(msg, { id: toastId });
+                                            });
+                                            safeStorage.setItem("full_sync_completed", "true");
+                                            setIsSynced(true);
+                                            toast.success("Ready for Offline! All content downloaded.", { id: toastId });
+                                        } catch (e) {
+                                            toast.error("Download partial failure. Please check connection.", { id: toastId });
+                                        } finally {
+                                            setIsSyncing(false);
+                                        }
+                                    }}
+                                    disabled={isSyncing || loading}
+                                >
+                                    <CloudDownload className={cn("w-4 h-4", isSyncing && "animate-bounce")} />
+                                    <span>{isSyncing ? "Downloading..." : "Download for Offline"}</span>
+                                </Button>
+                            ) : (
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-xs font-mono text-green-500">
+                                    <Zap className="w-3 h-3" />
+                                    <span>OFFLINE READY</span>
+                                </div>
+                            )}
                         </div>
 
                         {/* Animated Title */}

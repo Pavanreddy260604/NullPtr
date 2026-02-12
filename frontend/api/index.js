@@ -42,151 +42,178 @@ const getModel = (name) =>
 /* 🚀 3. Monolithic Handler                           */
 /* -------------------------------------------------- */
 export default async function handler(req, res) {
-    // CORS Headers for cross-origin requests
+    // CORS Headers
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-second-space-secret");
 
-    // Handle preflight
-    if (req.method === "OPTIONS") {
-        return res.status(204).end();
-    }
-
-    if (req.method !== "GET" && req.method !== "POST") {
-        return res.status(405).json({ message: "Method Not Allowed" });
-    }
+    if (req.method === "OPTIONS") return res.status(204).end();
 
     try {
         await connectDB();
 
-        // Safe URL Parsing
+        // 1. URL PARSING & ROUTE NORMALIZATION
         const parts = req.url.split("?")[0].split("/").filter(Boolean);
         const apiIndex = parts.indexOf("api");
         const rootIndex = apiIndex === -1 ? 0 : apiIndex + 1;
-        const resource = parts[rootIndex];
 
-        // 🔒 SECURE PIN VERIFICATION
-        if (req.method === "POST" && resource === "verify-pin") {
-            const { pin } = req.body;
-            const SERVER_PIN = process.env.SECOND_SPACE_PIN || "2606";
-            const SERVER_SECRET = process.env.SECOND_SPACE_SECRET || "nullptr_secret_123";
+        // Legacy Support: Admin panel uses "/question/mcq/..." 
+        // We normalize this so "question" becomes the root and "mcq" becomes subResource
+        let resource = parts[rootIndex];
+        let subResource = parts[rootIndex + 1];
+        let param = parts[rootIndex + 2];
+        let param2 = parts[rootIndex + 3];
 
-            if (pin === SERVER_PIN) {
-                return res.status(200).json({ secret: SERVER_SECRET });
-            } else {
-                return res.status(401).json({ message: "Invalid PIN" });
-            }
+        if (resource === "question") {
+            resource = subResource; // mcq, fillblank, descriptive
+            subResource = param;    // unit, bulk, or ID
+            param = param2;         // the actual ID
         }
 
-        if (req.method !== "GET") {
-            return res.status(405).json({ message: "Only GET allowed for data" });
-        }
+        // Normalize pluralization for mapping
+        // Frontend uses "/subjects", Admin uses "/subject"
+        const normalize = (r) => {
+            if (r === "subject") return "subjects";
+            if (r === "unit") return "units";
+            return r;
+        };
+        const normalizedResource = normalize(resource);
 
-
-        // Debug logging
-        console.log("Request URL:", req.url);
-        console.log("Parsed parts:", parts);
-
-        const subResource = parts[rootIndex + 1]; // e.g., "subject" OR specific ID
-        const param = parts[rootIndex + 2];       // e.g., ID if subResource was "subject"
-
-        console.log("Routing -> resource:", resource, "subResource:", subResource, "param:", param);
-
-        const isValidId = (id) => id && mongoose.Types.ObjectId.isValid(id);
-        let data = null;
-
-        // Collection name mapping (API resource -> MongoDB collection)
-        // Mongoose auto-pluralizes: MCQ -> mcqs, FillBlank -> fillblanks, Descriptive -> descriptives
+        // Map to collection names
         const collectionMap = {
+            subjects: "subjects",
+            units: "units",
             mcq: "mcqs",
             fillblank: "fillblanks",
-            descriptive: "descriptives", // FIXED: Was "descriptive", should be "descriptives"
+            descriptive: "descriptives",
         };
 
-        /* --- ROUTING --- */
+        const collectionName = collectionMap[normalizedResource];
+        const secret = req.headers['x-second-space-secret'];
+        const SERVER_SECRET = process.env.SECOND_SPACE_SECRET || 'nullptr_secret_123';
+        const isAdmin = secret === SERVER_SECRET;
 
-        // 1. SUBJECTS ROUTES
-        if (resource === "subjects") {
-            if (!subResource) {
-                // List all subjects
-                console.log("Fetching all subjects...");
+        const isValidId = (id) => id && mongoose.Types.ObjectId.isValid(id);
+        const toId = (id) => new mongoose.Types.ObjectId(id);
 
-                const secret = req.headers['x-second-space-secret'];
-                const SERVER_SECRET = process.env.SECOND_SPACE_SECRET || 'nullptr_secret_123';
+        // 🔒 AUTH GUARD: Only GET and verify-pin allowed without secret
+        if (req.method !== "GET" && resource !== "verify-pin" && !isAdmin) {
+            return res.status(403).json({ message: "Admin secret required for mutations" });
+        }
 
+        /* -------------------------------------------------- */
+        /* 🛠️ A. AUTH & UTILITY ROUTES                       */
+        /* -------------------------------------------------- */
+        if (resource === "verify-pin" && req.method === "POST") {
+            const { pin } = req.body;
+            if (pin === (process.env.SECOND_SPACE_PIN || "2606")) {
+                return res.status(200).json({ secret: SERVER_SECRET });
+            }
+            return res.status(401).json({ message: "Invalid PIN" });
+        }
+
+        /* -------------------------------------------------- */
+        /* 📚 B. DATA ROUTES (CRUD)                          */
+        /* -------------------------------------------------- */
+        if (!collectionName) {
+            return res.status(404).json({ message: "Resource not found", resource });
+        }
+
+        const Model = getModel(collectionName);
+
+        // 1. GET (Read)
+        if (req.method === "GET") {
+            let data = null;
+
+            if (!subResource || subResource === "all") {
+                // List all (Apply visibility filter for non-admin on subjects)
                 let query = {};
-                // Filter if missing secret
-                if (secret !== SERVER_SECRET) {
-                    query = {
-                        $or: [
-                            { visibility: 'public' },
-                            { visibility: { $exists: false } }, // Legacy docs
-                            { visibility: null }
-                        ]
-                    };
+                if (normalizedResource === "subjects" && !isAdmin) {
+                    query = { $or: [{ visibility: 'public' }, { visibility: { $exists: false } }, { visibility: null }] };
                 }
-
-                data = await getModel("subjects").find(query).lean();
+                data = await Model.find(query).lean();
+            } else if (subResource === "subject" || subResource === "unit") {
+                // Filtered List (e.g. /units/subject/ID or /mcq/unit/ID)
+                const queryKey = subResource === "subject" ? "subjectId" : "unitId";
+                if (!isValidId(param)) return res.status(400).json({ message: "Invalid ID param" });
+                data = await Model.find({ [queryKey]: toId(param) }).lean();
             } else if (isValidId(subResource)) {
-                // Get single subject by ID
-                console.log("Fetching subject by ID:", subResource);
-                data = await getModel("subjects").findById(subResource).lean();
+                // Single Item
+                data = await Model.findById(subResource).lean();
             }
+
+            if (!data) return res.status(404).json({ message: "Data not found" });
+
+            // Caching
+            res.setHeader("Vary", "x-second-space-secret");
+            res.setHeader("Cache-Control", isAdmin ? "private, no-cache" : "public, s-maxage=60, stale-while-revalidate=300");
+            return res.status(200).json(data);
         }
 
-        // 2. UNITS ROUTES
-        else if (resource === "units") {
-            if (subResource === "subject" && isValidId(param)) {
-                // Get units by Subject ID
-                console.log("Fetching units for subject:", param);
-                data = await getModel("units").find({ subjectId: new mongoose.Types.ObjectId(param) }).lean();
-            } else if (isValidId(subResource)) {
-                // Get single unit by ID
-                console.log("Fetching unit by ID:", subResource);
-                data = await getModel("units").findById(subResource).lean();
+        // 2. POST (Create)
+        if (req.method === "POST") {
+            if (subResource === "bulk") {
+                // Bulk operations (Admin panel uses these)
+                const { mcqs, fillBlanks, descriptives, unitId, subjectId } = req.body;
+                const items = mcqs || fillBlanks || descriptives;
+                if (!items || !Array.isArray(items)) return res.status(400).json({ message: "Invalid bulk data" });
+
+                const docs = items.map(item => ({ ...item, unitId: toId(unitId), subjectId: toId(subjectId) }));
+                await Model.insertMany(docs);
+                await incrementSubjectVersion(subjectId);
+                return res.status(201).json({ message: "Bulk insert success" });
             }
+
+            const doc = await Model.create(req.body);
+            if (req.body.subjectId) await incrementSubjectVersion(req.body.subjectId);
+            return res.status(201).json(doc);
         }
 
-        // 3. QUESTIONS ROUTES (MCQ, FillBlank, Descriptive)
-        else if (collectionMap[resource]) {
-            const collectionName = collectionMap[resource];
+        // 3. PUT (Update)
+        if (req.method === "PUT") {
+            if (!isValidId(subResource)) return res.status(400).json({ message: "Valid ID required for update" });
+            const doc = await Model.findByIdAndUpdate(subResource, req.body, { new: true });
+            if (doc?.subjectId) await incrementSubjectVersion(doc.subjectId);
+            else if (normalizedResource === "subjects") await incrementSubjectVersion(subResource);
+            return res.status(200).json(doc);
+        }
 
-            if (subResource === "unit" && isValidId(param)) {
-                console.log("Fetching", collectionName, "for unit:", param);
-                data = await getModel(collectionName).find({ unitId: new mongoose.Types.ObjectId(param) }).lean();
-            } else if (isValidId(subResource)) {
-                console.log("Fetching", collectionName, "by ID:", subResource);
-                data = await getModel(collectionName).findById(subResource).lean();
+        // 4. DELETE
+        if (req.method === "DELETE") {
+            let deletedId = subResource;
+            if (subResource === "bulk") {
+                const { ids } = req.body;
+                const firstItem = await Model.findById(ids[0]);
+                const sId = firstItem?.subjectId;
+                await Model.deleteMany({ _id: { $in: ids.map(toId) } });
+                if (sId) await incrementSubjectVersion(sId);
+                return res.status(200).json({ message: "Bulk delete success" });
             }
+
+            const item = await Model.findById(deletedId);
+            const subjectId = item?.subjectId;
+            await Model.findByIdAndDelete(deletedId);
+            if (subjectId) await incrementSubjectVersion(subjectId);
+            else if (normalizedResource === "subjects") await incrementSubjectVersion(deletedId);
+
+            return res.status(200).json({ message: "Delete success" });
         }
-
-        // 4. Fallback
-        if (data === null || data === undefined) {
-            console.log("404 - No data found for route");
-            return res.status(404).json({
-                message: "Resource not found or invalid ID",
-                debug: { resource, subResource, param }
-            });
-        }
-
-        console.log("Success - returning", Array.isArray(data) ? data.length + " items" : "1 item");
-
-        /* --- CACHING & RESPONSE --- */
-        // IMPORTANT: Vary by secret so CDN doesn't serve public cached data to private users (and vice versa)
-        res.setHeader("Vary", "x-second-space-secret");
-
-        if (req.headers['x-second-space-secret']) {
-            // Private data should not be cached publicly
-            res.setHeader("Cache-Control", "private, no-cache, no-store, must-revalidate");
-        } else {
-            // Public data can be cached
-            res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
-        }
-
-        return res.status(200).json(data);
 
     } catch (err) {
         console.error("API Error:", err);
         return res.status(500).json({ message: "Internal Server Error", error: err.message });
+    }
+}
+
+/**
+ * Automatically increments Subject version to trigger frontend cache invalidation
+ */
+async function incrementSubjectVersion(subjectId) {
+    if (!mongoose.Types.ObjectId.isValid(subjectId)) return;
+    try {
+        await getModel("subjects").findByIdAndUpdate(subjectId, { $inc: { version: 1 } });
+        console.log(`🔄 Version incremented for subject: ${subjectId}`);
+    } catch (e) {
+        console.error("Failed to increment version:", e);
     }
 }

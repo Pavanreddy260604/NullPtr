@@ -16,14 +16,14 @@ export default defineConfig({
         navigateFallbackAllowlist: [/^(?!\/__).*/], // Allow all routes except internal ones
         runtimeCaching: [
           {
-            // Cache API responses - StaleWhileRevalidate for instant load
-            urlPattern: /^(https:\/\/study-g3xc\.onrender\.com|http:\/\/localhost:5000)\/.*/i,
+            // Cache API responses - Support relative /api and specific domains
+            urlPattern: /^(https:\/\/study-g3xc\.onrender\.com|http:\/\/localhost:5000)\/.*|.*\/api\/.*/i,
             handler: "StaleWhileRevalidate",
             options: {
               cacheName: "api-cache",
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days (Hardened offline support)
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days (Hardened offline support)
               },
               cacheableResponse: {
                 statuses: [0, 200],
