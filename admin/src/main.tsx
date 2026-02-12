@@ -1,6 +1,61 @@
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import { initSecurityProtections } from "./lib/security";
+
 /**
- * 🛡️ Global Storage Polyfill
+ * 🛡️ Top-Level Nuclear Error Suppression
  */
+if (typeof window !== 'undefined') {
+    const isStorageError = (e: any) => {
+        const msg = (e?.message || (typeof e === 'string' ? e : '')).toLowerCase();
+        return msg.includes('access to storage is not allowed') ||
+            msg.includes('securityerror') ||
+            msg.includes('idbdatabase');
+    };
+
+    window.addEventListener('unhandledrejection', (event) => {
+        if (isStorageError(event.reason)) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }, true);
+
+    window.addEventListener('error', (event) => {
+        if (isStorageError(event.error) || isStorageError(event.message)) {
+            event.stopImmediatePropagation();
+        }
+    }, true);
+}
+
+/**
+ * 🛡️ Global Storage Polyfill & Proactive Handshake
+ */
+const probeStorage = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+        try {
+            if (typeof window.indexedDB === 'undefined' || window.indexedDB === null) {
+                return resolve(false);
+            }
+            const request = window.indexedDB.open("__admin_nullptr_probe__", 1);
+            const timeout = setTimeout(() => resolve(false), 500);
+
+            request.onsuccess = () => {
+                clearTimeout(timeout);
+                try {
+                    const test = "__h_test__";
+                    localStorage.setItem(test, test);
+                    localStorage.removeItem(test);
+                    resolve(true);
+                } catch (e) { resolve(false); }
+            };
+            request.onerror = () => {
+                clearTimeout(timeout);
+                resolve(false);
+            };
+        } catch (e) { resolve(false); }
+    });
+};
+
 (function hardenStorage() {
     const createSafeStorage = (type: 'localStorage' | 'sessionStorage') => {
         try {
@@ -30,21 +85,13 @@
     }
 })();
 
-// Initialize security protections (blocks APK downloads, malicious URLs, etc.)
+// Initialize security protections
 initSecurityProtections();
 
-// Register Service Worker for PWA
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker
-            .register('/sw.js')
-            .then((registration) => {
-                console.log('SW registered: ', registration);
-            })
-            .catch((registrationError) => {
-                console.log('SW registration failed: ', registrationError);
-            });
+const rootElement = document.getElementById("root");
+if (rootElement) {
+    const root = createRoot(rootElement);
+    probeStorage().then(() => {
+        root.render(<App />);
     });
 }
-
-createRoot(document.getElementById("root")!).render(<App />);
