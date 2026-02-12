@@ -130,20 +130,20 @@ export const generateUnitPDF = (data: PDFUnitData) => {
 
         checkPageBreak(40);
 
-        // --- Section Title (Typographic Authority) ---
+        // --- Section Title (Architectural Authority) ---
         doc.setFont("helvetica", "bold");
         doc.setFontSize(24);
         doc.setTextColor(...(COLORS.PRIMARY as [number, number, number]));
-        doc.text(title, margin + 8, y);
+        doc.text(title, margin + 12, y);
 
-        // Solid Section Marker (Bullet-proof)
+        // Solid Architectural Marker
         doc.setFillColor(...iconColor as [number, number, number]);
-        doc.rect(margin, y - 6, 4, 8, 'F');
+        doc.rect(margin, y - 6, 6, 9, 'F');
 
         y += 6;
         doc.setDrawColor(...(COLORS.PRIMARY as [number, number, number]));
-        doc.setLineWidth(1.5);
-        doc.line(margin, y, margin + 60, y);
+        doc.setLineWidth(2);
+        doc.line(margin, y, margin + 80, y);
         y += 20;
 
         questions.forEach((q, idx) => {
@@ -163,13 +163,19 @@ export const generateUnitPDF = (data: PDFUnitData) => {
             doc.text(qLines, margin + 5, y + 10);
             y += qBlockHeight + 8;
 
-            // Optional Topic
+            // Optional Topic Callout (Reference Book Style)
             if (q.topic) {
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(8);
-                doc.setTextColor(...(COLORS.MUTED as [number, number, number]));
-                doc.text(`SUBJECT TOPIC: ${q.topic.toUpperCase()}`, margin + 5, y);
-                y += 8;
+                doc.setFont("helvetica", "bolditalic");
+                doc.setFontSize(8.5);
+                doc.setTextColor(...(COLORS.SECONDARY as [number, number, number]));
+
+                // Vertical metadata separator
+                doc.setDrawColor(...(COLORS.SECONDARY as [number, number, number]));
+                doc.setLineWidth(0.5);
+                doc.line(margin + 5, y - 1, margin + 5, y + 4);
+
+                doc.text(q.topic.toUpperCase(), margin + 9, y + 3);
+                y += 12;
             }
 
             // Options (for MCQs)
@@ -224,31 +230,63 @@ export const generateUnitPDF = (data: PDFUnitData) => {
                             doc.setFontSize(10.5);
                             doc.setTextColor(...(COLORS.TEXT as [number, number, number]));
                             block.items.forEach((item: string) => {
-                                const itemLines = doc.splitTextToSize(`> ${item}`, contentWidth - 15);
+                                const bullet = "•";
+                                const bulletX = margin + 8;
+                                const textX = margin + 14;
+                                const maxTextWidth = contentWidth - 20;
+
+                                const itemLines = doc.splitTextToSize(item, maxTextWidth);
                                 checkPageBreak(itemLines.length * 6.5 + 4);
-                                doc.text(itemLines, margin + 10, y);
+
+                                // Draw Bullet
+                                doc.setFont("helvetica", "bold");
+                                doc.text(bullet, bulletX, y);
+                                doc.setFont("helvetica", "normal");
+
+                                // Draw Wrapped Text (Hanging Indent style)
+                                doc.text(itemLines, textX, y);
                                 y += (itemLines.length * 6.5);
                             });
-                            y += 5;
+                            y += 6;
                             break;
                         case 'code':
                             doc.setFont("courier", "normal");
                             doc.setFontSize(9);
-                            doc.setTextColor(...(COLORS.TEXT as [number, number, number]));
+                            doc.setTextColor(255, 255, 255); // White text for IDE look
                             const codeLines = block.content.split('\n');
-                            const boxHeight = (codeLines.length * 5) + 10;
-                            checkPageBreak(boxHeight + 8);
+                            const terminalHeaderHeight = 8;
+                            const internalPadding = 8;
+                            const boxHeight = (codeLines.length * 5) + internalPadding + terminalHeaderHeight;
 
-                            doc.setFillColor(...(COLORS.BG_CARD as [number, number, number]));
-                            doc.setDrawColor(...(COLORS.BORDER as [number, number, number]));
-                            doc.setLineWidth(0.5);
-                            doc.rect(margin + 5, y - 4, contentWidth - 10, boxHeight, 'FD');
+                            checkPageBreak(boxHeight + 10);
 
+                            // 1. Terminal Background (Slate 950 feel)
+                            doc.setFillColor(15, 23, 42); // Deep Slate
+                            doc.rect(margin + 5, y - 4, contentWidth - 10, boxHeight, 'F');
+
+                            // 2. Terminal Header Bar
+                            doc.setFillColor(30, 41, 59); // Slate 800
+                            doc.rect(margin + 5, y - 4, contentWidth - 10, terminalHeaderHeight, 'F');
+
+                            // 3. Status Dots (The "Perfection" touch)
+                            const dotY = y - 4 + (terminalHeaderHeight / 2);
+                            doc.setFillColor(239, 68, 68); doc.circle(margin + 9, dotY, 1, 'F');   // Red
+                            doc.setFillColor(245, 158, 11); doc.circle(margin + 13, dotY, 1, 'F'); // Amber
+                            doc.setFillColor(34, 197, 94); doc.circle(margin + 17, dotY, 1, 'F');  // Green
+
+                            doc.setFontSize(7);
+                            doc.setTextColor(148, 163, 184); // Slate 400
+                            doc.text("BASH // SOURCE_CODE", margin + 22, y + 1.5);
+
+                            // 4. Content
+                            doc.setFontSize(9);
+                            doc.setTextColor(226, 232, 240); // Slate 200
+                            y += terminalHeaderHeight + 2;
                             codeLines.forEach((line: string) => {
-                                doc.text(line, margin + 10, y + 2);
+                                doc.text(line, margin + 12, y);
                                 y += 5;
                             });
-                            y += 10;
+                            y += 12;
                             break;
                     }
                 });
