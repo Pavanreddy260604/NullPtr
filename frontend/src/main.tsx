@@ -38,21 +38,20 @@ import "./index.css";
             (window as any).sessionStorage = createSafeStorage('sessionStorage');
         }
     } catch (e) {
-        console.error("Critical: Failed to polyfill storage", e);
+        // Fallback already handled within createSafeStorage
     }
 })();
 
 // ✅ Safe Service Worker Registration
-// Service Workers often fail with "Access to storage is not allowed" 
-// in restricted contexts (Incognito, third-party cookies blocked).
 const registerSafeSW = () => {
     try {
         // Detect if storage is restricted BEFORE trying SW
-        // We check IDB directly because LocalStorage might be our polyfill
-        if (typeof indexedDB === 'undefined') throw new Error("IDB Missing");
+        if (typeof window.indexedDB === 'undefined' || window.indexedDB === null) {
+            throw new Error("IDB Missing");
+        }
 
-        // Try to trigger a security error if restricted
-        indexedDB.open("__sw_test__");
+        // Critical: In some browsers, trying to open IDB throws "Access to storage is not allowed"
+        window.indexedDB.open("__sw_test_probe__");
 
         return registerSW({
             onNeedRefresh() {
@@ -65,8 +64,8 @@ const registerSafeSW = () => {
             },
         });
     } catch (e) {
-        console.warn("🛡️ Storage access restricted. Service Worker disabled.", e);
-        return () => { }; // Return no-op unregister function
+        // console.warn("🛡️ Storage access restricted. Service Worker disabled.", e);
+        return () => { }; // Return no-op
     }
 };
 

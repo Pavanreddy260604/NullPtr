@@ -14,48 +14,49 @@ import { InstallPWA } from "@/components/InstallPWA";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 
 // ✅ Global Error Suppression for restricted storage contexts
+// Detects and mutes the frequent "Access to storage is not allowed" crash in Chrome/Safari
 if (typeof window !== 'undefined') {
-  window.addEventListener('unhandledrejection', (event) => {
-    if (event.reason?.message?.includes('Access to storage is not allowed')) {
-      console.warn("🛡️ Suppressed storage access error:", event.reason.message);
-      event.preventDefault();
+  const muteStorageError = (e: any) => {
+    const msg = e?.message || (typeof e === 'string' ? e : '');
+    if (msg.includes('Access to storage is not allowed') || msg.includes('SecurityError')) {
+      // console.warn("🛡️ Muted storage access error:", msg);
+      return true;
     }
+    return false;
+  };
+
+  window.addEventListener('unhandledrejection', (event) => {
+    if (muteStorageError(event.reason)) event.preventDefault();
   });
+  window.addEventListener('error', (event) => {
+    if (muteStorageError(event.error)) event.stopImmediatePropagation();
+  }, true);
 }
 
 // ✅ Check if storage (IndexedDB & LocalStorage) is actually allowed
 const checkStorageAccess = () => {
-  const status = {
-    local: false,
-    idb: false
-  };
+  const status = { local: false, idb: false };
 
   try {
-    // Check if LocalStorage is REAL (not polyfilled/restricted)
-    // We check if it's the native implementation that throws or a memory fallback
+    // 1. Check LocalStorage (Real vs Polyfill)
     const testKey = "__real_storage_test__";
     window.localStorage.setItem(testKey, "1");
     window.localStorage.removeItem(testKey);
-    status.local = true;
-
-    // Detect if our polyfill is active (we added a marker in polyfill if it fails)
-    if ((window.localStorage as any).__is_fallback) {
-      status.local = false;
-    }
+    status.local = !(window.localStorage as any).__is_fallback;
   } catch (e) {
     status.local = false;
   }
 
   try {
-    // Thorough check for IndexedDB
-    // Some browsers have it defined but throw "Access to storage is not allowed" on any access
-    if (typeof indexedDB !== 'undefined') {
-      const request = indexedDB.open("__storage_test__");
-      status.idb = true;
-      // We don't need to wait for success, just that it didn't throw immediately
+    // 2. Check IndexedDB Usability
+    // In many browsers, just calling .open() doesn't throw, but accessing indexedDB property might.
+    if (typeof window.indexedDB !== 'undefined' && window.indexedDB !== null) {
+      // Proactive probe: Try to open a dummy DB. 
+      // In some restricted contexts, this throws a SecurityError immediately.
+      const request = window.indexedDB.open("__storage_test_probe__");
+      if (request) status.idb = true;
     }
   } catch (e) {
-    console.warn("🛡️ IndexedDB restricted");
     status.idb = false;
   }
 
@@ -65,7 +66,7 @@ const checkStorageAccess = () => {
 const storage = checkStorageAccess();
 const storageAllowed = storage.local && storage.idb;
 
-console.log("💾 [Storage] Status:", storage);
+console.log(`💾 [Storage] Local: ${storage.local}, IDB: ${storage.idb} -> Allowed: ${storageAllowed}`);
 
 // Safe storage for next-themes to prevent crashes
 const safeThemeStorage = {
