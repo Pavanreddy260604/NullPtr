@@ -93,7 +93,7 @@ const UnitPage = () => {
         return (
             <div className="min-h-screen bg-slate-100 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
                 <div className="container mx-auto px-4 py-8">
-                    <div className="max-w-4xl mx-auto space-y-6">
+                    <div className="max-w-7xl mx-auto space-y-6">
                         {/* Header skeleton */}
                         <div className="flex items-center justify-between">
                             <Skeleton className="h-10 w-24" />
@@ -178,7 +178,7 @@ const UnitPage = () => {
                 {/* Hero */}
                 <section className="py-8 md:py-12 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
                     <div className="container mx-auto px-4">
-                        <div className="max-w-4xl mx-auto text-center">
+                        <div className="max-w-7xl mx-auto text-center">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 text-sm mb-4">
                                 <Sparkles className="w-4 h-4" />
                                 <span>{totalQuestions} Questions</span>
@@ -194,8 +194,8 @@ const UnitPage = () => {
                 </section>
 
                 {/* Main Content */}
-                <section className="container mx-auto px-4 py-8">
-                    <div className="max-w-4xl mx-auto">
+                <section className="container mx-auto px-0 sm:px-4 py-8">
+                    <div className="max-w-7xl mx-auto">
                         {/* Search */}
                         <div className="mb-8">
                             <div className="relative">

@@ -25,6 +25,7 @@ interface DescriptiveCardProps {
 }
 
 export const DescriptiveCard = ({ question, index }: DescriptiveCardProps) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
 
@@ -41,7 +42,8 @@ export const DescriptiveCard = ({ question, index }: DescriptiveCardProps) => {
     }).join('\n\n');
   };
 
-  const handleCopyAnswer = async () => {
+  const handleCopyAnswer = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent toggling accordion when clicking copy
     try {
       await navigator.clipboard.writeText(getPlainTextAnswer());
       setCopied(true);
@@ -162,54 +164,100 @@ export const DescriptiveCard = ({ question, index }: DescriptiveCardProps) => {
   };
 
   return (
-    <Card className="flex flex-col overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300">
-      {/* Question Header */}
-      <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/5">
-        <div className="flex items-start gap-4">
-          <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 text-white text-sm font-bold shadow-lg">
+    <Card
+      className={cn(
+        "flex flex-col overflow-hidden transition-all duration-300 bg-white dark:bg-white/5 backdrop-blur-md",
+        // Mobile: Edge-to-edge, no rounded corners, simple bottom border
+        "border-b border-slate-200 dark:border-white/10 rounded-none shadow-none",
+        // Desktop (sm+): Card look with border, rounded corners, shadow
+        "sm:border sm:border-slate-200 dark:sm:border-white/10 sm:rounded-xl sm:shadow-lg",
+        isOpen ? "sm:ring-2 sm:ring-purple-500/20 dark:sm:ring-purple-500/40" : "sm:hover:shadow-xl sm:hover:border-purple-200 dark:sm:hover:border-purple-500/30"
+      )}
+    >
+      {/* Question Header - Clickable for Accordion */}
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        className="p-4 sm:p-6 border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/5 cursor-pointer group select-none"
+      >
+        <div className="flex items-start gap-3 sm:gap-4">
+          <div className={cn(
+            "flex-shrink-0 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl text-white text-xs sm:text-sm font-bold shadow-lg transition-all duration-300",
+            isOpen ? "bg-gradient-to-br from-purple-600 to-pink-600 scale-110" : "bg-gradient-to-br from-purple-500 to-pink-500 group-hover:scale-105"
+          )}>
             {index + 1}
           </div>
           <div className="flex-1 space-y-2">
-            {question.topic && (
-              <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-purple-100 dark:bg-purple-500/20 text-xs font-medium text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
-                {question.topic}
-              </span>
-            )}
-            <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white leading-snug">
+            <div className="flex items-center justify-between gap-4">
+              {question.topic && (
+                <span className="inline-flex items-center px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg bg-purple-100 dark:bg-purple-500/20 text-[10px] sm:text-xs font-medium text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
+                  {question.topic}
+                </span>
+              )}
+              {/* Chevron for mobile/desktop indication */}
+              <div className={cn(
+                "w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-300 bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-slate-400 group-hover:bg-purple-100 dark:group-hover:bg-purple-500/20 group-hover:text-purple-600 dark:group-hover:text-purple-300",
+                isOpen && "rotate-180 bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-300"
+              )}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-4 h-4"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </div>
+            </div>
+            <h3 className={cn(
+              "text-base sm:text-xl font-semibold leading-snug transition-colors duration-200 max-w-prose",
+              isOpen ? "text-purple-700 dark:text-purple-300" : "text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-300"
+            )}>
               {question.question}
             </h3>
           </div>
         </div>
       </div>
 
-      {/* Answer Section - Always Visible */}
-      <div className="flex-1 bg-white dark:bg-slate-900/50">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/5">
-          <span className="text-xs font-semibold uppercase tracking-wider text-purple-600 dark:text-purple-400">Answer</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCopyAnswer}
-            className="h-8 px-3 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10"
-          >
-            {copied ? (
-              <span className="flex items-center gap-1.5 text-green-600 dark:text-green-400">
-                <CheckCheck className="w-3.5 h-3.5" />
-                Copied!
-              </span>
-            ) : (
-              <span className="flex items-center gap-1.5">
-                <Copy className="w-3.5 h-3.5" />
-                Copy
-              </span>
-            )}
-          </Button>
-        </div>
+      {/* Answer Section - Collapsible */}
+      {isOpen && (
+        <div className="flex-1 bg-white dark:bg-slate-900/50 animate-in slide-in-from-top-2 duration-200">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-purple-600 dark:text-purple-400">Answer</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCopyAnswer}
+              className="h-8 px-3 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10"
+            >
+              {copied ? (
+                <span className="flex items-center gap-1.5 text-green-600 dark:text-green-400">
+                  <CheckCheck className="w-3.5 h-3.5" />
+                  Copied!
+                </span>
+              ) : (
+                <span className="flex items-center gap-1.5">
+                  <Copy className="w-3.5 h-3.5" />
+                  Copy
+                </span>
+              )}
+            </Button>
+          </div>
 
-        <div className="p-5 sm:p-6">
-          {question.answer.map((block, idx) => renderBlock(block, idx))}
+          <div className="p-4 sm:p-6 pb-8 sm:pb-10">
+            {question.answer.map((block, idx) => (
+              <div key={idx} className="max-w-prose">
+                {renderBlock(block, idx)}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </Card>
   );
 };
