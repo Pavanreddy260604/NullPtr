@@ -125,40 +125,43 @@ export const generateUnitPDF = (data: PDFUnitData) => {
     y = margin + 10;
     addPageHeader();
 
-    const renderSection = (title: string, questions: PDFQuestion[], icon: string) => {
+    const renderSection = (title: string, questions: PDFQuestion[], iconColor: number[]) => {
         if (!questions || questions.length === 0) return;
 
-        checkPageBreak(30);
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(20);
-        doc.setTextColor(...(COLORS.PRIMARY as [number, number, number]));
+        checkPageBreak(40);
 
-        // --- Section Title ---
-        doc.text(`${icon} ${title}`, margin, y);
-        y += 4;
+        // --- Section Title (Typographic Authority) ---
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(24);
+        doc.setTextColor(...(COLORS.PRIMARY as [number, number, number]));
+        doc.text(title, margin + 8, y);
+
+        // Solid Section Marker (Bullet-proof)
+        doc.setFillColor(...iconColor as [number, number, number]);
+        doc.rect(margin, y - 6, 4, 8, 'F');
+
+        y += 6;
         doc.setDrawColor(...(COLORS.PRIMARY as [number, number, number]));
         doc.setLineWidth(1.5);
-        doc.line(margin, y, margin + 40, y);
-        y += 15;
+        doc.line(margin, y, margin + 60, y);
+        y += 20;
 
         questions.forEach((q, idx) => {
-            // Calculate Question Height
+            // Calculate Question Height (Sweet spot: 13pt)
             doc.setFont("helvetica", "bold");
-            doc.setFontSize(11);
+            doc.setFontSize(13);
             const qLines = doc.splitTextToSize(`${idx + 1}. ${q.question}`, contentWidth - 10);
-            const qBlockHeight = (qLines.length * 7) + 8;
+            const qBlockHeight = (qLines.length * 8) + 10;
 
-            checkPageBreak(qBlockHeight + 20);
+            checkPageBreak(qBlockHeight + 30);
 
-            const startY = y;
-
-            // --- Question Block (Aesthetic Shading) ---
+            // --- Question Block (Balanced Shading) ---
             doc.setFillColor(...(COLORS.BG_CARD as [number, number, number]));
             doc.rect(margin, y, contentWidth, qBlockHeight, 'F');
 
             doc.setTextColor(...(COLORS.TEXT as [number, number, number]));
-            doc.text(qLines, margin + 5, y + 8);
-            y += qBlockHeight + 6;
+            doc.text(qLines, margin + 5, y + 10);
+            y += qBlockHeight + 8;
 
             // Optional Topic
             if (q.topic) {
@@ -172,13 +175,13 @@ export const generateUnitPDF = (data: PDFUnitData) => {
             // Options (for MCQs)
             if (q.options && q.options.length > 0) {
                 doc.setFont("helvetica", "normal");
-                doc.setFontSize(10);
+                doc.setFontSize(10.5);
                 doc.setTextColor(...(COLORS.TEXT as [number, number, number]));
                 q.options.forEach((opt, oIdx) => {
                     const char = String.fromCharCode(65 + oIdx);
                     checkPageBreak(10);
                     doc.text(`${char}) ${opt}`, margin + 10, y);
-                    y += 6;
+                    y += 7; // Adjusted for 1.4x line height
                 });
                 y += 6;
             }
@@ -190,88 +193,91 @@ export const generateUnitPDF = (data: PDFUnitData) => {
 
                     switch (block.type) {
                         case 'heading':
-                            y += 2;
+                            y += 4;
                             doc.setFont("helvetica", "bold");
-                            doc.setFontSize(11);
+                            doc.setFontSize(12);
                             doc.setTextColor(...(COLORS.PRIMARY as [number, number, number]));
-                            checkPageBreak(10);
+                            checkPageBreak(12);
                             doc.text(block.content, margin + 5, y);
                             y += 8;
                             break;
                         case 'subheading':
                             doc.setFont("helvetica", "bold");
-                            doc.setFontSize(10);
+                            doc.setFontSize(11);
                             doc.setTextColor(...(COLORS.SECONDARY as [number, number, number]));
-                            checkPageBreak(8);
+                            checkPageBreak(10);
                             doc.text(block.content, margin + 5, y);
-                            y += 6;
+                            y += 7;
                             break;
                         case 'text':
                             doc.setFont("helvetica", "normal");
-                            doc.setFontSize(10);
+                            doc.setFontSize(10.5);
                             doc.setTextColor(...(COLORS.TEXT as [number, number, number]));
                             const textLines = doc.splitTextToSize(block.content, contentWidth - 10);
-                            checkPageBreak(textLines.length * 6 + 4);
+                            const lineSpacing = 7; // 1.4x of 10.5 is 14.7, splitText usually uses font size + leading
+                            checkPageBreak(textLines.length * lineSpacing + 6);
                             doc.text(textLines, margin + 5, y);
-                            y += (textLines.length * 6) + 4;
+                            y += (textLines.length * lineSpacing) + 6;
                             break;
                         case 'list':
                             doc.setFont("helvetica", "normal");
-                            doc.setFontSize(10);
+                            doc.setFontSize(10.5);
                             doc.setTextColor(...(COLORS.TEXT as [number, number, number]));
                             block.items.forEach((item: string) => {
-                                const itemLines = doc.splitTextToSize(`• ${item}`, contentWidth - 15);
-                                checkPageBreak(itemLines.length * 6 + 2);
+                                const itemLines = doc.splitTextToSize(`> ${item}`, contentWidth - 15);
+                                checkPageBreak(itemLines.length * 6.5 + 4);
                                 doc.text(itemLines, margin + 10, y);
-                                y += (itemLines.length * 6);
+                                y += (itemLines.length * 6.5);
                             });
-                            y += 4;
+                            y += 5;
                             break;
                         case 'code':
                             doc.setFont("courier", "normal");
                             doc.setFontSize(9);
                             doc.setTextColor(...(COLORS.TEXT as [number, number, number]));
                             const codeLines = block.content.split('\n');
-                            const boxHeight = (codeLines.length * 5) + 6;
-                            checkPageBreak(boxHeight + 5);
+                            const boxHeight = (codeLines.length * 5) + 10;
+                            checkPageBreak(boxHeight + 8);
 
                             doc.setFillColor(...(COLORS.BG_CARD as [number, number, number]));
                             doc.setDrawColor(...(COLORS.BORDER as [number, number, number]));
+                            doc.setLineWidth(0.5);
                             doc.rect(margin + 5, y - 4, contentWidth - 10, boxHeight, 'FD');
 
                             codeLines.forEach((line: string) => {
-                                doc.text(line, margin + 9, y);
+                                doc.text(line, margin + 10, y + 2);
                                 y += 5;
                             });
-                            y += 6;
+                            y += 10;
                             break;
                     }
                 });
             } else if (q.correctAnswer !== undefined && data.options?.includeAnswers) {
                 doc.setFont("helvetica", "bold");
-                doc.setFontSize(10);
+                doc.setFontSize(11);
                 doc.setTextColor(...(COLORS.ACCENT as [number, number, number]));
                 const ansText = q.type === 'mcq'
-                    ? `✔ Correct Option: ${String.fromCharCode(64 + (Number(q.correctAnswer) + 1))}`
-                    : `✔ Correct Answer: ${q.correctAnswer}`;
+                    ? `[Verified] Correct Option: ${String.fromCharCode(64 + (Number(q.correctAnswer) + 1))}`
+                    : `[Verified] Correct Answer: ${q.correctAnswer}`;
 
-                checkPageBreak(10);
+                checkPageBreak(12);
                 doc.text(ansText, margin + 5, y);
-                y += 10;
+                y += 12;
             } else if (typeof q.answer === 'string' && q.answer) {
                 doc.setFont("helvetica", "normal");
-                doc.setFontSize(10);
+                doc.setFontSize(10.5);
                 doc.setTextColor(...(COLORS.TEXT as [number, number, number]));
                 const ansLines = doc.splitTextToSize(`Ans: ${q.answer}`, contentWidth - 10);
-                checkPageBreak(ansLines.length * 6 + 5);
+                const lineSpacing = 7;
+                checkPageBreak(ansLines.length * lineSpacing + 8);
                 doc.text(ansLines, margin + 5, y);
-                y += (ansLines.length * 6) + 6;
+                y += (ansLines.length * lineSpacing) + 8;
             }
 
             // --- Dark Divider (High Contrast Separation) ---
             y += 4;
             doc.setDrawColor(...(COLORS.BORDER as [number, number, number]));
-            doc.setLineWidth(0.8);
+            doc.setLineWidth(0.5);
             doc.line(margin, y, pageWidth - margin, y);
             y += 15;
         });
@@ -279,9 +285,9 @@ export const generateUnitPDF = (data: PDFUnitData) => {
         y += 10;
     };
 
-    renderSection("Multiple Choice Questions", data.mcqs, "●");
-    renderSection("Fill in the Blanks", data.fillBlanks, "✎");
-    renderSection("Detailed Explanations", data.descriptives, "📖");
+    renderSection("Multiple Choice Questions", data.mcqs, COLORS.SECONDARY);
+    renderSection("Fill in the Blanks", data.fillBlanks, COLORS.SECONDARY);
+    renderSection("Detailed Explanations", data.descriptives, COLORS.PRIMARY);
 
     addPageFooter(data.title.toString());
 
