@@ -57,22 +57,22 @@ export const DescriptiveCard = ({ question, index }: DescriptiveCardProps) => {
     switch (block.type) {
       case "heading":
         return (
-          <h4 key={idx} className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mt-6 mb-3 flex items-center gap-2">
-            <span className="w-1 h-5 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></span>
+          <h4 key={idx} className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white mt-10 mb-4 flex items-center gap-3">
+            <span className="w-1.5 h-6 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></span>
             {block.content}
           </h4>
         );
 
       case "subheading":
         return (
-          <h5 key={idx} className="text-base sm:text-lg font-semibold text-purple-700 dark:text-purple-300 mt-4 mb-2">
+          <h5 key={idx} className="text-lg sm:text-xl font-semibold text-purple-700 dark:text-purple-300 mt-8 mb-3">
             {block.content}
           </h5>
         );
 
       case "text":
         return (
-          <p key={idx} className="mb-4 text-slate-600 dark:text-slate-300 leading-relaxed text-base whitespace-pre-line">
+          <p key={idx} className="mb-6 text-slate-700 dark:text-slate-300 leading-relaxed text-lg whitespace-pre-line">
             {block.content?.split(/(\*\*.*?\*\*)/g).map((part, i) =>
               part.startsWith('**') && part.endsWith('**') ? (
                 <strong key={i} className="font-semibold text-slate-900 dark:text-white">
@@ -87,10 +87,10 @@ export const DescriptiveCard = ({ question, index }: DescriptiveCardProps) => {
 
       case "list":
         return (
-          <ul key={idx} className="mb-6 space-y-2 ml-1">
+          <ul key={idx} className="mb-8 space-y-4 ml-1">
             {block.items?.map((item, i) => (
-              <li key={i} className="flex items-start gap-3 text-slate-600 dark:text-slate-300">
-                <span className="text-purple-500 dark:text-purple-400 mt-2 text-xs shrink-0">●</span>
+              <li key={i} className="flex items-start gap-4 text-slate-700 dark:text-slate-300 text-lg">
+                <span className="text-purple-500 dark:text-purple-400 mt-2.5 text-[10px] shrink-0">●</span>
                 <span className="leading-relaxed">{item}</span>
               </li>
             ))}
@@ -99,8 +99,8 @@ export const DescriptiveCard = ({ question, index }: DescriptiveCardProps) => {
 
       case "code":
         return (
-          <pre key={idx} className="mb-4 p-4 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 overflow-x-auto">
-            <code className="text-sm text-emerald-700 dark:text-emerald-300 font-mono">{block.content}</code>
+          <pre key={idx} className="mb-6 p-6 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-x-auto shadow-inner">
+            <code className="text-base text-emerald-700 dark:text-emerald-300 font-mono">{block.content}</code>
           </pre>
         );
 
@@ -112,8 +112,8 @@ export const DescriptiveCard = ({ question, index }: DescriptiveCardProps) => {
 
         if (hasValidImage) {
           return (
-            <div key={idx} className="my-6 space-y-3">
-              <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-lg bg-slate-100 dark:bg-slate-800">
+            <div key={idx} className="my-8 space-y-4">
+              <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-lg bg-slate-100 dark:bg-slate-800">
                 <img
                   src={imageSrc}
                   alt={block.label || "Diagram"}
@@ -123,7 +123,7 @@ export const DescriptiveCard = ({ question, index }: DescriptiveCardProps) => {
                 />
               </div>
               {block.label && (
-                <p className="text-sm text-center text-slate-500 dark:text-slate-400 font-medium italic">
+                <p className="text-base text-center text-slate-500 dark:text-slate-400 font-medium italic">
                   {block.label}
                 </p>
               )}
@@ -133,15 +133,15 @@ export const DescriptiveCard = ({ question, index }: DescriptiveCardProps) => {
 
         // Fallback if no image or image failed
         return (
-          <div key={idx} className="my-6 p-4 bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/30 rounded-xl flex items-center gap-4">
-            <div className="p-3 bg-purple-100 dark:bg-purple-500/20 rounded-lg">
-              <ImageIcon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+          <div key={idx} className="my-8 p-6 bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/30 rounded-2xl flex items-center gap-6">
+            <div className="p-4 bg-purple-100 dark:bg-purple-500/20 rounded-xl">
+              <ImageIcon className="w-8 h-8 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <span className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wide block mb-1">
+              <span className="text-sm font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wide block mb-1">
                 Visual Aid
               </span>
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-300 italic">
+              <p className="text-base font-medium text-slate-700 dark:text-slate-300 italic">
                 {block.label || "Image not available"}
               </p>
             </div>
@@ -150,9 +150,9 @@ export const DescriptiveCard = ({ question, index }: DescriptiveCardProps) => {
 
       case "callout":
         return (
-          <div key={idx} className="my-5 p-4 border-l-4 border-amber-400 bg-amber-50 dark:bg-amber-500/10 rounded-r-xl flex gap-3">
-            <Lightbulb className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
-            <p className="text-sm text-amber-800 dark:text-amber-200 font-medium italic leading-relaxed">
+          <div key={idx} className="my-8 p-6 border-l-4 border-amber-400 bg-amber-50 dark:bg-amber-500/10 rounded-r-2xl flex gap-4 shadow-sm">
+            <Lightbulb className="w-6 h-6 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+            <p className="text-lg text-amber-800 dark:text-amber-200 font-medium italic leading-relaxed">
               {block.content}
             </p>
           </div>
