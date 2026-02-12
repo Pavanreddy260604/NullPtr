@@ -144,9 +144,9 @@ const App = () => {
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="dark"
-      enableSystem={storageAllowed}
-      storageKey={storageAllowed ? "theme" : undefined}
+      defaultTheme="system"
+      enableSystem={true}
+      storageKey="theme"
     >
       {storageAllowed ? (
         <PersistQueryClientProvider

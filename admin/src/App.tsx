@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ThemeProvider } from "next-themes";
 
 import Login from "./pages/admin/Login";
 import AdminLayout from "./components/layout/AdminLayout";
@@ -20,41 +21,42 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
-        <BrowserRouter>
-          <Routes>
-            {/* Redirect root to login */}
-            <Route path="/" element={<Navigate to="/admin/login" replace />} />
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+          <BrowserRouter>
+            <Routes>
+              {/* Redirect root to login */}
+              <Route path="/" element={<Navigate to="/admin/login" replace />} />
 
-            {/* Public Route */}
-            <Route path="/admin/login" element={<Login />} />
+              {/* Public Route */}
+              <Route path="/admin/login" element={<Login />} />
 
-            {/* Protected Admin Layout */}
-            <Route element={<AdminLayout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
+              {/* Protected Admin Layout */}
+              <Route element={<AdminLayout />}>
+                <Route path="/dashboard" element={<Dashboard />} />
 
-              {/* Subjects */}
-              <Route path="/subjects" element={<Subjects />} />
+                {/* Subjects */}
+                <Route path="/subjects" element={<Subjects />} />
 
-              {/* Units - unified (standalone + nested) */}
-              <Route path="/units" element={<Units />} />
-              <Route path="/subjects/:subjectId/units" element={<Units />} />
+                {/* Units - unified (standalone + nested) */}
+                <Route path="/units" element={<Units />} />
+                <Route path="/subjects/:subjectId/units" element={<Units />} />
 
-              {/* Questions */}
-              <Route path="/questions" element={<Questions />} />
-              <Route path="/questions/:unitId" element={<Questions />} />
-            </Route>
+                {/* Questions */}
+                <Route path="/questions" element={<Questions />} />
+                <Route path="/questions/:unitId" element={<Questions />} />
+              </Route>
 
-            {/* Fallback 404 */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+              {/* Fallback 404 */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
   </QueryClientProvider>
 );
 
