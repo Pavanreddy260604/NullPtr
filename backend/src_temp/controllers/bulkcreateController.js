@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Unit from "../models/Unit.js";
+import Subject from "../models/Subject.js";
 
 export const bulkCreateByUnit = (
     Model,
@@ -49,6 +50,13 @@ export const bulkCreateByUnit = (
         await Unit.updateOne(
             { _id: unitId },
             { $push: { [unitField]: { $each: created.map((d) => d._id) } } },
+            { session }
+        );
+
+        // ✅ Force Update: Increment Subject version
+        await Subject.findByIdAndUpdate(
+            subjectId,
+            { $inc: { version: 1 } },
             { session }
         );
 

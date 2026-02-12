@@ -56,7 +56,12 @@ export const getSubjectById = async (req, res) => {
 }
 export const updateSubjectById = async (req, res) => {
     try {
-        const subject = await Subject.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const { version, ...updateData } = req.body;
+        const subject = await Subject.findByIdAndUpdate(
+            req.params.id,
+            { ...updateData, $inc: { version: 1 } },
+            { new: true }
+        );
         if (!subject) {
             return res.status(404).json({ message: "Subject not found" });
         }

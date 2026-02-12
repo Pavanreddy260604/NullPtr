@@ -14,14 +14,14 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         runtimeCaching: [
           {
-            // Cache API responses
-            urlPattern: /^https:\/\/study-g3xc\.onrender\.com\/.*/i,
-            handler: "NetworkFirst",
+            // Cache API responses - StaleWhileRevalidate for instant load
+            urlPattern: /^(https:\/\/study-g3xc\.onrender\.com|http:\/\/localhost:5000)\/.*/i,
+            handler: "StaleWhileRevalidate",
             options: {
               cacheName: "api-cache",
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24, // 24 hours
+                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days (Hardened offline support)
               },
               cacheableResponse: {
                 statuses: [0, 200],

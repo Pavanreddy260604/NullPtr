@@ -1,42 +1,73 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, BookOpen, Loader2, Play, FileQuestion, PenLine, MessageSquare, Share2 } from "lucide-react";
-import { getSubject, getUnitsBySubject, Subject, Unit } from "@/lib/api";
+import { ArrowLeft, BookOpen, Loader2, Play, FileQuestion, PenLine, MessageSquare, Share2, Zap } from "lucide-react";
+import {
+    getSubject,
+    getUnitsBySubject,
+    getUnit,
+    getMCQsByUnit,
+    getFillBlanksByUnit,
+    getDescriptivesByUnit,
+    Subject,
+    Unit,
+    safeStorage
+} from "@/lib/api";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { toast } from "sonner";
 
 const SubjectPage = () => {
     const { subjectId } = useParams<{ subjectId: string }>();
-    const [subject, setSubject] = useState<Subject | null>(null);
-    const [units, setUnits] = useState<Unit[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const queryClient = useQueryClient();
 
+    // Fetch Subject Details
+    const { data: subject, isLoading: subjectLoading, error: subjectError } = useQuery({
+        queryKey: ['subject', subjectId],
+        queryFn: () => getSubject(subjectId!),
+        enabled: !!subjectId,
+        staleTime: 0, // Always check version on mount
+        refetchOnWindowFocus: true, // Check for updates when coming back to tab
+    });
+
+    // Fetch Units list
+    const { data: unitsData, isLoading: unitsLoading, error: unitsError } = useQuery({
+        queryKey: ['units', subjectId],
+        queryFn: async () => {
+            const data = await getUnitsBySubject(subjectId!);
+            return data.sort((a, b) => a.unit - b.unit);
+        },
+        enabled: !!subjectId,
+    });
+
+    const units = unitsData || [];
+    const loading = subjectLoading || unitsLoading;
+    const error = (subjectError as Error)?.message || (unitsError as Error)?.message || null;
+
+    // ✅ Force Update Logic: Invalidate cache if version mismatch
     useEffect(() => {
-        if (!subjectId) return;
+        if (subject && subject.version !== undefined) {
+            const storageKey = `subject_v_${subjectId}`;
+            const localVersion = safeStorage.getItem(storageKey);
 
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-                const [subjectData, unitsData] = await Promise.all([
-                    getSubject(subjectId),
-                    getUnitsBySubject(subjectId)
-                ]);
-                setSubject(subjectData);
-                setUnits(unitsData.sort((a, b) => a.unit - b.unit));
-            } catch (err) {
-                setError(err instanceof Error ? err.message : "Failed to load data");
-            } finally {
-                setLoading(false);
+            if (localVersion && parseInt(localVersion) < subject.version) {
+                console.log(`🚀 Force Update: Version mismatch (${localVersion} vs ${subject.version}). Invalidating cache...`);
+
+                // Invalidate units list and all unit question data
+                queryClient.invalidateQueries({ queryKey: ['units', subjectId] });
+                queryClient.invalidateQueries({ queryKey: ['unitData'] });
+
+                toast.info("Content updated from Admin Panel. Refreshing...", {
+                    icon: <Zap className="w-4 h-4" />,
+                });
             }
-        };
 
-        fetchData();
-    }, [subjectId]);
+            // Sync local version
+            safeStorage.setItem(storageKey, subject.version.toString());
+        }
+    }, [subject, subjectId, queryClient]);
 
     const handleShare = async () => {
         if (navigator.share) {
@@ -184,7 +215,27 @@ const SubjectPage = () => {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {units.map((unit, index) => (
-                                <Link key={unit._id} to={`/units/${unit._id}`} className="group">
+                                <Link
+                                    key={unit._id}
+                                    to={`/units/${unit._id}`}
+                                    className="group"
+                                    onMouseEnter={() => {
+                                        // Prefetch data on hover
+                                        queryClient.prefetchQuery({
+                                            queryKey: ['unitData', unit._id],
+                                            queryFn: async () => {
+                                                const [unitData, mcqs, fillBlanks, descriptives] = await Promise.all([
+                                                    getUnit(unit._id),
+                                                    getMCQsByUnit(unit._id),
+                                                    getFillBlanksByUnit(unit._id),
+                                                    getDescriptivesByUnit(unit._id)
+                                                ]);
+                                                return { unit: unitData, mcqs, fillBlanks, descriptives };
+                                            },
+                                            staleTime: 1000 * 60 * 60 * 2, // 2 hours
+                                        });
+                                    }}
+                                >
                                     <Card className="relative overflow-hidden bg-white dark:bg-white/5 backdrop-blur-md border-slate-200 dark:border-white/10 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300 hover:shadow-xl dark:hover:shadow-purple-500/10 active:scale-[0.98]">
                                         {/* Progress-like accent */}
                                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity" />

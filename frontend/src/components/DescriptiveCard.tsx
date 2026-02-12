@@ -13,7 +13,7 @@ interface ContentBlock {
 }
 
 interface DescriptiveQuestion {
-  id: string;
+  _id: string;
   question: string;
   answer: ContentBlock[];
   topic?: string;

@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from "sonner";
 import { Lock } from "lucide-react";
+import { safeStorage } from "@/lib/api";
 
 interface Props {
     open: boolean;
@@ -14,7 +15,7 @@ export const SecondSpaceDialog = ({ open, onOpenChange }: Props) => {
 
     const handleComplete = async (pin: string) => {
         if (pin === "0000") {
-            localStorage.removeItem("second_space_secret");
+            safeStorage.removeItem("second_space_secret");
             toast.success("Locked Second Space");
             setTimeout(() => window.location.reload(), 1000);
             return;
@@ -31,7 +32,7 @@ export const SecondSpaceDialog = ({ open, onOpenChange }: Props) => {
 
             if (res.ok) {
                 const data = await res.json();
-                localStorage.setItem("second_space_secret", data.secret);
+                safeStorage.setItem("second_space_secret", data.secret);
                 toast.success("Unlocked Second Space");
                 setTimeout(() => window.location.reload(), 1000);
             } else {

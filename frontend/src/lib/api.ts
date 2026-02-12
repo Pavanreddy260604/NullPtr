@@ -3,6 +3,36 @@
 const rawApiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
 const API_BASE_URL = rawApiUrl.endsWith("/") ? rawApiUrl.slice(0, -1) : rawApiUrl;
 
+/**
+ * ✅ Safe Storage Helper
+ * Prevents "Access to storage is not allowed" errors from crashing the app
+ * when localStorage is blocked by Privacy/Incognito settings.
+ */
+export const safeStorage = {
+    getItem: (key: string): string | null => {
+        try {
+            return localStorage.getItem(key);
+        } catch (e) {
+            console.warn(`[Storage] Failed to get ${key}:`, e);
+            return null;
+        }
+    },
+    setItem: (key: string, value: string): void => {
+        try {
+            localStorage.setItem(key, value);
+        } catch (e) {
+            console.warn(`[Storage] Failed to set ${key}:`, e);
+        }
+    },
+    removeItem: (key: string): void => {
+        try {
+            localStorage.removeItem(key);
+        } catch (e) {
+            console.warn(`[Storage] Failed to remove ${key}:`, e);
+        }
+    }
+};
+
 /* -------------------------------------------------------------------------- */
 /* 🧱 TYPE DEFINITIONS                                                        */
 /* -------------------------------------------------------------------------- */
@@ -13,6 +43,7 @@ export interface Subject {
     description: string;
     thumbnail?: string;
     visibility?: 'public' | 'private';
+    version?: number;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -75,7 +106,7 @@ export interface Descriptive {
 /* 🔧 HELPER                                                                  */
 /* -------------------------------------------------------------------------- */
 async function fetchApi<T>(endpoint: string): Promise<T> {
-    const token = localStorage.getItem("second_space_secret");
+    const token = safeStorage.getItem("second_space_secret");
     const headers: HeadersInit = {
         "Content-Type": "application/json",
     };
@@ -96,41 +127,41 @@ async function fetchApi<T>(endpoint: string): Promise<T> {
 /* 📚 SUBJECT API                                                             */
 /* -------------------------------------------------------------------------- */
 export async function getSubjects(): Promise<Subject[]> {
-    return fetchApi<Subject[]>("/subjects");
+    return fetchApi<Subject[]>("/subject");
 }
 
 export async function getSubject(id: string): Promise<Subject> {
-    return fetchApi<Subject>(`/subjects/${id}`);
+    return fetchApi<Subject>(`/subject/${id}`);
 }
 
 /* -------------------------------------------------------------------------- */
 /* 📦 UNIT API                                                                */
 /* -------------------------------------------------------------------------- */
 export async function getUnitsBySubject(subjectId: string): Promise<Unit[]> {
-    return fetchApi<Unit[]>(`/units/subject/${subjectId}`);
+    return fetchApi<Unit[]>(`/unit/subject/${subjectId}`);
 }
 
 export async function getUnit(id: string): Promise<Unit> {
-    return fetchApi<Unit>(`/units/${id}`);
+    return fetchApi<Unit>(`/unit/${id}`);
 }
 
 /* -------------------------------------------------------------------------- */
 /* 🎯 MCQ API                                                                 */
 /* -------------------------------------------------------------------------- */
 export async function getMCQsByUnit(unitId: string): Promise<MCQ[]> {
-    return fetchApi<MCQ[]>(`/mcq/unit/${unitId}`);
+    return fetchApi<MCQ[]>(`/question/mcq/unit/${unitId}`);
 }
 
 /* -------------------------------------------------------------------------- */
 /* ✏️ FILL BLANK API                                                          */
 /* -------------------------------------------------------------------------- */
 export async function getFillBlanksByUnit(unitId: string): Promise<FillBlank[]> {
-    return fetchApi<FillBlank[]>(`/fillblank/unit/${unitId}`);
+    return fetchApi<FillBlank[]>(`/question/fillblank/unit/${unitId}`);
 }
 
 /* -------------------------------------------------------------------------- */
 /* 🧠 DESCRIPTIVE API                                                          */
 /* -------------------------------------------------------------------------- */
 export async function getDescriptivesByUnit(unitId: string): Promise<Descriptive[]> {
-    return fetchApi<Descriptive[]>(`/descriptive/unit/${unitId}`);
+    return fetchApi<Descriptive[]>(`/question/descriptive/unit/${unitId}`);
 }

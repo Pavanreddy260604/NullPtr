@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Search, Loader2, FileQuestion, PenLine, MessageSquare, Sparkles, Share2 } from "lucide-react";
+import { ArrowLeft, Search, FileQuestion, PenLine, MessageSquare, Sparkles, Share2, Zap } from "lucide-react";
 import { MCQCard } from "@/components/MCQCard";
 import { FillBlankCard } from "@/components/FillBlankCard";
 import { DescriptiveCard } from "@/components/DescriptiveCard";
@@ -15,48 +16,67 @@ import {
     getMCQsByUnit,
     getFillBlanksByUnit,
     getDescriptivesByUnit,
-    Unit,
-    MCQ,
-    FillBlank,
-    Descriptive
+    getSubject,
+    safeStorage,
 } from "@/lib/api";
 
 const UnitPage = () => {
     const { unitId } = useParams<{ unitId: string }>();
-    const [unit, setUnit] = useState<Unit | null>(null);
-    const [mcqs, setMcqs] = useState<MCQ[]>([]);
-    const [fillBlanks, setFillBlanks] = useState<FillBlank[]>([]);
-    const [descriptives, setDescriptives] = useState<Descriptive[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const queryClient = useQueryClient();
     const [searchQuery, setSearchQuery] = useState("");
 
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['unitData', unitId],
+        queryFn: async () => {
+            if (!unitId) throw new Error("Unit ID is required");
+            const [unit, mcqs, fillBlanks, descriptives] = await Promise.all([
+                getUnit(unitId),
+                getMCQsByUnit(unitId),
+                getFillBlanksByUnit(unitId),
+                getDescriptivesByUnit(unitId)
+            ]);
+            return { unit, mcqs, fillBlanks, descriptives };
+        },
+        enabled: !!unitId,
+        staleTime: 1000 * 60 * 60 * 2, // 2 hours - Data stays fresh
+        gcTime: 1000 * 60 * 60 * 24, // 24 hours - Keep in memory
+        retry: 3,
+    });
+
+    const unit = data?.unit || null;
+    const subjectId = unit?.subjectId;
+
+    // ✅ Force Update Logic: Monitor subject version in background
+    const { data: subject } = useQuery({
+        queryKey: ['subject', subjectId],
+        queryFn: () => getSubject(subjectId!),
+        enabled: !!subjectId,
+        staleTime: 0,
+        refetchOnWindowFocus: true,
+    });
+
     useEffect(() => {
-        if (!unitId) return;
+        if (subject && subject.version !== undefined && subjectId) {
+            const storageKey = `subject_v_${subjectId}`;
+            const localVersion = safeStorage.getItem(storageKey);
 
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-                const [unitData, mcqData, fbData, descData] = await Promise.all([
-                    getUnit(unitId),
-                    getMCQsByUnit(unitId),
-                    getFillBlanksByUnit(unitId),
-                    getDescriptivesByUnit(unitId)
-                ]);
-                setUnit(unitData);
-                setMcqs(mcqData);
-                setFillBlanks(fbData);
-                setDescriptives(descData);
-            } catch (err) {
-                setError(err instanceof Error ? err.message : "Failed to load data");
-            } finally {
-                setLoading(false);
+            if (localVersion && parseInt(localVersion) < subject.version) {
+                console.log(`🚀 Force Update (UnitView): Version mismatch. Invalidating unitData...`);
+
+                queryClient.invalidateQueries({ queryKey: ['unitData', unitId] });
+
+                toast.info("Content updated. Refreshing questions...", {
+                    icon: <Zap className="w-4 h-4" />,
+                });
             }
-        };
+            safeStorage.setItem(storageKey, subject.version.toString());
+        }
+    }, [subject, subjectId, unitId, queryClient]);
 
-        fetchData();
-    }, [unitId]);
+    const mcqs = data?.mcqs || [];
+    const fillBlanks = data?.fillBlanks || [];
+    const descriptives = data?.descriptives || [];
+    const loading = isLoading;
 
     const handleShare = async () => {
         if (navigator.share) {
@@ -129,7 +149,7 @@ const UnitPage = () => {
                 <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center">
                     <span className="text-2xl">⚠️</span>
                 </div>
-                <p className="text-red-600 dark:text-red-400">{error}</p>
+                <p className="text-red-600 dark:text-red-400">{(error as Error).message || "Failed to load data"}</p>
                 <Button
                     onClick={() => window.location.reload()}
                     className="bg-gradient-to-r from-purple-500 to-pink-500"
@@ -262,12 +282,7 @@ const UnitPage = () => {
                                     filteredDescriptives.map((desc, index) => (
                                         <DescriptiveCard
                                             key={desc._id}
-                                            question={{
-                                                id: desc._id,
-                                                question: desc.question,
-                                                answer: desc.answer,
-                                                topic: desc.topic
-                                            }}
+                                            question={desc}
                                             index={index}
                                         />
                                     ))
@@ -285,14 +300,7 @@ const UnitPage = () => {
                                     filteredMCQs.map((mcq, index) => (
                                         <MCQCard
                                             key={mcq._id}
-                                            question={{
-                                                id: mcq._id,
-                                                question: mcq.question,
-                                                options: mcq.options,
-                                                correctAnswer: mcq.correctAnswer,
-                                                explanation: mcq.explanation,
-                                                topic: mcq.topic
-                                            }}
+                                            question={mcq}
                                             index={index}
                                         />
                                     ))
@@ -310,13 +318,7 @@ const UnitPage = () => {
                                     filteredFillBlanks.map((fb, index) => (
                                         <FillBlankCard
                                             key={fb._id}
-                                            question={{
-                                                id: fb._id,
-                                                question: fb.question,
-                                                correctAnswer: fb.correctAnswer,
-                                                explanation: fb.explanation,
-                                                topic: fb.topic
-                                            }}
+                                            question={fb}
                                             index={index}
                                         />
                                     ))

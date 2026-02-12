@@ -6,7 +6,7 @@ import { CheckCircle2, XCircle, RotateCcw, Eye, EyeOff, HelpCircle } from "lucid
 import { cn } from "@/lib/utils";
 
 interface FillBlankQuestion {
-  id: string;
+  _id: string;
   question: string;
   correctAnswer: string;
   explanation?: string;

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Unit from "../models/Unit.js";
+import Subject from "../models/Subject.js";
 
 export const deleteByIdAndUnit = (
     Model,
@@ -43,6 +44,15 @@ export const deleteByIdAndUnit = (
             await Unit.updateOne(
                 { _id: docUnitId },
                 { $pull: { [unitField]: new mongoose.Types.ObjectId(id) } },
+                { session }
+            );
+        }
+
+        // ✅ Force Update: Increment Subject version
+        if (doc.subjectId) {
+            await Subject.findByIdAndUpdate(
+                doc.subjectId,
+                { $inc: { version: 1 } },
                 { session }
             );
         }

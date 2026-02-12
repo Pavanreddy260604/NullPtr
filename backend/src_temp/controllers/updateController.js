@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Subject from "../models/Subject.js";
 
 export const updateByIdAndUnit = (Model, label, allowedFields) => async (req, res) => {
     try {
@@ -37,6 +38,12 @@ export const updateByIdAndUnit = (Model, label, allowedFields) => async (req, re
 
         if (!doc) {
             return res.status(404).json({ message: `${label} not found` });
+        }
+
+        // ✅ Force Update: Increment Subject version
+        const subjectIdToUpdate = req.body.subjectId || doc.subjectId;
+        if (subjectIdToUpdate) {
+            await Subject.findByIdAndUpdate(subjectIdToUpdate, { $inc: { version: 1 } });
         }
 
         return res.status(200).json({

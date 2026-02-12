@@ -4,7 +4,7 @@ import { CheckCircle2, XCircle, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MCQQuestion {
-  id: string;
+  _id: string;
   question: string;
   options: string[];
   correctAnswer: number;

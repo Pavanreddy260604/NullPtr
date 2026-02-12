@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BookOpen, ArrowRight, Sparkles, GraduationCap, Trophy, Zap, Terminal, Github, Lock } from "lucide-react";
-import { getSubjects, Subject } from "@/lib/api";
+import { getSubjects, getSubject, getUnitsBySubject, Subject, safeStorage } from "@/lib/api";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SecondSpaceDialog } from "@/components/SecondSpaceDialog";
 
@@ -38,12 +39,19 @@ const useTypingEffect = (text: string, speed: number = 100, delay: number = 0) =
 };
 
 const Index = () => {
-    const [subjects, setSubjects] = useState<Subject[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const queryClient = useQueryClient();
+
+    // Fetch Subjects with persistence
+    const { data: subjects = [], isLoading: loading, error: queryError } = useQuery({
+        queryKey: ['subjects'],
+        queryFn: getSubjects,
+        staleTime: 0, // Always check for metadata changes (visibility/updates)
+    });
+
+    const error = (queryError as Error)?.message || null;
 
     // Second Space Logic
-    const [isUnlocked, setIsUnlocked] = useState(() => !!localStorage.getItem("second_space_secret"));
+    const [isUnlocked, setIsUnlocked] = useState(() => !!safeStorage.getItem("second_space_secret"));
     const [secretClicks, setSecretClicks] = useState(0);
     const [showSecretDialog, setShowSecretDialog] = useState(false);
 
@@ -59,21 +67,6 @@ const Index = () => {
             setSecretClicks(prev => prev + 1);
         }
     };
-
-    useEffect(() => {
-        const fetchSubjects = async () => {
-            try {
-                setLoading(true);
-                const data = await getSubjects();
-                setSubjects(data);
-            } catch (err) {
-                setError(err instanceof Error ? err.message : "Failed to load subjects");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchSubjects();
-    }, []);
 
     const publicSubjects = subjects.filter(s => s.visibility !== 'private');
     const privateSubjects = subjects.filter(s => s.visibility === 'private');
@@ -108,6 +101,17 @@ const Index = () => {
                     key={subject._id}
                     to={`/subjects/${subject._id}`}
                     className="group"
+                    onMouseEnter={() => {
+                        // Prefetch subject details and its units when hovering
+                        queryClient.prefetchQuery({
+                            queryKey: ['subject', subject._id],
+                            queryFn: () => getSubject(subject._id),
+                        });
+                        queryClient.prefetchQuery({
+                            queryKey: ['units', subject._id],
+                            queryFn: () => getUnitsBySubject(subject._id),
+                        });
+                    }}
                 >
                     <Card className={`relative h-full overflow-hidden bg-white dark:bg-white/5 backdrop-blur-md border-slate-200 dark:border-white/10 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl dark:hover:shadow-purple-500/20 hover:-translate-y-2 active:scale-95 ${isPrivate ? 'border-red-500/20 dark:border-red-500/20' : ''}`}>
                         {/* Gradient Overlay */}
@@ -366,7 +370,7 @@ const Index = () => {
                             <p
                                 className="font-mono text-red-500 text-sm select-none cursor-pointer hover:text-red-600 transition-colors animate-pulse"
                                 onClick={() => {
-                                    localStorage.removeItem("second_space_secret");
+                                    safeStorage.removeItem("second_space_secret");
                                     // Using standard alert or simple reload for speed, but user mentioned unwanted DB requests.
                                     // Reload is necessary to Reset state properly.
                                     window.location.reload();

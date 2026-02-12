@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Unit from "../models/Unit.js";
+import Subject from "../models/Subject.js";
 
 /**
  * Bulk delete with Unit reference cleanup
@@ -27,6 +28,9 @@ export const bulkDeleteByUnit = (Model, label, unitField) => async (req, res) =>
         // Convert to ObjectIds for both operations
         const objectIds = validIds.map(id => new mongoose.Types.ObjectId(id));
 
+        // ✅ Get subjectId BEFORE deletion
+        const firstDoc = await Model.findOne({ _id: { $in: objectIds } }).session(session);
+
         // Delete the documents
         const result = await Model.deleteMany({
             _id: { $in: objectIds }
@@ -44,6 +48,15 @@ export const bulkDeleteByUnit = (Model, label, unitField) => async (req, res) =>
             await Unit.updateMany(
                 { [unitField]: { $in: objectIds } },
                 { $pull: { [unitField]: { $in: objectIds } } },
+                { session }
+            );
+        }
+
+        // ✅ Force Update: Increment Subject version using the ID we found earlier
+        if (firstDoc && firstDoc.subjectId) {
+            await Subject.findByIdAndUpdate(
+                firstDoc.subjectId,
+                { $inc: { version: 1 } },
                 { session }
             );
         }

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Subject from "../models/Subject.js";
 import Unit from "../models/Unit.js";
 
 export const createByUnit = (Model, unitField, label) => async (req, res) => {
@@ -35,6 +36,13 @@ export const createByUnit = (Model, unitField, label) => async (req, res) => {
         await Unit.updateOne(
             { _id: unitId },
             { $push: { [unitField]: doc._id } },
+            { session }
+        );
+
+        // ✅ Force Update: Increment Subject version
+        await Subject.findByIdAndUpdate(
+            subjectId,
+            { $inc: { version: 1 } },
             { session }
         );
 

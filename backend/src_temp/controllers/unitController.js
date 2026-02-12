@@ -34,6 +34,7 @@ export const createUnit = async (req, res) => {
 
         // ✅ Push unit reference into subject
         subject.units.push(newUnit._id);
+        subject.version += 1; // ✅ Force Update
         await subject.save();
 
         console.log("✅ Unit linked to subject:", subject.name);
@@ -90,6 +91,11 @@ export const updateUnit = async (req, res) => {
         const updatedUnit = await Unit.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
         });
+
+        if (updatedUnit) {
+            await Subject.findByIdAndUpdate(updatedUnit.subjectId, { $inc: { version: 1 } });
+        }
+
         res.json({ message: "✅ Unit updated", unit: updatedUnit });
     } catch (err) {
         console.error("❌ Error updating unit:", err);
@@ -110,10 +116,13 @@ export const deleteUnit = async (req, res) => {
         await FillBlank.deleteMany({ unitId: unit._id });
         await Descriptive.deleteMany({ unitId: unit._id });
 
-        // ✅ Remove unit reference from Subject
+        // ✅ Remove unit reference from Subject and increment version
         await Subject.findByIdAndUpdate(
             unit.subjectId,
-            { $pull: { units: unit._id } }, // removes unit id from subject’s array
+            {
+                $pull: { units: unit._id },
+                $inc: { version: 1 } // ✅ Force Update
+            },
             { new: true }
         );
 
