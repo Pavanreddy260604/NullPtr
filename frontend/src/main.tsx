@@ -4,6 +4,32 @@ import App from "./App.tsx";
 import "./index.css";
 
 /**
+ * 🛡️ Top-Level Nuclear Error Suppression
+ */
+if (typeof window !== 'undefined') {
+    const isStorageError = (e: any) => {
+        const msg = (e?.message || (typeof e === 'string' ? e : '')).toLowerCase();
+        return msg.includes('access to storage is not allowed') ||
+            msg.includes('securityerror') ||
+            msg.includes('idbdatabase') ||
+            msg.includes('indexeddb');
+    };
+
+    window.addEventListener('unhandledrejection', (event) => {
+        if (isStorageError(event.reason)) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }, true);
+
+    window.addEventListener('error', (event) => {
+        if (isStorageError(event.error) || isStorageError(event.message)) {
+            event.stopImmediatePropagation();
+        }
+    }, true);
+}
+
+/**
  * 🛡️ Global Storage Polyfill
  * This prevents third-party libraries (like next-themes) from crashing the app
  * when localStorage/sessionStorage are restricted (Incognito, etc).
