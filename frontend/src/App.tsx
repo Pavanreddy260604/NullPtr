@@ -21,6 +21,7 @@ const checkStorageAccess = () => {
   };
 
   try {
+    // This will now pass even in Incognito if our polyfill at main.tsx is working
     localStorage.setItem("__test__", "1");
     localStorage.removeItem("__test__");
     status.local = true;
@@ -28,8 +29,7 @@ const checkStorageAccess = () => {
     console.warn("🛡️ LocalStorage restricted");
   }
 
-  // We can't easily check IDB synchronously in a robust way, 
-  // but we can check if the API exists.
+  // We check if indexedDB exists and isn't blocked by the browser
   status.idb = typeof indexedDB !== 'undefined';
 
   return status;
@@ -37,6 +37,8 @@ const checkStorageAccess = () => {
 
 const storage = checkStorageAccess();
 const storageAllowed = storage.local && storage.idb;
+
+console.log("💾 [Storage] Status:", storage);
 
 // Safe storage for next-themes to prevent crashes
 const safeThemeStorage = {

@@ -1,7 +1,22 @@
 // API Configuration - Uses environment variable for deployment flexibility
-// API Configuration - Uses environment variable for deployment flexibility
-const rawApiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const getApiUrl = () => {
+    const url = import.meta.env.VITE_API_URL;
+
+    // If we're on Vercel/Production and VITE_API_URL is missing, it will default to relative paths
+    // resulting in 404s on the frontend domain. We need to catch this.
+    if (!url && typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
+        console.error("❌ [API] VITE_API_URL is missing in production! API calls will fail.");
+        // Fallback to the known Render backend if possible, or stay relative
+        return "https://study-g3xc.onrender.com";
+    }
+
+    return url || "http://localhost:5000";
+};
+
+const rawApiUrl = getApiUrl();
 const API_BASE_URL = rawApiUrl.endsWith("/") ? rawApiUrl.slice(0, -1) : rawApiUrl;
+
+console.log(`🌐 [API] Base URL: ${API_BASE_URL}`);
 
 /**
  * ✅ Safe Storage Helper
