@@ -14,14 +14,19 @@ import {
     getDescriptivesByUnit,
     Subject,
     Unit,
-    safeStorage
+    safeStorage,
+    API_BASE_URL
 } from "@/lib/api";
+import { syncSubject } from "@/lib/sync";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { RefreshCw, CloudDownload } from "lucide-react";
 
 const SubjectPage = () => {
     const { subjectId } = useParams<{ subjectId: string }>();
     const queryClient = useQueryClient();
+    const [isSyncing, setIsSyncing] = useState(false);
 
     // Fetch Subject Details
     const { data: subject, isLoading: subjectLoading, error: subjectError } = useQuery({
@@ -170,6 +175,29 @@ const SubjectPage = () => {
                                 </div>
                                 <span className="font-semibold">{subject?.name}</span>
                             </div>
+
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={async () => {
+                                    if (isSyncing) return;
+                                    setIsSyncing(true);
+                                    const toastId = toast.loading(`Refreshing ${subject?.name}...`);
+                                    try {
+                                        await syncSubject(queryClient, subjectId!);
+                                        toast.success("Content Updated!", { id: toastId });
+                                    } catch (e) {
+                                        toast.error("Update failed. Check connection.", { id: toastId });
+                                    } finally {
+                                        setIsSyncing(false);
+                                    }
+                                }}
+                                className={cn("rounded-full", isSyncing && "text-purple-500")}
+                                title="Refresh Content"
+                                disabled={isSyncing}
+                            >
+                                <RefreshCw className={cn("w-5 h-5", isSyncing && "animate-spin")} />
+                            </Button>
 
                             <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-full">
                                 <Share2 className="w-5 h-5" />

@@ -12,6 +12,8 @@ export default defineConfig({
       manifest: false, // We already have site.webmanifest
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        navigateFallback: "/index.html",
+        navigateFallbackAllowlist: [/^(?!\/__).*/], // Allow all routes except internal ones
         runtimeCaching: [
           {
             // Cache API responses - StaleWhileRevalidate for instant load

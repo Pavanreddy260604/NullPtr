@@ -4,10 +4,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, ArrowRight, Sparkles, GraduationCap, Trophy, Zap, Terminal, Github, Lock } from "lucide-react";
+import { BookOpen, ArrowRight, Sparkles, GraduationCap, Trophy, Zap, Terminal, Github, Lock, CloudDownload } from "lucide-react";
 import { getSubjects, getSubject, getUnitsBySubject, Subject, safeStorage } from "@/lib/api";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SecondSpaceDialog } from "@/components/SecondSpaceDialog";
+import { syncAll } from "@/lib/sync";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 // Typing animation hook
 const useTypingEffect = (text: string, speed: number = 100, delay: number = 0) => {
@@ -54,6 +57,8 @@ const Index = () => {
     const [isUnlocked, setIsUnlocked] = useState(() => !!safeStorage.getItem("second_space_secret"));
     const [secretClicks, setSecretClicks] = useState(0);
     const [showSecretDialog, setShowSecretDialog] = useState(false);
+
+    const [isSyncing, setIsSyncing] = useState(false);
 
     // Animated typing effects
     const { displayedText: nullText, isComplete: nullComplete } = useTypingEffect("Null", 150, 500);
@@ -202,11 +207,39 @@ const Index = () => {
                 <section className="container mx-auto px-4 py-12 md:py-32">
                     <div className="max-w-4xl mx-auto text-center space-y-8">
                         {/* Terminal Badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 dark:bg-black/50 backdrop-blur-sm border border-slate-700 dark:border-white/20 text-sm font-mono">
-                            <Terminal className="w-4 h-4 text-green-500" />
-                            <span className="text-green-500">$</span>
-                            <span className="text-slate-300">./study --mode=engineer</span>
-                            <span className="w-2 h-4 bg-green-500 animate-pulse ml-1"></span>
+                        <div className="flex flex-col items-center gap-4">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 dark:bg-black/50 backdrop-blur-sm border border-slate-700 dark:border-white/20 text-sm font-mono">
+                                <Terminal className="w-4 h-4 text-green-500" />
+                                <span className="text-green-500">$</span>
+                                <span className="text-slate-300">./study --mode=engineer</span>
+                                <span className="w-2 h-4 bg-green-500 animate-pulse ml-1"></span>
+                            </div>
+
+                            {/* Sync All Button */}
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-9 px-4 rounded-full bg-white/5 border-slate-200 dark:border-white/10 hover:bg-white/10 text-slate-600 dark:text-slate-400 gap-2 transition-all group"
+                                onClick={async () => {
+                                    if (isSyncing) return;
+                                    setIsSyncing(true);
+                                    const toastId = toast.loading("Starting Full Curriculum Sync...");
+                                    try {
+                                        await syncAll(queryClient, subjects, (msg) => {
+                                            toast.loading(msg, { id: toastId });
+                                        });
+                                        toast.success("Offline Sync Complete! You can now study without internet.", { id: toastId });
+                                    } catch (e) {
+                                        toast.error("Sync partial failure. Please check connection.", { id: toastId });
+                                    } finally {
+                                        setIsSyncing(false);
+                                    }
+                                }}
+                                disabled={isSyncing || loading}
+                            >
+                                <CloudDownload className={cn("w-4 h-4", isSyncing && "animate-bounce")} />
+                                <span>{isSyncing ? "Syncing..." : "Download Everything"}</span>
+                            </Button>
                         </div>
 
                         {/* Animated Title */}
