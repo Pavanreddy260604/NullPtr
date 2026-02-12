@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import { initSecurityProtections } from "./lib/security";
+import "./index.css";
 
 /**
  * 🛡️ Top-Level Nuclear Error Suppression
