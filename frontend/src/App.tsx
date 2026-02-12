@@ -13,6 +13,16 @@ import NotFound from "./pages/NotFound";
 import { InstallPWA } from "@/components/InstallPWA";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 
+// ✅ Global Error Suppression for restricted storage contexts
+if (typeof window !== 'undefined') {
+  window.addEventListener('unhandledrejection', (event) => {
+    if (event.reason?.message?.includes('Access to storage is not allowed')) {
+      console.warn("🛡️ Suppressed storage access error:", event.reason.message);
+      event.preventDefault();
+    }
+  });
+}
+
 // ✅ Check if storage (IndexedDB & LocalStorage) is actually allowed
 const checkStorageAccess = () => {
   const status = {
@@ -21,16 +31,33 @@ const checkStorageAccess = () => {
   };
 
   try {
-    // This will now pass even in Incognito if our polyfill at main.tsx is working
-    localStorage.setItem("__test__", "1");
-    localStorage.removeItem("__test__");
+    // Check if LocalStorage is REAL (not polyfilled/restricted)
+    // We check if it's the native implementation that throws or a memory fallback
+    const testKey = "__real_storage_test__";
+    window.localStorage.setItem(testKey, "1");
+    window.localStorage.removeItem(testKey);
     status.local = true;
+
+    // Detect if our polyfill is active (we added a marker in polyfill if it fails)
+    if ((window.localStorage as any).__is_fallback) {
+      status.local = false;
+    }
   } catch (e) {
-    console.warn("🛡️ LocalStorage restricted");
+    status.local = false;
   }
 
-  // We check if indexedDB exists and isn't blocked by the browser
-  status.idb = typeof indexedDB !== 'undefined';
+  try {
+    // Thorough check for IndexedDB
+    // Some browsers have it defined but throw "Access to storage is not allowed" on any access
+    if (typeof indexedDB !== 'undefined') {
+      const request = indexedDB.open("__storage_test__");
+      status.idb = true;
+      // We don't need to wait for success, just that it didn't throw immediately
+    }
+  } catch (e) {
+    console.warn("🛡️ IndexedDB restricted");
+    status.idb = false;
+  }
 
   return status;
 };

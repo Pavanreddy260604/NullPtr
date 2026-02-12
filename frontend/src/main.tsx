@@ -19,21 +19,25 @@ import "./index.css";
             console.warn(`⚠️ [Harden] ${type} restricted. Using memory fallback.`);
             const storageStore: Record<string, string> = {};
             return {
+                __is_fallback: true,
                 getItem: (key: string) => storageStore[key] || null,
                 setItem: (key: string, value: string) => { storageStore[key] = String(value); },
                 removeItem: (key: string) => { delete storageStore[key]; },
                 clear: () => { for (let k in storageStore) delete storageStore[k]; },
                 key: (i: number) => Object.keys(storageStore)[i] || null,
                 get length() { return Object.keys(storageStore).length; }
-            } as Storage;
+            } as any;
         }
     };
 
     try {
-        if (!window.localStorage) (window as any).localStorage = createSafeStorage('localStorage');
-        if (!window.sessionStorage) (window as any).sessionStorage = createSafeStorage('sessionStorage');
+        if (!window.localStorage || (window.localStorage as any).__is_fallback) {
+            (window as any).localStorage = createSafeStorage('localStorage');
+        }
+        if (!window.sessionStorage || (window.sessionStorage as any).__is_fallback) {
+            (window as any).sessionStorage = createSafeStorage('sessionStorage');
+        }
     } catch (e) {
-        // Handle cases where even defining them fails (rare)
         console.error("Critical: Failed to polyfill storage", e);
     }
 })();
@@ -43,8 +47,12 @@ import "./index.css";
 // in restricted contexts (Incognito, third-party cookies blocked).
 const registerSafeSW = () => {
     try {
-        // Simple heuristic: if localStorage is blocked, SW storage likely is too
-        localStorage.getItem('test');
+        // Detect if storage is restricted BEFORE trying SW
+        // We check IDB directly because LocalStorage might be our polyfill
+        if (typeof indexedDB === 'undefined') throw new Error("IDB Missing");
+
+        // Try to trigger a security error if restricted
+        indexedDB.open("__sw_test__");
 
         return registerSW({
             onNeedRefresh() {
