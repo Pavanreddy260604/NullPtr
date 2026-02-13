@@ -48,6 +48,13 @@ const BLOCKED_TEXT_PATTERNS = [
     /bunny.*rummy/i,
 ];
 
+// Whitelisted text patterns (PWA prompts, legitimate browser events)
+const WHITELISTED_TEXT_PATTERNS = [
+    /add.*to.*home.*screen/i,
+    /install.*app/i,
+    /beforeinstallprompt/i,
+];
+
 /**
  * Check if a URL is potentially malicious
  */
@@ -70,6 +77,10 @@ export function isMaliciousUrl(url: string): boolean {
  * Check if text content contains potentially malicious patterns
  */
 export function containsMaliciousContent(text: string): boolean {
+    // Check whitelist first
+    if (WHITELISTED_TEXT_PATTERNS.some(pattern => pattern.test(text))) {
+        return false;
+    }
     return BLOCKED_TEXT_PATTERNS.some(pattern => pattern.test(text));
 }
 
@@ -183,12 +194,11 @@ export function initSecurityProtections(): void {
 export function getRecommendedCSP(): string {
     return [
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com",
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "font-src 'self' https://fonts.gstatic.com",
         "img-src 'self' data: blob: https://*.cloudinary.com",
-        "connect-src 'self' https://*.cloudinary.com https://api.cloudinary.com",
-        "frame-ancestors 'none'",
+        "connect-src 'self' https://*.cloudinary.com https://api.cloudinary.com https://cloudflareinsights.com https://study-g3xc.onrender.com https://study-8c4d.vercel.app",
         "base-uri 'self'",
         "form-action 'self'",
     ].join('; ');
