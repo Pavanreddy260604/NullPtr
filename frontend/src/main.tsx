@@ -4,15 +4,15 @@ import App from "./App.tsx";
 import "./index.css";
 
 // ✅ Safe Service Worker Registration
+// Note: We always register the SW even without IndexedDB because the
+// Workbox HTTP cache (CacheStorage API) works independently of IDB.
+// This ensures static assets and API responses are cached for offline use.
 const registerSafeSW = () => {
     try {
-        // Detect if storage is restricted BEFORE trying SW
-        if (typeof window.indexedDB === 'undefined' || window.indexedDB === null) {
+        if (!('serviceWorker' in navigator)) {
+            console.warn('[SW] Service workers not supported in this browser');
             return () => { };
         }
-
-        // Active probe
-        window.indexedDB.open("__sw_test_probe__");
 
         return registerSW({
             onNeedRefresh() {
@@ -21,10 +21,11 @@ const registerSafeSW = () => {
                 }
             },
             onOfflineReady() {
-                // Silently ready
+                console.log('📦 [SW] App is ready for offline use');
             },
         });
     } catch (e) {
+        console.warn('[SW] Registration failed:', e);
         return () => { };
     }
 };

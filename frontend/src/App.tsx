@@ -50,8 +50,10 @@ const probeStorage = (): Promise<boolean> => {
       const request = window.indexedDB.open("__nullptr_probe__", 1);
 
       const timeout = setTimeout(() => {
-        resolve(false);
-      }, 500);
+        // Optimistic: if probe times out, assume storage works
+        // rather than disabling persistence on slow devices
+        resolve(true);
+      }, 1000);
 
       request.onsuccess = () => {
         clearTimeout(timeout);
@@ -106,7 +108,20 @@ const persister = {
   },
 } as any;
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: 1000 * 60 * 60 * 24 * 30,       // 30 days – keep cached data for offline
+      staleTime: 1000 * 60 * 60 * 24,          // 1 day  – avoid refetch spam
+      networkMode: 'offlineFirst',              // Serve cache instantly, revalidate if online
+      retry: (failureCount, error) => {
+        // Don't retry when offline – serve stale cache instead
+        if (!navigator.onLine) return false;
+        return failureCount < 2;
+      },
+    },
+  },
+});
 
 const AppContent = () => (
   <TooltipProvider>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -67,6 +67,36 @@ const Index = () => {
         isError: false
     });
     const [isSynced, setIsSynced] = useState(() => !!safeStorage.getItem("full_sync_completed"));
+    const autoSyncTriggered = useRef(false);
+
+    // ✅ Automatic Background Sync on first visit
+    // Warms the cache so offline mode works without manual action
+    useEffect(() => {
+        if (
+            autoSyncTriggered.current ||  // Already triggered this session
+            isSynced ||                     // Already synced before
+            loading ||                      // Subjects still loading
+            subjects.length === 0 ||        // No subjects available
+            !navigator.onLine ||            // User is offline
+            syncState.isSyncing             // Manual sync in progress
+        ) return;
+
+        autoSyncTriggered.current = true;
+        console.log('📡 [AutoSync] Starting background sync for offline support...');
+
+        // Run sync in background without blocking UI
+        syncAll(queryClient, subjects, (progress, status) => {
+            setSyncState(prev => ({ ...prev, progress, status }));
+        }).then(success => {
+            if (success) {
+                safeStorage.setItem("full_sync_completed", "true");
+                setIsSynced(true);
+                console.log('✅ [AutoSync] Background sync complete');
+            }
+        }).catch(err => {
+            console.warn('⚠️ [AutoSync] Background sync failed (non-critical):', err);
+        });
+    }, [subjects, loading, isSynced, syncState.isSyncing]);
 
     // ... (rest of the logic)
 

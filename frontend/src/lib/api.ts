@@ -128,12 +128,23 @@ async function fetchApi<T>(endpoint: string): Promise<T> {
         headers["x-second-space-secret"] = token;
     }
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, { headers });
-    if (!response.ok) {
-        throw new Error(`API error: ${response.statusText}`);
+    try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, { headers });
+        if (!response.ok) {
+            throw new Error(`API error: ${response.statusText}`);
+        }
+        const json = await response.json();
+        return json.data ?? json;
+    } catch (error: any) {
+        // If we're offline and the service worker didn't have a cached response,
+        // throw a recognizable error so React Query can serve stale data instead.
+        if (!navigator.onLine) {
+            const offlineErr = new Error(`Offline: cached data unavailable for ${endpoint}`);
+            offlineErr.name = 'OfflineError';
+            throw offlineErr;
+        }
+        throw error;
     }
-    const json = await response.json();
-    return json.data ?? json;
 }
 
 /* -------------------------------------------------------------------------- */
