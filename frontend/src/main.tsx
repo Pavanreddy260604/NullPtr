@@ -1,72 +1,8 @@
 import { createRoot } from "react-dom/client";
 import { registerSW } from 'virtual:pwa-register';
 import App from "./App.tsx";
+import App from "./App.tsx";
 import "./index.css";
-
-/**
- * 🛡️ Top-Level Nuclear Error Suppression
- */
-if (typeof window !== 'undefined') {
-    const isStorageError = (e: any) => {
-        const msg = (e?.message || (typeof e === 'string' ? e : '')).toLowerCase();
-        return msg.includes('access to storage is not allowed') ||
-            msg.includes('securityerror') ||
-            msg.includes('idbdatabase') ||
-            msg.includes('indexeddb');
-    };
-
-    window.addEventListener('unhandledrejection', (event) => {
-        if (isStorageError(event.reason)) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-    }, true);
-
-    window.addEventListener('error', (event) => {
-        if (isStorageError(event.error) || isStorageError(event.message)) {
-            event.stopImmediatePropagation();
-        }
-    }, true);
-}
-
-/**
- * 🛡️ Global Storage Polyfill
- * This prevents third-party libraries (like next-themes) from crashing the app
- * when localStorage/sessionStorage are restricted (Incognito, etc).
- */
-(function hardenStorage() {
-    const createSafeStorage = (type: 'localStorage' | 'sessionStorage') => {
-        try {
-            const testKey = "__storage_test__";
-            window[type].setItem(testKey, testKey);
-            window[type].removeItem(testKey);
-            return window[type];
-        } catch (e) {
-            console.warn(`⚠️ [Harden] ${type} restricted. Using memory fallback.`);
-            const storageStore: Record<string, string> = {};
-            return {
-                __is_fallback: true,
-                getItem: (key: string) => storageStore[key] || null,
-                setItem: (key: string, value: string) => { storageStore[key] = String(value); },
-                removeItem: (key: string) => { delete storageStore[key]; },
-                clear: () => { for (let k in storageStore) delete storageStore[k]; },
-                key: (i: number) => Object.keys(storageStore)[i] || null,
-                get length() { return Object.keys(storageStore).length; }
-            } as any;
-        }
-    };
-
-    try {
-        if (!window.localStorage || (window.localStorage as any).__is_fallback) {
-            (window as any).localStorage = createSafeStorage('localStorage');
-        }
-        if (!window.sessionStorage || (window.sessionStorage as any).__is_fallback) {
-            (window as any).sessionStorage = createSafeStorage('sessionStorage');
-        }
-    } catch (e) {
-        // Fallback already handled within createSafeStorage
-    }
-})();
 
 // ✅ Safe Service Worker Registration
 const registerSafeSW = () => {

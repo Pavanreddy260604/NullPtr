@@ -6,7 +6,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NullPtr - Master Your Engineering Subjects</title>
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.cloudinary.com; connect-src 'self' https://*.cloudinary.com https://api.cloudinary.com https://cloudflareinsights.com https://study-g3xc.onrender.com; base-uri 'self'; form-action 'self';" />
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.cloudinary.com; connect-src 'self' https://*.cloudinary.com https://api.cloudinary.com https://cloudflareinsights.com https://study-g3xc.onrender.com https://study-8c4d.vercel.app; base-uri 'self'; form-action 'self';" />
+
+    <!-- 🛡️ Nuclear Storage Shield (Must be first to prevent module crashes) -->
+    <script>
+        (function () {
+            const createSafeStorage = (t) => {
+                try {
+                    const k = "__s_t__";
+                    window[t].setItem(k, k);
+                    window[t].removeItem(k);
+                    return window[t];
+                } catch (e) {
+                    const s = {};
+                    return {
+                        getItem: (k) => s[k] || null,
+                        setItem: (k, v) => { s[k] = String(v); },
+                        removeItem: (k) => { delete s[k]; },
+                        clear: () => { for (let x in s) delete s[x]; },
+                        key: (i) => Object.keys(s)[i] || null,
+                        get length() { return Object.keys(s).length; }
+                    };
+                }
+            };
+            try {
+                if (!window.localStorage) window.localStorage = createSafeStorage('localStorage');
+                if (!window.sessionStorage) window.sessionStorage = createSafeStorage('sessionStorage');
+            } catch (e) { }
+            const isErr = (e) => {
+                const m = (e?.message || (typeof e === 'string' ? e : '')).toLowerCase();
+                return m.includes('access to storage is not allowed') || m.includes('securityerror') || m.includes('idbdatabase') || m.includes('indexeddb');
+            };
+            window.addEventListener('unhandledrejection', (ev) => { if (isErr(ev.reason)) { ev.preventDefault(); ev.stopPropagation(); } }, true);
+            window.addEventListener('error', (ev) => { if (isErr(ev.error) || isErr(ev.message)) { ev.stopImmediatePropagation(); } }, true);
+        })();
+    </script>
+
     <meta name="description"
         content="NullPtr - The ultimate study platform for CS & Engineering students. Practice MCQs, Fill in the Blanks, and Q&A - Works Offline!" />
     <meta name="author" content="NullPtr" />
