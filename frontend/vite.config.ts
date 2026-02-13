@@ -16,8 +16,8 @@ export default defineConfig({
         navigateFallbackAllowlist: [/^(?!\/__).*/], // Allow all routes except internal ones
         runtimeCaching: [
           {
-            // Cache API responses - Support relative /api and specific domains
-            urlPattern: /^(https:\/\/study-g3xc\.onrender\.com|http:\/\/localhost:5000)\/.*|.*\/api\/.*/i,
+            // Cache API responses - Support Vercel, Render, Local, and direct routes
+            urlPattern: /^(https:\/\/study-.*\.vercel\.app|https:\/\/study-g3xc\.onrender\.com|http:\/\/localhost:5000)\/.*|.*\/api\/.*|\/(subjects|units|mcq|fillblank|descriptive)\/.*/i,
             handler: "StaleWhileRevalidate",
             options: {
               cacheName: "api-cache",
