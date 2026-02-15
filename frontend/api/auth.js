@@ -289,13 +289,23 @@ export default async function handler(req, res) {
     try {
         await connectDB();
 
-        // Parse URL to get the auth action
-        const url = new URL(req.url, `http://${req.headers.host}`);
-        const pathParts = url.pathname.split('/').filter(Boolean);
+        // Parse URL to get the auth action - use same approach as index.js
+        const parts = req.url.split("?")[0].split("/").filter(Boolean);
+        const authIndex = parts.indexOf("auth");
+        const actionIndex = authIndex !== -1 ? authIndex + 1 : 0;
+        const action = parts[actionIndex] || '';
 
-        // Find where 'auth' is in the path
-        const authIndex = pathParts.indexOf('auth');
-        const action = authIndex !== -1 ? pathParts[authIndex + 1] : pathParts[0];
+        // Parse body if needed (Vercel may parse it automatically or as string)
+        let body = req.body;
+        if (typeof body === 'string') {
+            try {
+                body = JSON.parse(body);
+            } catch (e) {
+                body = {};
+            }
+        }
+        // Ensure body exists
+        if (!body) body = {};
 
         const User = getUserModel();
         const PendingUser = getPendingUserModel();
@@ -304,7 +314,7 @@ export default async function handler(req, res) {
 
         // POST /auth/register
         if (action === 'register' && req.method === 'POST') {
-            const { email, password, name } = req.body;
+            const { email, password, name } = body;
 
             if (!email || !password || !name) {
                 return res.status(400).json({ success: false, error: 'Email, password, and name are required' });
@@ -350,7 +360,7 @@ export default async function handler(req, res) {
 
         // POST /auth/verify-email
         if (action === 'verify-email' && req.method === 'POST') {
-            const { email, otp } = req.body;
+            const { email, otp } = body;
 
             const pendingUser = await PendingUser.findOne({
                 email: email.toLowerCase(),
@@ -395,7 +405,7 @@ export default async function handler(req, res) {
 
         // POST /auth/login
         if (action === 'login' && req.method === 'POST') {
-            const { email, password } = req.body;
+            const { email, password } = body;
 
             if (!email || !password) {
                 return res.status(400).json({ success: false, error: 'Email and password are required' });
@@ -445,7 +455,7 @@ export default async function handler(req, res) {
 
         // POST /auth/google-login
         if (action === 'google-login' && req.method === 'POST') {
-            const { credential } = req.body;
+            const { credential } = body;
 
             try {
                 const payload = await verifyGoogleToken(credential);
@@ -503,7 +513,7 @@ export default async function handler(req, res) {
 
         // POST /auth/forgot-password
         if (action === 'forgot-password' && req.method === 'POST') {
-            const { email } = req.body;
+            const { email } = body;
             const user = await User.findOne({ email: email.toLowerCase() });
 
             if (!user) {
@@ -525,7 +535,7 @@ export default async function handler(req, res) {
 
         // POST /auth/reset-password
         if (action === 'reset-password' && req.method === 'POST') {
-            const { email, token, newPassword } = req.body;
+            const { email, token, newPassword } = body;
 
             const user = await User.findOne({
                 email: email.toLowerCase(),
@@ -551,7 +561,7 @@ export default async function handler(req, res) {
 
         // POST /auth/refresh
         if (action === 'refresh' && req.method === 'POST') {
-            const { refreshToken } = req.body;
+            const { refreshToken } = body;
 
             if (!refreshToken) {
                 return res.status(400).json({ success: false, error: 'Refresh token is required' });
@@ -618,7 +628,7 @@ export default async function handler(req, res) {
 
         // PATCH /auth/profile
         if (action === 'profile' && req.method === 'PATCH') {
-            const { name, avatar } = req.body;
+            const { name, avatar } = body;
             const user = await User.findById(authUser.userId);
 
             if (!user) {
@@ -647,7 +657,7 @@ export default async function handler(req, res) {
 
         // PATCH /auth/preferences
         if (action === 'preferences' && req.method === 'PATCH') {
-            const { theme, aiProvider, aiApiKey, aiModel, notifications } = req.body;
+            const { theme, aiProvider, aiApiKey, aiModel, notifications } = body;
             const user = await User.findById(authUser.userId);
 
             if (!user) {
@@ -672,7 +682,7 @@ export default async function handler(req, res) {
 
         // POST /auth/change-password
         if (action === 'change-password' && req.method === 'POST') {
-            const { currentPassword, newPassword } = req.body;
+            const { currentPassword, newPassword } = body;
             const user = await User.findById(authUser.userId);
 
             if (!user) {
@@ -700,7 +710,7 @@ export default async function handler(req, res) {
 
         // DELETE /auth/account
         if (action === 'account' && req.method === 'DELETE') {
-            const { password } = req.body;
+            const { password } = body;
             const user = await User.findById(authUser.userId);
 
             if (!user) {
