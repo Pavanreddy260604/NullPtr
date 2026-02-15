@@ -34,9 +34,12 @@ const unique = <T,>(values: T[]): T[] => Array.from(new Set(values));
 const getApiBaseUrls = (): string[] => {
     const fromEnv = normalizeBaseUrl(import.meta.env.VITE_API_URL);
     const fromEnvServerless = toServerlessApiBase(fromEnv);
+    const fromEnvRootOnly = fromEnv && fromEnv !== fromEnvServerless ? fromEnv : null;
     const localDefault = "/api";
     const fallbackFromEnv = normalizeBaseUrl(import.meta.env.VITE_STUDENT_API_FALLBACK_URL);
     const fallbackFromEnvServerless = toServerlessApiBase(fallbackFromEnv);
+    const fallbackFromEnvRootOnly =
+        fallbackFromEnv && fallbackFromEnv !== fallbackFromEnvServerless ? fallbackFromEnv : null;
     const defaultRemoteStudentApi = "https://study-8c4d.vercel.app/api";
     const isLocalhost =
         typeof window !== "undefined" &&
@@ -48,13 +51,13 @@ const getApiBaseUrls = (): string[] => {
     );
 
     const localAndFallbackOrder = isLocalhost
-        ? [localDefault, fallbackFromEnvServerless, fallbackFromEnv, fallbackLocalDefault]
-        : [fallbackFromEnvServerless, fallbackFromEnv, fallbackLocalDefault, localDefault];
+        ? [localDefault, fallbackFromEnvServerless, fallbackFromEnvRootOnly, fallbackLocalDefault]
+        : [fallbackFromEnvServerless, fallbackFromEnvRootOnly, fallbackLocalDefault, localDefault];
 
     return unique(
         [
             fromEnvServerless,
-            fromEnv,
+            fromEnvRootOnly,
             ...localAndFallbackOrder
         ].filter(Boolean) as string[]
     );
