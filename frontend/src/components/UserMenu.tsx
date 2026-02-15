@@ -40,7 +40,7 @@ export function UserMenu() {
         <div ref={ref} className="relative">
             <button
                 onClick={() => setOpen(!open)}
-                className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white hover:bg-white/10 transition-colors"
+                className="flex items-center gap-1.5 sm:gap-2 rounded-xl border border-white/10 bg-white/5 px-2 sm:px-3 py-2 text-sm text-white hover:bg-white/10 transition-colors"
                 aria-label="User menu"
                 aria-expanded={open}
             >

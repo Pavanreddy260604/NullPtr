@@ -293,9 +293,9 @@ const Index = () => {
             {/* Content */}
             <div className="relative z-10">
                 {/* Header for Global Controls */}
-                <header className="absolute top-0 w-full z-50 p-4">
-                    <div className="container mx-auto flex items-center justify-end">
-                        <div className="flex items-center gap-4">
+                <header className="absolute inset-x-0 top-0 z-50">
+                    <div className="mx-auto flex w-full max-w-[1400px] items-center justify-end px-2 pt-3 sm:px-4 sm:pt-4">
+                        <div className="-mr-1 flex items-center gap-1.5 sm:mr-0 sm:gap-3">
                             <ThemeToggle />
                             <UserMenu />
                         </div>
