@@ -44,7 +44,7 @@ const getModel = (name) =>
 export default async function handler(req, res) {
     // CORS Headers for cross-origin requests
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-second-space-secret");
 
     // Handle preflight
@@ -52,8 +52,9 @@ export default async function handler(req, res) {
         return res.status(204).end();
     }
 
-    if (req.method !== "GET" && req.method !== "POST") {
-        return res.status(405).json({ message: "Method Not Allowed" });
+    // Allow all methods for API routes - specific handlers will validate
+    if (req.method !== "OPTIONS") {
+        // Pass through to route handlers
     }
 
     try {
