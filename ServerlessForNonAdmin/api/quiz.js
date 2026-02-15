@@ -1,11 +1,7 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 
-/* -------------------------------------------------- */
-/* 🔌 1. DB Connection (Fixed for Race Conditions)    */
-/* -------------------------------------------------- */
 let cached = global.mongoose;
-
 if (!cached) {
     cached = global.mongoose = { conn: null, promise: null };
 }
@@ -15,28 +11,23 @@ async function connectDB() {
 
     if (!cached.promise) {
         const opts = { bufferCommands: false, maxPoolSize: 10 };
-        cached.promise = mongoose.connect(process.env.MONGO_URI, opts).then((mongoose) => {
-            return mongoose;
-        });
+        cached.promise = mongoose.connect(process.env.MONGO_URI, opts).then((mongooseInstance) => mongooseInstance);
     }
 
     try {
         cached.conn = await cached.promise;
-    } catch (e) {
+    } catch (error) {
         cached.promise = null;
-        throw e;
+        throw error;
     }
+
     return cached.conn;
 }
 
-/* -------------------------------------------------- */
-/* 🧠 2. Mongoose Models                              */
-/* -------------------------------------------------- */
-
-// Quiz Question Schema
 const quizQuestionSchema = new mongoose.Schema({
     questionId: { type: String, required: true },
-    questionType: { type: String, enum: ['mcq', 'fillblank', 'descriptive'], required: true },
+    questionType: { type: String, enum: ["mcq", "fillblank", "descriptive"], required: true },
+    originalType: { type: String, enum: ["descriptive", null], default: null },
     questionText: { type: String, required: true },
     options: [{ type: String }],
     correctAnswer: { type: mongoose.Schema.Types.Mixed, required: true },
@@ -47,19 +38,18 @@ const quizQuestionSchema = new mongoose.Schema({
     earnedPoints: { type: Number, default: 0 }
 });
 
-// Quiz Attempt Schema
 const quizAttemptSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true },
     config: {
         subjectId: { type: String, default: null },
         unitIds: [{ type: String }],
-        questionTypes: [{ type: String, enum: ['mcq', 'fillblank', 'descriptive'] }],
+        questionTypes: [{ type: String, enum: ["mcq", "fillblank", "descriptive"] }],
         totalQuestions: { type: Number, required: true },
         timeLimit: { type: Number, default: null },
         shuffle: { type: Boolean, default: true },
         negativeMarking: { type: Boolean, default: false },
         negativeMarkValue: { type: Number, default: 0.25 },
-        difficulty: { type: String, enum: ['easy', 'medium', 'hard', 'mixed'], default: 'mixed' }
+        difficulty: { type: String, enum: ["easy", "medium", "hard", "mixed"], default: "mixed" }
     },
     questions: [quizQuestionSchema],
     results: {
@@ -74,7 +64,7 @@ const quizAttemptSchema = new mongoose.Schema({
         timeTaken: { type: Number, default: 0 },
         averageTimePerQuestion: { type: Number, default: 0 }
     },
-    status: { type: String, enum: ['in_progress', 'completed', 'abandoned'], default: 'in_progress' },
+    status: { type: String, enum: ["in_progress", "completed", "abandoned"], default: "in_progress" },
     startedAt: { type: Date, default: Date.now },
     completedAt: { type: Date, default: null },
     lastActivityAt: { type: Date, default: Date.now }
@@ -83,35 +73,38 @@ const quizAttemptSchema = new mongoose.Schema({
     toJSON: { virtuals: true }
 });
 
-// Quiz Methods
 quizAttemptSchema.methods.submitAnswer = function (questionIndex, userAnswer, timeSpent = 0) {
     if (questionIndex < 0 || questionIndex >= this.questions.length) {
-        throw new Error('Invalid question index');
+        throw new Error("Invalid question index");
     }
 
     const question = this.questions[questionIndex];
     question.userAnswer = userAnswer;
-    question.timeSpent = timeSpent;
+    question.timeSpent = Number(timeSpent) || 0;
     this.lastActivityAt = new Date();
 
     let isCorrect = false;
-    if (question.questionType === 'mcq') {
-        isCorrect = userAnswer === question.correctAnswer;
-    } else if (question.questionType === 'fillblank') {
-        isCorrect = userAnswer?.toString().toLowerCase().trim() ===
-            question.correctAnswer?.toString().toLowerCase().trim();
-    } else if (question.questionType === 'descriptive') {
-        if (typeof question.correctAnswer === 'number' && typeof userAnswer === 'number') {
+
+    if (question.questionType === "mcq") {
+        const normalizedUserAnswer = typeof userAnswer === "string" ? Number(userAnswer) : userAnswer;
+        const normalizedCorrectAnswer = typeof question.correctAnswer === "string"
+            ? Number(question.correctAnswer)
+            : question.correctAnswer;
+        isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
+    } else if (question.questionType === "fillblank") {
+        isCorrect = userAnswer?.toString().toLowerCase().trim() === question.correctAnswer?.toString().toLowerCase().trim();
+    } else if (question.questionType === "descriptive") {
+        if (typeof question.correctAnswer === "number" && typeof userAnswer === "number") {
             isCorrect = userAnswer === question.correctAnswer;
         } else {
-            isCorrect = userAnswer ? true : false;
+            isCorrect = Boolean(userAnswer);
         }
     }
 
     question.isCorrect = isCorrect;
-    if (isCorrect === true) {
+    if (isCorrect) {
         question.earnedPoints = question.points;
-    } else if (isCorrect === false && this.config.negativeMarking) {
+    } else if (this.config.negativeMarking) {
         question.earnedPoints = -question.points * this.config.negativeMarkValue;
     } else {
         question.earnedPoints = 0;
@@ -121,7 +114,7 @@ quizAttemptSchema.methods.submitAnswer = function (questionIndex, userAnswer, ti
 };
 
 quizAttemptSchema.methods.completeQuiz = function () {
-    this.status = 'completed';
+    this.status = "completed";
     this.completedAt = new Date();
 
     const results = {
@@ -137,72 +130,104 @@ quizAttemptSchema.methods.completeQuiz = function () {
 
     for (const question of this.questions) {
         results.maxScore += question.points;
+
         if (question.userAnswer !== null && question.userAnswer !== undefined) {
-            results.attemptedQuestions++;
+            results.attemptedQuestions += 1;
             results.timeTaken += question.timeSpent || 0;
             if (question.isCorrect === true) {
-                results.correctAnswers++;
+                results.correctAnswers += 1;
             } else if (question.isCorrect === false) {
-                results.incorrectAnswers++;
+                results.incorrectAnswers += 1;
             }
         } else {
-            results.skipped++;
+            results.skipped += 1;
         }
+
         results.score += question.earnedPoints || 0;
     }
 
     results.score = Math.max(0, results.score);
-    results.percentage = results.maxScore > 0 ? Math.round((results.score / results.maxScore) * 100 * 100) / 100 : 0;
-    results.averageTimePerQuestion = results.attemptedQuestions > 0 ? Math.round(results.timeTaken / results.attemptedQuestions) : 0;
-    this.results = results;
+    results.percentage = results.maxScore > 0
+        ? Math.round((results.score / results.maxScore) * 100 * 100) / 100
+        : 0;
+    results.averageTimePerQuestion = results.attemptedQuestions > 0
+        ? Math.round(results.timeTaken / results.attemptedQuestions)
+        : 0;
 
+    this.results = results;
     return this.save();
 };
 
-// Get or create models
-const getQuizAttemptModel = () =>
-    mongoose.models.QuizAttempt || mongoose.model('QuizAttempt', quizAttemptSchema);
+const getQuizAttemptModel = () => mongoose.models.QuizAttempt || mongoose.model("QuizAttempt", quizAttemptSchema);
+const getMCQModel = () => mongoose.models.MCQ || mongoose.model("MCQ", new mongoose.Schema({}, { strict: false, collection: "mcqs" }));
+const getFillBlankModel = () => mongoose.models.FillBlank || mongoose.model("FillBlank", new mongoose.Schema({}, { strict: false, collection: "fillblanks" }));
+const getDescriptiveModel = () => mongoose.models.Descriptive || mongoose.model("Descriptive", new mongoose.Schema({}, { strict: false, collection: "descriptives" }));
 
-const getMCQModel = () =>
-    mongoose.models.MCQ || mongoose.model('MCQ', new mongoose.Schema({}, { strict: false, collection: 'mcqs' }));
-
-const getFillBlankModel = () =>
-    mongoose.models.FillBlank || mongoose.model('FillBlank', new mongoose.Schema({}, { strict: false, collection: 'fillblanks' }));
-
-const getDescriptiveModel = () =>
-    mongoose.models.Descriptive || mongoose.model('Descriptive', new mongoose.Schema({}, { strict: false, collection: 'descriptives' }));
-
-/* -------------------------------------------------- */
-/* 🔐 3. Authentication Middleware                     */
-/* -------------------------------------------------- */
-const verifyToken = (token, secret) => {
-    try {
-        return jwt.verify(token, secret);
-    } catch (error) {
-        return null;
+const parseRequestBody = (body) => {
+    if (body && typeof body === "object") return body;
+    if (typeof body === "string") {
+        try {
+            return JSON.parse(body);
+        } catch {
+            return {};
+        }
     }
+    return {};
 };
 
 const authenticate = (req) => {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return { authenticated: false, error: 'Authentication required' };
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return { authenticated: false, error: "Authentication required" };
     }
 
-    const token = authHeader.split(' ')[1];
-    const decoded = verifyToken(token, process.env.JWT_SECRET || 'your-super-secret-jwt-key');
-
-    if (!decoded) {
-        return { authenticated: false, error: 'Invalid or expired token' };
+    const token = authHeader.split(" ")[1];
+    if (!token) {
+        return { authenticated: false, error: "Authentication token required" };
     }
 
-    return { authenticated: true, user: decoded };
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || "your-super-secret-jwt-key");
+        return { authenticated: true, user: decoded };
+    } catch (error) {
+        if (error?.name === "TokenExpiredError") {
+            return { authenticated: false, error: "Token expired", code: "TOKEN_EXPIRED" };
+        }
+        return { authenticated: false, error: "Invalid token", code: "INVALID_TOKEN" };
+    }
 };
 
-/* -------------------------------------------------- */
-/* 🚀 4. Main Quiz Handler                            */
-/* -------------------------------------------------- */
+const asSafeArray = (value) => (Array.isArray(value) ? value : []);
+
+const stringifyBlocks = (blocks) => {
+    if (!Array.isArray(blocks) || blocks.length === 0) return "No model answer available";
+
+    const combined = blocks.map((block) => {
+        if (block?.type === "list") {
+            return Array.isArray(block.items) ? block.items.join(", ") : "";
+        }
+        return block?.content || "";
+    }).join(" ").trim();
+
+    if (!combined) return "No model answer available";
+    return combined.length > 150 ? `${combined.slice(0, 150)}...` : combined;
+};
+
+const sanitizeQuestionTypes = (questionTypes) => {
+    const allowed = ["mcq", "fillblank", "descriptive"];
+    const incoming = Array.isArray(questionTypes) ? questionTypes.filter((type) => allowed.includes(type)) : [];
+    return incoming.length > 0 ? incoming : ["mcq", "fillblank"];
+};
+
+const buildStartResponseQuestions = (questions) => questions.map((question) => ({
+    questionId: question.questionId,
+    questionType: question.questionType,
+    originalType: question.originalType || null,
+    questionText: question.questionText,
+    options: question.options
+}));
+
 export default async function handler(req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
@@ -212,74 +237,91 @@ export default async function handler(req, res) {
 
     try {
         await connectDB();
-        const auth = authenticate(req);
 
-        // All quiz routes require authentication
+        const auth = authenticate(req);
         if (!auth.authenticated) {
-            return res.status(401).json({ success: false, error: auth.error });
+            return res.status(401).json({ success: false, error: auth.error, code: auth.code });
         }
 
         const parts = req.url.split("?")[0].split("/").filter(Boolean);
         const quizIndex = parts.indexOf("quiz");
         const actionIndex = quizIndex !== -1 ? quizIndex + 1 : 0;
-        const action = parts[actionIndex] || '';
+        const action = parts[actionIndex] || "";
+
+        const body = parseRequestBody(req.body);
 
         const QuizAttempt = getQuizAttemptModel();
         const MCQ = getMCQModel();
         const FillBlank = getFillBlankModel();
         const Descriptive = getDescriptiveModel();
 
-        // ==================== QUIZ OPERATIONS ====================
-        if (action === 'start' && req.method === 'POST') {
-            const { subjectId, unitIds, questionTypes, totalQuestions, timeLimit, difficulty, shuffle } = req.body;
+        if (action === "start" && req.method === "POST") {
+            const {
+                subjectId,
+                unitIds,
+                questionTypes,
+                totalQuestions,
+                timeLimit,
+                difficulty,
+                shuffle,
+                negativeMarking,
+                negativeMarkValue
+            } = body;
+
+            const requestedTotalQuestions = Math.max(
+                1,
+                Math.min(100, parseInt(String(totalQuestions ?? "10"), 10) || 10)
+            );
+            const selectedTypes = sanitizeQuestionTypes(questionTypes);
 
             const query = {};
             if (subjectId) query.subjectId = subjectId;
-            if (unitIds && unitIds.length > 0) query.unitId = { $in: unitIds };
+
+            const safeUnitIds = asSafeArray(unitIds).map((id) => String(id)).filter(Boolean);
+            if (safeUnitIds.length > 0) {
+                query.unitId = { $in: safeUnitIds };
+            }
 
             let questions = [];
-            const types = questionTypes || ['mcq', 'fillblank'];
 
-            if (types.includes('mcq')) {
-                const mcqs = await MCQ.find(query).limit(totalQuestions);
-                questions = questions.concat(mcqs.map(q => ({
-                    questionId: q._id.toString(),
-                    questionType: 'mcq',
-                    questionText: q.question,
-                    options: q.options,
-                    correctAnswer: q.correctAnswer,
+            if (selectedTypes.includes("mcq")) {
+                const mcqs = await MCQ.find(query).limit(requestedTotalQuestions);
+                questions = questions.concat(mcqs.map((question) => ({
+                    questionId: question._id.toString(),
+                    questionType: "mcq",
+                    originalType: null,
+                    questionText: question.question,
+                    options: asSafeArray(question.options).map((option) => String(option)),
+                    correctAnswer: question.correctAnswer,
                     points: 1
                 })));
             }
 
-            if (types.includes('fillblank') && questions.length < totalQuestions) {
-                const fills = await FillBlank.find(query).limit(totalQuestions - questions.length);
-                questions = questions.concat(fills.map(q => ({
-                    questionId: q._id.toString(),
-                    questionType: 'fillblank',
-                    questionText: q.question,
-                    correctAnswer: q.correctAnswer,
+            if (selectedTypes.includes("fillblank") && questions.length < requestedTotalQuestions) {
+                const remaining = requestedTotalQuestions - questions.length;
+                const fillBlanks = await FillBlank.find(query).limit(remaining);
+                questions = questions.concat(fillBlanks.map((question) => ({
+                    questionId: question._id.toString(),
+                    questionType: "fillblank",
+                    originalType: null,
+                    questionText: question.question,
+                    correctAnswer: question.correctAnswer,
                     points: 1
                 })));
             }
 
-            if (types.includes('descriptive') && questions.length < totalQuestions) {
-                const descs = await Descriptive.find(query);
+            if (selectedTypes.includes("descriptive") && questions.length < requestedTotalQuestions) {
+                const descriptives = await Descriptive.find(query);
+                const remaining = requestedTotalQuestions - questions.length;
 
-                const stringifyBlocks = (blocks) => {
-                    return blocks.map(b => {
-                        if (b.type === 'list') return b.items.join(', ');
-                        return b.content || '';
-                    }).join(' ').slice(0, 150) + (blocks.length > 1 || (blocks[0]?.content?.length > 150) ? '...' : '');
-                };
+                const converted = descriptives.slice(0, remaining).map((question) => {
+                    const correctOption = stringifyBlocks(question.answer);
+                    const distractorsPool = descriptives
+                        .filter((candidate) => candidate._id.toString() !== question._id.toString())
+                        .map((candidate) => stringifyBlocks(candidate.answer))
+                        .filter(Boolean);
 
-                const convertedDescs = descs.slice(0, totalQuestions - questions.length).map((q, idx) => {
-                    const correctOption = stringifyBlocks(q.answer);
-                    const otherAnswers = descs
-                        .filter(d => d._id.toString() !== q._id.toString())
-                        .map(d => stringifyBlocks(d.answer));
-
-                    const distractors = otherAnswers
+                    const distractors = distractorsPool
                         .sort(() => Math.random() - 0.5)
                         .slice(0, 3);
 
@@ -291,95 +333,104 @@ export default async function handler(req, res) {
                     const correctIndex = options.indexOf(correctOption);
 
                     return {
-                        questionId: q._id.toString(),
-                        questionType: 'mcq',
-                        originalType: 'descriptive',
-                        questionText: q.question,
-                        options: options,
+                        questionId: question._id.toString(),
+                        questionType: "mcq",
+                        originalType: "descriptive",
+                        questionText: question.question,
+                        options,
                         correctAnswer: correctIndex,
                         points: 2
                     };
                 });
 
-                questions = questions.concat(convertedDescs);
+                questions = questions.concat(converted);
             }
 
             if (shuffle !== false) {
                 questions = questions.sort(() => Math.random() - 0.5);
             }
 
-            questions = questions.slice(0, totalQuestions);
+            questions = questions.slice(0, requestedTotalQuestions);
 
             if (questions.length === 0) {
                 return res.status(404).json({
                     success: false,
-                    error: 'No questions found for the given criteria'
+                    error: "No questions found for the given criteria"
                 });
             }
 
             const quizAttempt = await QuizAttempt.create({
                 userId: auth.user.userId,
                 config: {
-                    subjectId,
-                    unitIds,
-                    questionTypes: types,
+                    subjectId: subjectId || null,
+                    unitIds: safeUnitIds,
+                    questionTypes: selectedTypes,
                     totalQuestions: questions.length,
-                    timeLimit,
-                    shuffle,
-                    difficulty
+                    timeLimit: timeLimit ?? null,
+                    shuffle: shuffle !== false,
+                    difficulty: difficulty || "mixed",
+                    negativeMarking: Boolean(negativeMarking),
+                    negativeMarkValue: Number(negativeMarkValue) > 0 ? Number(negativeMarkValue) : 0.25
                 },
                 questions,
                 results: {
                     totalQuestions: questions.length,
-                    maxScore: questions.reduce((acc, q) => acc + q.points, 0)
+                    maxScore: questions.reduce((acc, question) => acc + question.points, 0)
                 }
             });
 
-            res.status(201).json({
+            return res.status(201).json({
                 success: true,
                 data: {
                     quizId: quizAttempt._id,
-                    questions: quizAttempt.questions.map(q => ({
-                        questionId: q.questionId,
-                        questionType: q.questionType,
-                        questionText: q.questionText,
-                        options: q.options
-                    })),
+                    questions: buildStartResponseQuestions(quizAttempt.questions),
                     config: quizAttempt.config,
                     startedAt: quizAttempt.startedAt
                 }
             });
         }
 
-        else if (action && action.match(/^[0-9a-f]{24}$/) && req.method === 'POST' && parts[actionIndex + 1] === 'submit') {
-            const { questionIndex, answer, timeSpent } = req.body;
+        if (
+            action &&
+            mongoose.Types.ObjectId.isValid(action) &&
+            req.method === "POST" &&
+            parts[actionIndex + 1] === "submit"
+        ) {
+            const { questionIndex, answer, timeSpent } = body;
             const quizId = action;
+
+            const parsedQuestionIndex = parseInt(String(questionIndex), 10);
+            if (Number.isNaN(parsedQuestionIndex)) {
+                return res.status(400).json({ success: false, error: "Invalid question index" });
+            }
 
             const quiz = await QuizAttempt.findOne({ _id: quizId, userId: auth.user.userId });
             if (!quiz) {
-                return res.status(404).json({ success: false, error: 'Quiz not found' });
+                return res.status(404).json({ success: false, error: "Quiz not found" });
             }
 
-            if (quiz.status !== 'in_progress') {
-                return res.status(400).json({ success: false, error: 'Quiz is already finished' });
+            if (quiz.status !== "in_progress") {
+                return res.status(400).json({ success: false, error: "Quiz is already finished" });
             }
 
-            await quiz.submitAnswer(questionIndex, answer, timeSpent);
-
-            res.json({ success: true, message: 'Answer submitted' });
+            await quiz.submitAnswer(parsedQuestionIndex, answer, timeSpent);
+            return res.json({ success: true, message: "Answer submitted" });
         }
 
-        else if (action && action.match(/^[0-9a-f]{24}$/) && req.method === 'POST' && parts[actionIndex + 1] === 'complete') {
+        if (
+            action &&
+            mongoose.Types.ObjectId.isValid(action) &&
+            req.method === "POST" &&
+            parts[actionIndex + 1] === "complete"
+        ) {
             const quizId = action;
-
             const quiz = await QuizAttempt.findOne({ _id: quizId, userId: auth.user.userId });
             if (!quiz) {
-                return res.status(404).json({ success: false, error: 'Quiz not found' });
+                return res.status(404).json({ success: false, error: "Quiz not found" });
             }
 
             await quiz.completeQuiz();
-
-            res.json({
+            return res.json({
                 success: true,
                 data: {
                     results: quiz.results,
@@ -388,37 +439,27 @@ export default async function handler(req, res) {
             });
         }
 
-        else if (action === 'history' && req.method === 'GET') {
+        if (action === "history" && req.method === "GET") {
             const history = await QuizAttempt.find({ userId: auth.user.userId })
                 .sort({ startedAt: -1 })
                 .limit(20);
 
-            res.json({
-                success: true,
-                data: history
-            });
+            return res.json({ success: true, data: history });
         }
 
-        else if (action && action.match(/^[0-9a-f]{24}$/) && req.method === 'GET') {
+        if (action && mongoose.Types.ObjectId.isValid(action) && req.method === "GET") {
             const quizId = action;
-
             const quiz = await QuizAttempt.findOne({ _id: quizId, userId: auth.user.userId });
             if (!quiz) {
-                return res.status(404).json({ success: false, error: 'Quiz not found' });
+                return res.status(404).json({ success: false, error: "Quiz not found" });
             }
 
-            res.json({
-                success: true,
-                data: quiz
-            });
+            return res.json({ success: true, data: quiz });
         }
 
-        else {
-            return res.status(404).json({ success: false, error: 'Quiz endpoint not found' });
-        }
-
+        return res.status(404).json({ success: false, error: "Quiz endpoint not found" });
     } catch (err) {
         console.error("Quiz API Error:", err);
-        return res.status(500).json({ success: false, error: 'Internal Server Error', message: err.message });
+        return res.status(500).json({ success: false, error: "Internal Server Error", message: err.message });
     }
 }

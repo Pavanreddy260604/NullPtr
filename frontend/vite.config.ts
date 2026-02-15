@@ -84,5 +84,11 @@ export default defineConfig({
   server: {
     port: 8080,
     host: true,
+    proxy: {
+      '/api': {
+        target: 'https://study-8c4d.vercel.app',
+        changeOrigin: true,
+      },
+    },
   },
 });

@@ -18,14 +18,10 @@ import {
 } from "lucide-react";
 import {
     QuizAttemptResponse,
-    QuizQuestion,
     submitQuizAnswer,
     completeQuiz,
     getQuizAttempt
 } from "@/lib/quiz";
-import { MCQCard } from "@/components/MCQCard";
-import { FillBlankCard } from "@/components/FillBlankCard";
-import { DescriptiveCard } from "@/components/DescriptiveCard";
 import { cn } from "@/lib/utils";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -94,15 +90,20 @@ export default function Quiz() {
         setAnswers(prev => ({ ...prev, [currentIndex]: answer }));
     };
 
-    const handleNext = () => {
-        if (quiz && currentIndex < quiz.questions.length - 1) {
-            setDirection(1);
-            const question = quiz.questions[currentIndex];
-            const timeSpent = Math.round((Date.now() - startTime) / 1000);
-            submitQuizAnswer(quizId!, currentIndex, answers[currentIndex], timeSpent);
+    const handleNext = async () => {
+        if (!quiz || !quizId || isSubmitting || currentIndex >= quiz.questions.length - 1) return;
 
+        setIsSubmitting(true);
+        try {
+            const timeSpent = Math.round((Date.now() - startTime) / 1000);
+            await submitQuizAnswer(quizId, currentIndex, answers[currentIndex], timeSpent);
+            setDirection(1);
             setCurrentIndex(prev => prev + 1);
             setStartTime(Date.now());
+        } catch (error: any) {
+            toast.error(error.message || "Failed to save answer");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -368,7 +369,7 @@ export default function Quiz() {
                         <Button
                             variant="ghost"
                             onClick={handlePrev}
-                            disabled={currentIndex === 0}
+                            disabled={currentIndex === 0 || isSubmitting}
                             className="h-10 sm:h-14 px-3 sm:px-6 rounded-xl sm:rounded-2xl hover:bg-violet-500/10 text-slate-600 dark:text-slate-400 disabled:opacity-30 transition-all font-bold group"
                         >
                             <ChevronLeft className="w-5 h-5 sm:mr-2 group-hover:-translate-x-1 transition-transform" />
@@ -407,6 +408,7 @@ export default function Quiz() {
                         ) : (
                             <Button
                                 onClick={handleNext}
+                                disabled={isSubmitting}
                                 className="h-10 sm:h-14 px-4 sm:px-8 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white rounded-xl sm:rounded-2xl shadow-xl shadow-violet-500/25 transition-all hover:scale-105 active:scale-95 font-bold group"
                             >
                                 <span className="hidden sm:inline">Continue</span>

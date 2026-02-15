@@ -144,6 +144,11 @@ const verifyToken = (token, secret) => {
     }
 };
 
+const normalizeEmail = (email) => (email || '').toString().trim().toLowerCase();
+const normalizeName = (name) => (name || '').toString().trim();
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const isTruthy = (value) => value === true || value === 'true' || value === 1 || value === '1';
+
 /* -------------------------------------------------- */
 /* 📧 4. Email Service                               */
 /* -------------------------------------------------- */
@@ -217,10 +222,26 @@ const sendPasswordReset = async (email, resetUrl) => {
 /* -------------------------------------------------- */
 async function verifyGoogleToken(credential) {
     const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
-    if (!response.ok) {
-        throw new Error('Invalid Google token');
+    const payload = await response.json();
+
+    if (!response.ok || payload?.error) {
+        throw new Error(payload?.error_description || payload?.error || 'Invalid Google token');
     }
-    return response.json();
+
+    const allowedClientIds = (process.env.GOOGLE_CLIENT_ID || '')
+        .split(',')
+        .map((id) => id.trim())
+        .filter(Boolean);
+
+    if (allowedClientIds.length > 0 && !allowedClientIds.includes(payload.aud)) {
+        throw new Error('Google token audience mismatch');
+    }
+
+    if (!isTruthy(payload.email_verified)) {
+        throw new Error('Google email is not verified');
+    }
+
+    return payload;
 }
 
 /* -------------------------------------------------- */
@@ -234,13 +255,19 @@ const authenticate = (req) => {
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded = verifyToken(token, process.env.JWT_SECRET || 'your-super-secret-jwt-key');
-
-    if (!decoded) {
-        return { authenticated: false, error: 'Invalid or expired token' };
+    if (!token) {
+        return { authenticated: false, error: 'Authentication token required' };
     }
 
-    return { authenticated: true, user: decoded };
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-super-secret-jwt-key');
+        return { authenticated: true, user: decoded };
+    } catch (error) {
+        if (error?.name === 'TokenExpiredError') {
+            return { authenticated: false, error: 'Token expired', code: 'TOKEN_EXPIRED' };
+        }
+        return { authenticated: false, error: 'Invalid token', code: 'INVALID_TOKEN' };
+    }
 };
 
 /* -------------------------------------------------- */
@@ -264,11 +291,16 @@ export default async function handler(req, res) {
         const actionIndex = authIndex !== -1 ? authIndex + 1 : 0;
         const action = parts[actionIndex] || '';
 
+        console.log("Raw req.body type:", typeof req.body);
+        console.log("Raw req.body value:", req.body);
+
         let body = req.body;
         if (typeof body === 'string') {
             try {
                 body = JSON.parse(body);
+                console.log("Parsed body:", body);
             } catch (e) {
+                console.error("JSON parse error:", e);
                 body = {};
             }
         }
@@ -281,55 +313,89 @@ export default async function handler(req, res) {
 
         if (action === 'register' && req.method === 'POST') {
             const { email, password, name } = body;
+            const normalizedEmail = normalizeEmail(email);
+            const normalizedName = normalizeName(name);
 
-            if (!email || !password || !name) {
+            if (!normalizedEmail || !password || !normalizedName) {
                 return res.status(400).json({ success: false, error: 'Email, password, and name are required' });
+            }
+
+            if (!isValidEmail(normalizedEmail)) {
+                return res.status(400).json({ success: false, error: 'Please provide a valid email address' });
             }
 
             if (password.length < 8) {
                 return res.status(400).json({ success: false, error: 'Password must be at least 8 characters' });
             }
 
-            const existingUser = await User.findOne({ email: email.toLowerCase() });
+            const existingUser = await User.findOne({ email: normalizedEmail });
             if (existingUser) {
-                return res.status(409).json({ success: false, error: 'Email already registered' });
+                if (!existingUser.isActive) {
+                    return res.status(403).json({ success: false, error: 'Account has been deactivated' });
+                }
+
+                if (existingUser.oauthProvider && !existingUser.passwordHash) {
+                    const provider = existingUser.oauthProvider[0].toUpperCase() + existingUser.oauthProvider.slice(1);
+                    return res.status(409).json({
+                        success: false,
+                        error: `Email already linked with ${provider}. Please sign in with ${provider}.`
+                    });
+                }
+
+                return res.status(409).json({ success: false, error: 'Email already registered. Please sign in.' });
             }
 
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
             const passwordHash = await User.hashPassword(password);
 
-            let pendingUser = await PendingUser.findOne({ email: email.toLowerCase() });
+            let pendingUser = await PendingUser.findOne({ email: normalizedEmail });
             if (pendingUser) {
                 pendingUser.passwordHash = passwordHash;
-                pendingUser.name = name.trim();
+                pendingUser.name = normalizedName;
                 pendingUser.verificationToken = otp;
                 pendingUser.createdAt = Date.now();
                 await pendingUser.save();
             } else {
                 pendingUser = await PendingUser.create({
-                    email: email.toLowerCase(),
+                    email: normalizedEmail,
                     passwordHash,
-                    name: name.trim(),
+                    name: normalizedName,
                     verificationToken: otp
                 });
             }
 
-            await sendOTP(email, otp);
+            await sendOTP(normalizedEmail, otp);
 
             return res.status(200).json({
                 success: true,
                 message: 'Verification code sent. Please check your email.',
                 requireVerification: true,
-                email
+                email: normalizedEmail
             });
         }
 
         if (action === 'verify-email' && req.method === 'POST') {
             const { email, otp } = body;
+            const normalizedEmail = normalizeEmail(email);
+            const normalizedOtp = (otp || '').toString().trim();
+
+            if (!normalizedEmail || !normalizedOtp) {
+                return res.status(400).json({ success: false, error: 'Email and verification code are required' });
+            }
+
+            if (!/^\d{6}$/.test(normalizedOtp)) {
+                return res.status(400).json({ success: false, error: 'Verification code must be 6 digits' });
+            }
+
+            const existingUser = await User.findOne({ email: normalizedEmail });
+            if (existingUser) {
+                await PendingUser.deleteOne({ email: normalizedEmail });
+                return res.status(409).json({ success: false, error: 'Account already verified. Please sign in.' });
+            }
 
             const pendingUser = await PendingUser.findOne({
-                email: email.toLowerCase(),
-                verificationToken: otp
+                email: normalizedEmail,
+                verificationToken: normalizedOtp
             });
 
             if (!pendingUser) {
@@ -370,27 +436,36 @@ export default async function handler(req, res) {
 
         if (action === 'login' && req.method === 'POST') {
             const { email, password } = body;
+            const normalizedEmail = normalizeEmail(email);
 
-            if (!email || !password) {
+            if (!normalizedEmail || !password) {
                 return res.status(400).json({ success: false, error: 'Email and password are required' });
             }
 
-            const user = await User.findOne({ email: email.toLowerCase() });
+            if (!isValidEmail(normalizedEmail)) {
+                return res.status(400).json({ success: false, error: 'Please provide a valid email address' });
+            }
+
+            const user = await User.findOne({ email: normalizedEmail });
             if (!user) {
-                return res.status(401).json({ success: false, error: 'Invalid email or password' });
-            }
-
-            if (!user.passwordHash) {
-                return res.status(401).json({ success: false, error: 'Please login with your social account' });
-            }
-
-            const isMatch = await user.comparePassword(password);
-            if (!isMatch) {
                 return res.status(401).json({ success: false, error: 'Invalid email or password' });
             }
 
             if (!user.isActive) {
                 return res.status(403).json({ success: false, error: 'Account has been deactivated' });
+            }
+
+            if (!user.passwordHash) {
+                if (user.oauthProvider) {
+                    const provider = user.oauthProvider[0].toUpperCase() + user.oauthProvider.slice(1);
+                    return res.status(401).json({ success: false, error: `Please sign in with ${provider}` });
+                }
+                return res.status(401).json({ success: false, error: 'Password login is not available for this account' });
+            }
+
+            const isMatch = await user.comparePassword(password);
+            if (!isMatch) {
+                return res.status(401).json({ success: false, error: 'Invalid email or password' });
             }
 
             const token = generateToken(user);
@@ -427,26 +502,48 @@ export default async function handler(req, res) {
             try {
                 const payload = await verifyGoogleToken(credential);
                 const { email, name, picture, sub: googleId } = payload;
+                const normalizedEmail = normalizeEmail(email);
+                const normalizedName = normalizeName(name) || 'User';
 
-                if (!email) {
+                if (!normalizedEmail) {
                     return res.status(400).json({ success: false, error: 'Email not found in Google token' });
                 }
 
-                let user = await User.findOne({ email: email.toLowerCase() });
+                let user = await User.findOne({ email: normalizedEmail });
 
                 if (user) {
-                    if (!user.oauthProvider) {
+                    if (!user.isActive) {
+                        return res.status(403).json({ success: false, error: 'Account has been deactivated' });
+                    }
+
+                    if (user.oauthProvider && user.oauthProvider !== 'google') {
+                        return res.status(409).json({
+                            success: false,
+                            error: `Account is linked with ${user.oauthProvider}. Please sign in with ${user.oauthProvider}.`
+                        });
+                    }
+
+                    if (user.oauthProvider === 'google' && user.oauthId && user.oauthId !== googleId) {
+                        return res.status(409).json({
+                            success: false,
+                            error: 'Google account mismatch detected for this email. Please use the originally linked Google account.'
+                        });
+                    }
+
+                    if (!user.oauthProvider || user.oauthProvider === 'google') {
                         user.oauthProvider = 'google';
                         user.oauthId = googleId;
                         if (!user.avatar) user.avatar = picture;
-                        if (!user.emailVerified) user.emailVerified = true;
+                        user.emailVerified = true;
                     }
+
+                    if (!user.name && normalizedName) user.name = normalizedName;
                     user.lastLogin = new Date();
                     await user.save();
                 } else {
                     user = await User.create({
-                        email: email.toLowerCase(),
-                        name: name || 'User',
+                        email: normalizedEmail,
+                        name: normalizedName,
                         avatar: picture,
                         oauthProvider: 'google',
                         oauthId: googleId,
@@ -484,10 +581,20 @@ export default async function handler(req, res) {
 
         if (action === 'forgot-password' && req.method === 'POST') {
             const { email } = body;
-            const user = await User.findOne({ email: email.toLowerCase() });
+            const normalizedEmail = normalizeEmail(email);
+
+            if (!normalizedEmail || !isValidEmail(normalizedEmail)) {
+                return res.status(400).json({ success: false, error: 'Please provide a valid email address' });
+            }
+
+            const user = await User.findOne({ email: normalizedEmail });
 
             if (!user) {
-                return res.status(404).json({ success: false, error: 'User not found' });
+                return res.json({ success: true, message: 'If an account exists, a password reset link has been sent.' });
+            }
+
+            if (!user.isActive) {
+                return res.status(403).json({ success: false, error: 'Account has been deactivated' });
             }
 
             const resetToken = crypto.randomBytes(32).toString('hex');
@@ -497,23 +604,32 @@ export default async function handler(req, res) {
             user.resetPasswordExpires = resetExpires;
             await user.save();
 
-            const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
-            await sendPasswordReset(email, resetUrl);
+            const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${resetToken}&email=${encodeURIComponent(normalizedEmail)}`;
+            await sendPasswordReset(normalizedEmail, resetUrl);
 
             return res.json({ success: true, message: 'Password reset link sent to email' });
         }
 
         if (action === 'reset-password' && req.method === 'POST') {
             const { email, token, newPassword } = body;
+            const normalizedEmail = normalizeEmail(email);
+
+            if (!normalizedEmail || !token || !newPassword) {
+                return res.status(400).json({ success: false, error: 'Email, token, and new password are required' });
+            }
 
             const user = await User.findOne({
-                email: email.toLowerCase(),
+                email: normalizedEmail,
                 resetPasswordToken: token,
                 resetPasswordExpires: { $gt: Date.now() }
             });
 
             if (!user) {
                 return res.status(400).json({ success: false, error: 'Invalid or expired token' });
+            }
+
+            if (!user.isActive) {
+                return res.status(403).json({ success: false, error: 'Account has been deactivated' });
             }
 
             if (newPassword.length < 8) {
@@ -559,7 +675,7 @@ export default async function handler(req, res) {
 
         const authResult = authenticate(req);
         if (!authResult.authenticated) {
-            return res.status(401).json({ success: false, error: authResult.error });
+            return res.status(401).json({ success: false, error: authResult.error, code: authResult.code });
         }
         const { user: authUser } = authResult;
 
@@ -700,6 +816,9 @@ export default async function handler(req, res) {
 
     } catch (err) {
         console.error("Auth API Error:", err);
+        if (err?.code === 11000 && err?.keyPattern?.email) {
+            return res.status(409).json({ success: false, error: 'Email already registered. Please sign in.' });
+        }
         return res.status(500).json({ success: false, error: 'Internal Server Error', message: err.message });
     }
 }

@@ -14,6 +14,7 @@ export interface QuizConfig {
 export interface QuizQuestion {
     questionId: string;
     questionType: 'mcq' | 'fillblank' | 'descriptive';
+    originalType?: 'descriptive' | null;
     questionText: string;
     options?: string[]; // For MCQs
 }
