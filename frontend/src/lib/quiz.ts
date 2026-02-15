@@ -43,11 +43,46 @@ export interface QuizResults {
  * Start a new quiz
  */
 export async function startQuiz(config: QuizConfig): Promise<QuizAttemptResponse> {
-    const response = await authFetch<{ success: boolean; data: QuizAttemptResponse }>('/quiz/start', {
-        method: 'POST',
-        body: JSON.stringify(config)
-    });
-    return response?.data;
+    const requestStartQuiz = async (payload: QuizConfig): Promise<QuizAttemptResponse> => {
+        const response = await authFetch<{ success: boolean; data: QuizAttemptResponse }>('/quiz/start', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+        return response?.data;
+    };
+
+    try {
+        return await requestStartQuiz(config);
+    } catch (error: any) {
+        const message = (error?.message || '').toString();
+        const noQuestions = /no questions found/i.test(message);
+        if (!noQuestions) {
+            throw error;
+        }
+
+        // Retry with progressively relaxed filters to avoid ID-type mismatches in deployed data.
+        const withNoUnits: QuizConfig = { ...config, unitIds: [] };
+        if ((config.unitIds?.length || 0) > 0) {
+            try {
+                return await requestStartQuiz(withNoUnits);
+            } catch (unitRetryError: any) {
+                const unitRetryMessage = (unitRetryError?.message || '').toString();
+                if (!/no questions found/i.test(unitRetryMessage)) {
+                    throw unitRetryError;
+                }
+            }
+        }
+
+        if (config.subjectId) {
+            const withoutSubject: QuizConfig = {
+                ...withNoUnits,
+                subjectId: undefined
+            };
+            return await requestStartQuiz(withoutSubject);
+        }
+
+        throw error;
+    }
 }
 
 /**
