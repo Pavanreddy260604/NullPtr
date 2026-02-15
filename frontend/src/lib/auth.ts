@@ -4,20 +4,29 @@ import { fetchWithApiFallback, safeStorage } from './api';
 const TOKEN_KEY = 'nullptr_token';
 const REFRESH_KEY = 'nullptr_refresh_token';
 
+// Storage can be blocked in private/sandboxed contexts.
+// Keep tokens in memory so auth continues for the current tab session.
+let inMemoryToken: string | null = null;
+let inMemoryRefreshToken: string | null = null;
+
 function getToken(): string | null {
-    return safeStorage.getItem(TOKEN_KEY);
+    return safeStorage.getItem(TOKEN_KEY) || inMemoryToken;
 }
 
 function getRefreshToken(): string | null {
-    return safeStorage.getItem(REFRESH_KEY);
+    return safeStorage.getItem(REFRESH_KEY) || inMemoryRefreshToken;
 }
 
 function setTokens(token: string, refreshToken: string) {
+    inMemoryToken = token;
+    inMemoryRefreshToken = refreshToken;
     safeStorage.setItem(TOKEN_KEY, token);
     safeStorage.setItem(REFRESH_KEY, refreshToken);
 }
 
 function clearTokens() {
+    inMemoryToken = null;
+    inMemoryRefreshToken = null;
     safeStorage.removeItem(TOKEN_KEY);
     safeStorage.removeItem(REFRESH_KEY);
 }
