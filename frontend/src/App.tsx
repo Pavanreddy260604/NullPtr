@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ThemeProvider } from "next-themes";
 import { get, set, del } from 'idb-keyval';
+import { Loader2 } from "lucide-react";
 import Index from "./pages/Index";
 import SubjectPage from "./pages/SubjectPage";
 import UnitPage from "./pages/UnitPage";
@@ -27,6 +28,7 @@ import Review from "./pages/Review";
 import { InstallPWA } from "@/components/InstallPWA";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { AuthGuard } from "@/components/AuthGuard";
 
 // ✅ 1. Absolute Top: Global Error Suppression
@@ -146,8 +148,24 @@ const queryClient = new QueryClient({
   },
 });
 
+const AuthLoadingOverlay = () => {
+  const { isLoading } = useAuth();
+
+  if (!isLoading) return null;
+
+  return (
+    <div className="fixed inset-0 z-[200] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center">
+      <div className="rounded-2xl border border-white/10 bg-slate-900/80 px-6 py-5 text-center shadow-2xl">
+        <Loader2 className="mx-auto mb-3 h-7 w-7 animate-spin text-violet-400" />
+        <p className="text-sm font-medium text-white">Signing you in...</p>
+      </div>
+    </div>
+  );
+};
+
 const AppContent = () => (
   <TooltipProvider>
+    <AuthLoadingOverlay />
     <Toaster />
     <Sonner />
     <InstallPWA />
