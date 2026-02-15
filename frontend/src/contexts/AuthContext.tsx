@@ -50,29 +50,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const login = useCallback(async (email: string, password: string) => {
-        const u = await loginUser(email, password);
-        setUser(u);
+        setIsLoading(true);
+        try {
+            const u = await loginUser(email, password);
+            setUser(u);
+        } finally {
+            setIsLoading(false);
+        }
     }, []);
 
     const register = useCallback(async (name: string, email: string, password: string) => {
-        // Registration now returns pending verification state, not user
-        // User will be set after OTP verification
-        return registerUserPending(name, email, password);
+        setIsLoading(true);
+        try {
+            // Registration now returns pending verification state, not user
+            // User will be set after OTP verification
+            return registerUserPending(name, email, password);
+        } finally {
+            setIsLoading(false);
+        }
     }, []);
 
     const verifyEmail = useCallback(async (email: string, otp: string) => {
-        const data = await verifyRes(email, otp);
-        setUser(data.user);
+        setIsLoading(true);
+        try {
+            const data = await verifyRes(email, otp);
+            setUser(data.user);
+        } finally {
+            setIsLoading(false);
+        }
     }, []);
 
     const googleLogin = useCallback(async (credential: string) => {
-        const u = await googleLoginRes(credential);
-        setUser(u);
+        setIsLoading(true);
+        try {
+            const u = await googleLoginRes(credential);
+            setUser(u);
+        } finally {
+            setIsLoading(false);
+        }
     }, []);
 
     const logout = useCallback(async () => {
-        await logoutUser();
-        setUser(null);
+        setIsLoading(true);
+        try {
+            await logoutUser();
+            setUser(null);
+        } finally {
+            setIsLoading(false);
+        }
     }, []);
 
     const refreshUser = useCallback(async () => {
@@ -100,7 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             value={{
                 user,
                 isLoading,
-                isAuthenticated: !!user,
+                isAuthenticated: !!user || !!getToken(),
                 login,
                 register,
                 logout,
