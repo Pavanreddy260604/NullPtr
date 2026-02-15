@@ -20,6 +20,14 @@
             "destination": "/api/auth.js"
         },
         {
+            "source": "/api/quiz/(.*)",
+            "destination": "/api/quiz.js"
+        },
+        {
+            "source": "/api/progress/(.*)",
+            "destination": "/api/progress.js"
+        },
+        {
             "source": "/api/(.*)",
             "destination": "/api/index.js"
         },
