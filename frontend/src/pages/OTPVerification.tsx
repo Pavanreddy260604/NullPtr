@@ -6,11 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, Mail } from "lucide-react";
+import { resendVerificationOtp } from "@/lib/auth";
 
 export default function OTPVerification() {
     const [otp, setOtp] = useState("");
     const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [isResending, setIsResending] = useState(false);
+    const [cooldown, setCooldown] = useState(0);
     const location = useLocation();
     const navigate = useNavigate();
     const { verifyEmail } = useAuth();
@@ -20,6 +23,20 @@ export default function OTPVerification() {
             setEmail(location.state.email);
         }
     }, [location.state]);
+
+    useEffect(() => {
+        if (cooldown <= 0) return;
+        const timer = setInterval(() => {
+            setCooldown((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [cooldown]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -35,6 +52,20 @@ export default function OTPVerification() {
             toast.error(error.message || "Verification failed");
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleResendOtp = async () => {
+        if (!email || isResending || cooldown > 0) return;
+        setIsResending(true);
+        try {
+            await resendVerificationOtp(email);
+            toast.success("Verification code resent!");
+            setCooldown(30);
+        } catch (error: any) {
+            toast.error(error.message || "Failed to resend code");
+        } finally {
+            setIsResending(false);
         }
     };
 
@@ -81,6 +112,19 @@ export default function OTPVerification() {
                         </div>
                         <Button type="submit" className="w-full" disabled={isLoading || otp.length !== 6 || !email}>
                             {isLoading ? <Loader2 className="animate-spin mr-2" /> : "Verify Email"}
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="w-full"
+                            onClick={handleResendOtp}
+                            disabled={isResending || cooldown > 0 || !email}
+                        >
+                            {isResending
+                                ? <><Loader2 className="animate-spin mr-2" />Resending...</>
+                                : cooldown > 0
+                                    ? `Resend OTP in ${cooldown}s`
+                                    : "Resend OTP"}
                         </Button>
                     </form>
                 </CardContent>

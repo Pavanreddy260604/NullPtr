@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import { parseBody } from "./utils/parseBody.js";
 
 /* -------------------------------------------------- */
 /* 🔌 1. DB Connection (Fixed for Race Conditions)    */
@@ -291,20 +292,11 @@ export default async function handler(req, res) {
         const actionIndex = authIndex !== -1 ? authIndex + 1 : 0;
         const action = parts[actionIndex] || '';
 
-        console.log("Raw req.body type:", typeof req.body);
-        console.log("Raw req.body value:", req.body);
+        const body = parseBody(req.body);
 
-        let body = req.body;
-        if (typeof body === 'string') {
-            try {
-                body = JSON.parse(body);
-                console.log("Parsed body:", body);
-            } catch (e) {
-                console.error("JSON parse error:", e);
-                body = {};
-            }
-        }
-        if (!body) body = {};
+        console.log("Request body type:", typeof req.body);
+        console.log("Request body value:", req.body);
+        console.log("Parsed body:", body);
 
         const User = getUserModel();
         const PendingUser = getPendingUserModel();
@@ -364,12 +356,62 @@ export default async function handler(req, res) {
                 });
             }
 
-            await sendOTP(normalizedEmail, otp);
+            const otpResult = await sendOTP(normalizedEmail, otp);
+            if (!otpResult?.success) {
+                return res.status(502).json({
+                    success: false,
+                    error: 'Failed to send verification code. Please try again.'
+                });
+            }
 
             return res.status(200).json({
                 success: true,
                 message: 'Verification code sent. Please check your email.',
                 requireVerification: true,
+                email: normalizedEmail
+            });
+        }
+
+        if (action === 'resend-otp' && req.method === 'POST') {
+            const { email } = body;
+            const normalizedEmail = normalizeEmail(email);
+
+            if (!normalizedEmail || !isValidEmail(normalizedEmail)) {
+                return res.status(400).json({ success: false, error: 'Please provide a valid email address' });
+            }
+
+            const existingUser = await User.findOne({ email: normalizedEmail });
+            if (existingUser) {
+                if (!existingUser.isActive) {
+                    return res.status(403).json({ success: false, error: 'Account has been deactivated' });
+                }
+                return res.status(409).json({ success: false, error: 'Account already verified. Please sign in.' });
+            }
+
+            const pendingUser = await PendingUser.findOne({ email: normalizedEmail });
+            if (!pendingUser) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'No pending registration found for this email. Please register again.'
+                });
+            }
+
+            const otp = Math.floor(100000 + Math.random() * 900000).toString();
+            pendingUser.verificationToken = otp;
+            pendingUser.createdAt = new Date();
+            await pendingUser.save();
+
+            const otpResult = await sendOTP(normalizedEmail, otp);
+            if (!otpResult?.success) {
+                return res.status(502).json({
+                    success: false,
+                    error: 'Failed to send verification code. Please try again.'
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: 'Verification code resent successfully.',
                 email: normalizedEmail
             });
         }

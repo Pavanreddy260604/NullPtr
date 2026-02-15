@@ -1,4 +1,4 @@
-import { API_BASE_URL, safeStorage } from './api';
+import { fetchWithApiFallback, safeStorage } from './api';
 
 // ─── Token Management ───────────────────────────────────────────────────────
 const TOKEN_KEY = 'nullptr_token';
@@ -29,7 +29,7 @@ async function publicFetch<T>(
     endpoint: string,
     options: RequestInit = {}
 ): Promise<T> {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetchWithApiFallback(endpoint, {
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ async function authFetch<T>(
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetchWithApiFallback(endpoint, {
         ...options,
         headers,
     });
@@ -124,7 +124,7 @@ async function authFetch<T>(
             const refreshed = await refreshTokens();
             if (refreshed) {
                 headers['Authorization'] = `Bearer ${getToken()}`;
-                const retryResponse = await fetch(`${API_BASE_URL}${endpoint}`, {
+                const retryResponse = await fetchWithApiFallback(endpoint, {
                     ...options,
                     headers,
                 });
@@ -194,6 +194,26 @@ export async function verifyEmail(
     throw new Error(result.error || 'Verification failed');
 }
 
+export async function resendVerificationOtp(
+    email: string
+): Promise<{ success: boolean; message: string }> {
+    const response = await fetchWithApiFallback('/auth/resend-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+    });
+
+    const result = await response.json().catch(() => ({} as { success?: boolean; message?: string; error?: string }));
+    if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to resend verification code');
+    }
+
+    return {
+        success: true,
+        message: result.message || 'Verification code resent successfully.',
+    };
+}
+
 export async function googleLogin(
     credential: string
 ): Promise<AuthUser> {
@@ -259,7 +279,7 @@ async function refreshTokens(): Promise<boolean> {
     if (!refreshToken) return false;
 
     try {
-        const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        const response = await fetchWithApiFallback('/auth/refresh', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refreshToken }),
@@ -296,7 +316,7 @@ export async function registerUserPending(
     email: string,
     password: string
 ): Promise<{ requireVerification: boolean; email: string }> {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    const response = await fetchWithApiFallback('/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
