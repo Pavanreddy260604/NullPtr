@@ -254,6 +254,9 @@ export default async function handler(req, res) {
     if (req.method === "OPTIONS") return res.status(204).end();
 
     try {
+        console.log("Auth handler received request:", req.method, req.url);
+        console.log("Request body:", req.body);
+
         await connectDB();
 
         const parts = req.url.split("?")[0].split("/").filter(Boolean);
