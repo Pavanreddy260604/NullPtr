@@ -1,5 +1,14 @@
 {
+    "version": 2,
     "rewrites": [
+        {
+            "source": "/api/quiz/:match*",
+            "destination": "/api/quiz.js"
+        },
+        {
+            "source": "/api/progress/:match*",
+            "destination": "/api/progress.js"
+        },
         {
             "source": "/api/auth/:match*",
             "destination": "/api/auth.js"
@@ -11,6 +20,25 @@
         {
             "source": "/:match*",
             "destination": "/index.html"
+        }
+    ],
+    "headers": [
+        {
+            "source": "/api/:match*",
+            "headers": [
+                {
+                    "key": "Access-Control-Allow-Origin",
+                    "value": "*"
+                },
+                {
+                    "key": "Access-Control-Allow-Methods",
+                    "value": "GET,OPTIONS,POST,PUT,DELETE,PATCH"
+                },
+                {
+                    "key": "Access-Control-Allow-Headers",
+                    "value": "Content-Type,Authorization,x-second-space-secret"
+                }
+            ]
         }
     ]
 }

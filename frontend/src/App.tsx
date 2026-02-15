@@ -28,8 +28,6 @@ import { InstallPWA } from "@/components/InstallPWA";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AuthGuard } from "@/components/AuthGuard";
-import { UserMenu } from "@/components/UserMenu";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 // ✅ 1. Absolute Top: Global Error Suppression
 if (typeof window !== 'undefined') {
@@ -95,6 +93,15 @@ const probeStorage = (): Promise<boolean> => {
 
 // Global flags (updated after probe)
 let storageAllowedGlobal = false;
+const configuredGoogleClientId = (import.meta.env.VITE_GOOGLE_CLIENT_ID || "").trim();
+const googleClientId =
+  configuredGoogleClientId && configuredGoogleClientId !== "YOUR_CLIENT_ID"
+    ? configuredGoogleClientId
+    : null;
+
+if (!googleClientId) {
+  console.warn("[Auth] Google OAuth disabled: VITE_GOOGLE_CLIENT_ID is missing or invalid.");
+}
 
 // Safe storage for next-themes
 const safeThemeStorage = {
@@ -185,31 +192,35 @@ const App = () => {
 
   if (!storageReady) return null;
 
-  return (
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || "YOUR_CLIENT_ID"}>
-      <AuthProvider>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem={true}
-          storageKey="theme"
-        >
-          {storageAllowed ? (
-            <PersistQueryClientProvider
-              client={queryClient}
-              persistOptions={{ persister, maxAge: 1000 * 60 * 60 * 24 * 30 }}
-            >
-              <AppContent />
-            </PersistQueryClientProvider>
-          ) : (
-            <QueryClientProvider client={queryClient}>
-              <AppContent />
-            </QueryClientProvider>
-          )}
-        </ThemeProvider>
-      </AuthProvider>
-    </GoogleOAuthProvider>
+  const appTree = (
+    <AuthProvider>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem={true}
+        storageKey="theme"
+      >
+        {storageAllowed ? (
+          <PersistQueryClientProvider
+            client={queryClient}
+            persistOptions={{ persister, maxAge: 1000 * 60 * 60 * 24 * 30 }}
+          >
+            <AppContent />
+          </PersistQueryClientProvider>
+        ) : (
+          <QueryClientProvider client={queryClient}>
+            <AppContent />
+          </QueryClientProvider>
+        )}
+      </ThemeProvider>
+    </AuthProvider>
   );
+
+  if (!googleClientId) {
+    return appTree;
+  }
+
+  return <GoogleOAuthProvider clientId={googleClientId}>{appTree}</GoogleOAuthProvider>;
 };
 
 export default App;
