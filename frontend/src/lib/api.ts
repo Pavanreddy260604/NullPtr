@@ -45,9 +45,9 @@ const getApiBaseUrls = (): string[] => {
 
     return unique(
         [
+            localDefault,
             fromEnvServerless,
             fromEnv,
-            localDefault,
             fallbackFromEnvServerless,
             fallbackFromEnv,
             fallbackLocalDefault
