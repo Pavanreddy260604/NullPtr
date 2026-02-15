@@ -8,24 +8,24 @@
     },
     "rewrites": [
         {
-            "source": "/api/test-auth",
+            "source": "/api/test-auth(.*)",
             "destination": "/api/test-auth.js"
+        },
+        {
+            "source": "/api/quiz(.*)",
+            "destination": "/api/quiz.js"
+        },
+        {
+            "source": "/api/progress(.*)",
+            "destination": "/api/progress.js"
+        },
+        {
+            "source": "/api/auth(.*)",
+            "destination": "/api/auth.js"
         },
         {
             "source": "/auth/(.*)",
             "destination": "/api/auth.js"
-        },
-        {
-            "source": "/api/auth/(.*)",
-            "destination": "/api/auth.js"
-        },
-        {
-            "source": "/api/quiz/(.*)",
-            "destination": "/api/quiz.js"
-        },
-        {
-            "source": "/api/progress/(.*)",
-            "destination": "/api/progress.js"
         },
         {
             "source": "/api/(.*)",
