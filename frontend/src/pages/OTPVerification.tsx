@@ -30,7 +30,7 @@ export default function OTPVerification() {
         try {
             await verifyEmail(email, otp);
             toast.success("Email verified successfully!");
-            navigate("/login");
+            navigate("/");
         } catch (error: any) {
             toast.error(error.message || "Verification failed");
         } finally {

@@ -1,29 +1,25 @@
-import { API_BASE_URL } from './api';
+import { API_BASE_URL, safeStorage } from './api';
 
 // ─── Token Management ───────────────────────────────────────────────────────
 const TOKEN_KEY = 'nullptr_token';
 const REFRESH_KEY = 'nullptr_refresh_token';
 
 function getToken(): string | null {
-    try { return localStorage.getItem(TOKEN_KEY); } catch { return null; }
+    return safeStorage.getItem(TOKEN_KEY);
 }
 
 function getRefreshToken(): string | null {
-    try { return localStorage.getItem(REFRESH_KEY); } catch { return null; }
+    return safeStorage.getItem(REFRESH_KEY);
 }
 
 function setTokens(token: string, refreshToken: string) {
-    try {
-        localStorage.setItem(TOKEN_KEY, token);
-        localStorage.setItem(REFRESH_KEY, refreshToken);
-    } catch { /* storage blocked */ }
+    safeStorage.setItem(TOKEN_KEY, token);
+    safeStorage.setItem(REFRESH_KEY, refreshToken);
 }
 
 function clearTokens() {
-    try {
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(REFRESH_KEY);
-    } catch { /* storage blocked */ }
+    safeStorage.removeItem(TOKEN_KEY);
+    safeStorage.removeItem(REFRESH_KEY);
 }
 
 export { getToken, clearTokens };
@@ -103,10 +99,28 @@ async function authFetch<T>(
         headers,
     });
 
-    // Try refresh if token expired
     if (response.status === 401) {
-        const body = await response.json().catch(() => ({}));
-        if (body.code === 'TOKEN_EXPIRED') {
+        const body = await response.json().catch(() => ({} as any));
+
+        const publicAuthEndpoints = [
+            '/auth/login',
+            '/auth/register',
+            '/auth/verify-email',
+            '/auth/google-login',
+            '/auth/forgot-password',
+            '/auth/reset-password',
+            '/auth/refresh',
+        ];
+
+        const isPublicAuthRequest = publicAuthEndpoints.some((publicEndpoint) =>
+            endpoint.startsWith(publicEndpoint)
+        );
+
+        const tokenExpired =
+            body.code === 'TOKEN_EXPIRED' ||
+            /expired/i.test(body.error || '');
+
+        if (token && !isPublicAuthRequest && tokenExpired) {
             const refreshed = await refreshTokens();
             if (refreshed) {
                 headers['Authorization'] = `Bearer ${getToken()}`;
@@ -115,12 +129,17 @@ async function authFetch<T>(
                     headers,
                 });
                 if (!retryResponse.ok) {
-                    throw new Error('Request failed after token refresh');
+                    const retryError = await retryResponse.json().catch(() => ({ error: 'Request failed after token refresh' }));
+                    throw new Error(retryError.error || `Request failed with status ${retryResponse.status}`);
                 }
                 return retryResponse.json();
             }
         }
-        clearTokens();
+
+        if (token && !isPublicAuthRequest) {
+            clearTokens();
+        }
+
         throw new Error(body.error || 'Authentication required');
     }
 
