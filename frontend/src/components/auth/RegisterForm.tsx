@@ -49,18 +49,22 @@ export function RegisterForm() {
     };
 
     const handleGoogleSuccess = async (credentialResponse: any) => {
+        if (loading) return;
         const credential = credentialResponse?.credential;
         if (!credential) {
             toast({ title: "Google Sign-Up failed", description: "No Google credential received", variant: "destructive" });
             return;
         }
 
+        setLoading(true);
         try {
             await googleLogin(credential);
             toast({ title: "Welcome!", description: "Signed up with Google" });
             navigate("/");
         } catch (error) {
             toast({ title: "Google Sign-Up failed", variant: "destructive" });
+        } finally {
+            setLoading(false);
         }
     };
 

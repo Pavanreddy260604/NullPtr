@@ -37,18 +37,22 @@ export function LoginForm() {
     };
 
     const handleGoogleSuccess = async (credentialResponse: any) => {
+        if (loading) return;
         const credential = credentialResponse?.credential;
         if (!credential) {
             toast({ title: "Google Login failed", description: "No Google credential received", variant: "destructive" });
             return;
         }
 
+        setLoading(true);
         try {
             await googleLogin(credential);
             toast({ title: "Welcome!", description: "Logged in with Google" });
             navigate("/");
         } catch (error) {
             toast({ title: "Google Login failed", variant: "destructive" });
+        } finally {
+            setLoading(false);
         }
     };
 
