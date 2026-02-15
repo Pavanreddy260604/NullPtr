@@ -258,7 +258,7 @@ export default function Settings() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <Button variant="outline" className="w-full sm:w-auto" asChild>
-                            <a href="/change-password">Change Password</a>
+                            <a href="/profile">Change Password & Manage Account</a>
                         </Button>
                     </CardContent>
                 </Card>
