@@ -1,21 +1,78 @@
-// API Configuration - Uses environment variable for deployment flexibility
-const getApiUrl = () => {
-    const url = import.meta.env.VITE_API_URL;
-
-    // If VITE_API_URL is explicitly set, use it
-    if (url) {
-        return url;
-    }
-
-    // Otherwise, use relative /api path (works for both localhost and production with Vercel rewrites)
-    console.log("🚀 [API] Using same-domain /api");
-    return "/api";
+const normalizeBaseUrl = (baseUrl?: string | null): string | null => {
+    const value = (baseUrl || "").trim();
+    if (!value) return null;
+    return value.endsWith("/") ? value.slice(0, -1) : value;
 };
 
-const rawApiUrl = getApiUrl();
-export const API_BASE_URL = rawApiUrl.endsWith("/") ? rawApiUrl.slice(0, -1) : rawApiUrl;
+const unique = <T,>(values: T[]): T[] => Array.from(new Set(values));
 
-console.log(`🌐 [API] Base URL: ${API_BASE_URL}`);
+const getApiBaseUrls = (): string[] => {
+    const fromEnv = normalizeBaseUrl(import.meta.env.VITE_API_URL);
+    const localDefault = "/api";
+    const fallbackFromEnv = normalizeBaseUrl(import.meta.env.VITE_STUDENT_API_FALLBACK_URL);
+    const fallbackLocalDefault = normalizeBaseUrl(
+        typeof window !== "undefined" && window.location.hostname === "localhost"
+            ? "https://study-8c4d.vercel.app/api"
+            : null
+    );
+
+    return unique(
+        [fromEnv, localDefault, fallbackFromEnv, fallbackLocalDefault].filter(Boolean) as string[]
+    );
+};
+
+export const API_BASE_URLS = getApiBaseUrls();
+export const API_BASE_URL = API_BASE_URLS[0] || "/api";
+
+console.log(`[API] Base URLs: ${API_BASE_URLS.join(" -> ")}`);
+
+const RETRYABLE_STATUS_CODES = new Set([404, 408, 429, 500, 502, 503, 504]);
+
+const buildUrl = (baseUrl: string, endpoint: string): string => {
+    const normalizedEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+    return `${baseUrl}${normalizedEndpoint}`;
+};
+
+export async function fetchWithApiFallback(
+    endpoint: string,
+    init: RequestInit = {},
+    retryableStatusCodes: Set<number> = RETRYABLE_STATUS_CODES
+): Promise<Response> {
+    let lastNetworkError: unknown = null;
+    let lastResponse: Response | null = null;
+
+    for (let index = 0; index < API_BASE_URLS.length; index++) {
+        const baseUrl = API_BASE_URLS[index];
+        const url = buildUrl(baseUrl, endpoint);
+
+        try {
+            const response = await fetch(url, init);
+            if (response.ok) {
+                return response;
+            }
+
+            lastResponse = response;
+            const hasFallback = index < API_BASE_URLS.length - 1;
+
+            if (hasFallback && retryableStatusCodes.has(response.status)) {
+                console.warn(`[API] ${response.status} from ${url}, trying fallback...`);
+                continue;
+            }
+
+            return response;
+        } catch (error) {
+            lastNetworkError = error;
+            const hasFallback = index < API_BASE_URLS.length - 1;
+            if (hasFallback) {
+                console.warn(`[API] Network error from ${url}, trying fallback...`, error);
+                continue;
+            }
+        }
+    }
+
+    if (lastResponse) return lastResponse;
+    throw lastNetworkError || new Error("All API endpoints failed");
+}
 
 /**
  * ✅ Safe Storage Helper
@@ -130,7 +187,7 @@ async function fetchApi<T>(endpoint: string): Promise<T> {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, { headers });
+        const response = await fetchWithApiFallback(endpoint, { headers });
         if (!response.ok) {
             throw new Error(`API error: ${response.statusText}`);
         }
@@ -265,7 +322,7 @@ export const clearAuthTokens = () => {
 export const authApi = {
     // Register new user
     register: async (email: string, password: string, name: string): Promise<AuthResponse> => {
-        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        const response = await fetchWithApiFallback('/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password, name }),
@@ -275,7 +332,7 @@ export const authApi = {
 
     // Verify email with OTP
     verifyEmail: async (email: string, otp: string): Promise<AuthResponse> => {
-        const response = await fetch(`${API_BASE_URL}/auth/verify-email`, {
+        const response = await fetchWithApiFallback('/auth/verify-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, otp }),
@@ -290,7 +347,7 @@ export const authApi = {
 
     // Login
     login: async (email: string, password: string): Promise<AuthResponse> => {
-        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        const response = await fetchWithApiFallback('/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
@@ -305,7 +362,7 @@ export const authApi = {
 
     // Google OAuth login
     googleLogin: async (credential: string): Promise<AuthResponse> => {
-        const response = await fetch(`${API_BASE_URL}/auth/google-login`, {
+        const response = await fetchWithApiFallback('/auth/google-login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ credential }),
@@ -320,7 +377,7 @@ export const authApi = {
 
     // Forgot password
     forgotPassword: async (email: string): Promise<{ success: boolean; message?: string; error?: string }> => {
-        const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+        const response = await fetchWithApiFallback('/auth/forgot-password', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
@@ -330,7 +387,7 @@ export const authApi = {
 
     // Reset password
     resetPassword: async (email: string, token: string, newPassword: string): Promise<{ success: boolean; message?: string; error?: string }> => {
-        const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+        const response = await fetchWithApiFallback('/auth/reset-password', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, token, newPassword }),
@@ -344,7 +401,7 @@ export const authApi = {
         if (!refreshToken) {
             return { success: false, error: 'No refresh token' };
         }
-        const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        const response = await fetchWithApiFallback('/auth/refresh', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refreshToken }),
@@ -360,7 +417,7 @@ export const authApi = {
     logout: async (): Promise<void> => {
         const { token } = getStoredTokens();
         if (token) {
-            await fetch(`${API_BASE_URL}/auth/logout`, {
+            await fetchWithApiFallback('/auth/logout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -377,7 +434,7 @@ export const authApi = {
         if (!token) {
             return { success: false, error: 'Not authenticated' };
         }
-        const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+        const response = await fetchWithApiFallback('/auth/profile', {
             headers: { 'Authorization': `Bearer ${token}` },
         });
         const data = await response.json();
@@ -393,7 +450,7 @@ export const authApi = {
         if (!token) {
             return { success: false, error: 'Not authenticated' };
         }
-        const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+        const response = await fetchWithApiFallback('/auth/profile', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -416,7 +473,7 @@ export const authApi = {
         if (!token) {
             return { success: false, error: 'Not authenticated' };
         }
-        const response = await fetch(`${API_BASE_URL}/auth/preferences`, {
+        const response = await fetchWithApiFallback('/auth/preferences', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -433,7 +490,7 @@ export const authApi = {
         if (!token) {
             return { success: false, error: 'Not authenticated' };
         }
-        const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
+        const response = await fetchWithApiFallback('/auth/change-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -450,7 +507,7 @@ export const authApi = {
         if (!token) {
             return { success: false, error: 'Not authenticated' };
         }
-        const response = await fetch(`${API_BASE_URL}/auth/account`, {
+        const response = await fetchWithApiFallback('/auth/account', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -487,3 +544,4 @@ export const authApi = {
         return !!safeStorage.getItem('auth_token');
     },
 };
+

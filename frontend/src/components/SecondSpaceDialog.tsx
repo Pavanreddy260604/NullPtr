@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from "sonner";
 import { Lock } from "lucide-react";
-import { safeStorage, API_BASE_URL } from "@/lib/api";
+import { safeStorage, fetchWithApiFallback } from "@/lib/api";
 
 interface Props {
     open: boolean;
@@ -21,7 +21,7 @@ export const SecondSpaceDialog = ({ open, onOpenChange }: Props) => {
             return;
         }
         try {
-            const res = await fetch(`${API_BASE_URL}/verify-pin`, {
+            const res = await fetchWithApiFallback("/verify-pin", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ pin })

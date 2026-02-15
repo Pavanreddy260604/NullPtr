@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+import { parseBody } from "./utils/parseBody.js";
 
 let cached = global.mongoose;
 if (!cached) {
@@ -164,15 +165,7 @@ const getFillBlankModel = () => mongoose.models.FillBlank || mongoose.model("Fil
 const getDescriptiveModel = () => mongoose.models.Descriptive || mongoose.model("Descriptive", new mongoose.Schema({}, { strict: false, collection: "descriptives" }));
 
 const parseRequestBody = (body) => {
-    if (body && typeof body === "object") return body;
-    if (typeof body === "string") {
-        try {
-            return JSON.parse(body);
-        } catch {
-            return {};
-        }
-    }
-    return {};
+    return parseBody(body);
 };
 
 const authenticate = (req) => {
@@ -237,7 +230,6 @@ export default async function handler(req, res) {
 
     try {
         await connectDB();
-
         const auth = authenticate(req);
         if (!auth.authenticated) {
             return res.status(401).json({ success: false, error: auth.error, code: auth.code });
