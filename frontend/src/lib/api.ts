@@ -38,20 +38,24 @@ const getApiBaseUrls = (): string[] => {
     const fallbackFromEnv = normalizeBaseUrl(import.meta.env.VITE_STUDENT_API_FALLBACK_URL);
     const fallbackFromEnvServerless = toServerlessApiBase(fallbackFromEnv);
     const defaultRemoteStudentApi = "https://study-8c4d.vercel.app/api";
+    const isLocalhost =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
     const fallbackLocalDefault = normalizeBaseUrl(
         typeof window !== "undefined"
             ? (window.location.hostname === "study-8c4d.vercel.app" ? null : defaultRemoteStudentApi)
             : defaultRemoteStudentApi
     );
 
+    const localAndFallbackOrder = isLocalhost
+        ? [localDefault, fallbackFromEnvServerless, fallbackFromEnv, fallbackLocalDefault]
+        : [fallbackFromEnvServerless, fallbackFromEnv, fallbackLocalDefault, localDefault];
+
     return unique(
         [
             fromEnvServerless,
             fromEnv,
-            localDefault,
-            fallbackFromEnvServerless,
-            fallbackFromEnv,
-            fallbackLocalDefault
+            ...localAndFallbackOrder
         ].filter(Boolean) as string[]
     );
 };
