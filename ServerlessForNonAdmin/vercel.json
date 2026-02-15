@@ -8,6 +8,10 @@
     },
     "rewrites": [
         {
+            "source": "/auth/(.*)",
+            "destination": "/api/auth.js"
+        },
+        {
             "source": "/api/auth/(.*)",
             "destination": "/api/auth.js"
         },
