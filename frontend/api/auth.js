@@ -432,8 +432,9 @@ export default async function handler(req, res) {
             const token = generateToken(user);
             const refreshToken = generateRefreshToken(user);
 
+            // Update last login
             user.lastLogin = new Date();
-            await user.updateStreak();
+            await user.save();
 
             return res.json({
                 success: true,
@@ -457,9 +458,17 @@ export default async function handler(req, res) {
         if (action === 'google-login' && req.method === 'POST') {
             const { credential } = body;
 
+            if (!credential) {
+                return res.status(400).json({ success: false, error: 'Credential is required' });
+            }
+
             try {
                 const payload = await verifyGoogleToken(credential);
                 const { email, name, picture, sub: googleId } = payload;
+
+                if (!email) {
+                    return res.status(400).json({ success: false, error: 'Email not found in Google token' });
+                }
 
                 let user = await User.findOne({ email: email.toLowerCase() });
 
@@ -469,22 +478,22 @@ export default async function handler(req, res) {
                         user.oauthId = googleId;
                         if (!user.avatar) user.avatar = picture;
                         if (!user.emailVerified) user.emailVerified = true;
-                        await user.save();
                     }
+                    user.lastLogin = new Date();
+                    await user.save();
                 } else {
                     user = await User.create({
                         email: email.toLowerCase(),
-                        name,
+                        name: name || 'User',
                         avatar: picture,
                         oauthProvider: 'google',
                         oauthId: googleId,
                         emailVerified: true,
-                        role: 'student'
+                        role: 'student',
+                        lastLogin: new Date(),
+                        stats: { streakDays: 1, lastActiveDate: new Date() }
                     });
                 }
-
-                user.lastLogin = new Date();
-                await user.updateStreak();
 
                 const token = generateToken(user);
                 const refreshToken = generateRefreshToken(user);
@@ -507,7 +516,7 @@ export default async function handler(req, res) {
                 });
             } catch (error) {
                 console.error('Google login error:', error);
-                return res.status(401).json({ success: false, error: 'Google authentication failed' });
+                return res.status(401).json({ success: false, error: 'Google authentication failed: ' + error.message });
             }
         }
 
