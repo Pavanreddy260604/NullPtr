@@ -87,31 +87,6 @@ userSchema.methods.comparePassword = async function (password) {
     return bcrypt.compare(password, this.passwordHash);
 };
 
-userSchema.methods.updateStreak = function () {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const lastActive = this.stats.lastActiveDate;
-    if (lastActive) {
-        const lastActiveDate = new Date(lastActive);
-        lastActiveDate.setHours(0, 0, 0, 0);
-
-        const diffDays = Math.floor((today - lastActiveDate) / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 1) {
-            this.stats.streakDays += 1;
-            this.stats.longestStreak = Math.max(this.stats.streakDays, this.stats.longestStreak);
-        } else if (diffDays > 1) {
-            this.stats.streakDays = 1;
-        }
-    } else {
-        this.stats.streakDays = 1;
-    }
-
-    this.stats.lastActiveDate = today;
-    return this.save();
-};
-
 userSchema.statics.hashPassword = async function (password) {
     return bcrypt.hash(password, 12);
 };
@@ -173,14 +148,8 @@ const verifyToken = (token, secret) => {
 /* 📧 4. Email Service                               */
 /* -------------------------------------------------- */
 async function sendEmail(to, subject, html) {
-    // In serverless, we use a simpler approach
-    // Option 1: Use a transactional email service like Resend, SendGrid, etc.
-    // Option 2: Store emails in a queue collection for processing
-
-    // For now, we'll log and return success (configure your email provider)
     console.log(`📧 Email to ${to}: ${subject}`);
 
-    // If you have Resend or similar configured:
     if (process.env.RESEND_API_KEY) {
         try {
             const response = await fetch('https://api.resend.com/emails', {
@@ -204,7 +173,6 @@ async function sendEmail(to, subject, html) {
         }
     }
 
-    // Fallback: Log email content for development
     console.log('Email content:', html.substring(0, 200) + '...');
     return { success: true, messageId: 'dev-mode-' + Date.now() };
 }
@@ -279,7 +247,6 @@ const authenticate = (req) => {
 /* 🚀 7. Main Handler                                */
 /* -------------------------------------------------- */
 export default async function handler(req, res) {
-    // CORS Headers
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -289,13 +256,11 @@ export default async function handler(req, res) {
     try {
         await connectDB();
 
-        // Parse URL to get the auth action - use same approach as index.js
         const parts = req.url.split("?")[0].split("/").filter(Boolean);
         const authIndex = parts.indexOf("auth");
         const actionIndex = authIndex !== -1 ? authIndex + 1 : 0;
         const action = parts[actionIndex] || '';
 
-        // Parse body if needed (Vercel may parse it automatically or as string)
         let body = req.body;
         if (typeof body === 'string') {
             try {
@@ -304,7 +269,6 @@ export default async function handler(req, res) {
                 body = {};
             }
         }
-        // Ensure body exists
         if (!body) body = {};
 
         const User = getUserModel();
@@ -312,7 +276,6 @@ export default async function handler(req, res) {
 
         // ==================== PUBLIC ROUTES ====================
 
-        // POST /auth/register
         if (action === 'register' && req.method === 'POST') {
             const { email, password, name } = body;
 
@@ -358,7 +321,6 @@ export default async function handler(req, res) {
             });
         }
 
-        // POST /auth/verify-email
         if (action === 'verify-email' && req.method === 'POST') {
             const { email, otp } = body;
 
@@ -403,7 +365,6 @@ export default async function handler(req, res) {
             });
         }
 
-        // POST /auth/login
         if (action === 'login' && req.method === 'POST') {
             const { email, password } = body;
 
@@ -432,7 +393,6 @@ export default async function handler(req, res) {
             const token = generateToken(user);
             const refreshToken = generateRefreshToken(user);
 
-            // Update last login
             user.lastLogin = new Date();
             await user.save();
 
@@ -454,7 +414,6 @@ export default async function handler(req, res) {
             });
         }
 
-        // POST /auth/google-login
         if (action === 'google-login' && req.method === 'POST') {
             const { credential } = body;
 
@@ -520,7 +479,6 @@ export default async function handler(req, res) {
             }
         }
 
-        // POST /auth/forgot-password
         if (action === 'forgot-password' && req.method === 'POST') {
             const { email } = body;
             const user = await User.findOne({ email: email.toLowerCase() });
@@ -530,7 +488,7 @@ export default async function handler(req, res) {
             }
 
             const resetToken = crypto.randomBytes(32).toString('hex');
-            const resetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+            const resetExpires = new Date(Date.now() + 60 * 60 * 1000);
 
             user.resetPasswordToken = resetToken;
             user.resetPasswordExpires = resetExpires;
@@ -542,7 +500,6 @@ export default async function handler(req, res) {
             return res.json({ success: true, message: 'Password reset link sent to email' });
         }
 
-        // POST /auth/reset-password
         if (action === 'reset-password' && req.method === 'POST') {
             const { email, token, newPassword } = body;
 
@@ -568,7 +525,6 @@ export default async function handler(req, res) {
             return res.json({ success: true, message: 'Password changed successfully' });
         }
 
-        // POST /auth/refresh
         if (action === 'refresh' && req.method === 'POST') {
             const { refreshToken } = body;
 
@@ -598,19 +554,16 @@ export default async function handler(req, res) {
 
         // ==================== PROTECTED ROUTES ====================
 
-        // All routes below require authentication
         const authResult = authenticate(req);
         if (!authResult.authenticated) {
             return res.status(401).json({ success: false, error: authResult.error });
         }
         const { user: authUser } = authResult;
 
-        // POST /auth/logout
         if (action === 'logout' && req.method === 'POST') {
             return res.json({ success: true, message: 'Logged out successfully' });
         }
 
-        // GET /auth/profile
         if (action === 'profile' && req.method === 'GET') {
             const user = await User.findById(authUser.userId);
             if (!user) {
@@ -635,7 +588,6 @@ export default async function handler(req, res) {
             });
         }
 
-        // PATCH /auth/profile
         if (action === 'profile' && req.method === 'PATCH') {
             const { name, avatar } = body;
             const user = await User.findById(authUser.userId);
@@ -664,7 +616,6 @@ export default async function handler(req, res) {
             });
         }
 
-        // PATCH /auth/preferences
         if (action === 'preferences' && req.method === 'PATCH') {
             const { theme, aiProvider, aiApiKey, aiModel, notifications } = body;
             const user = await User.findById(authUser.userId);
@@ -689,7 +640,6 @@ export default async function handler(req, res) {
             return res.json({ success: true, data: { preferences: user.preferences } });
         }
 
-        // POST /auth/change-password
         if (action === 'change-password' && req.method === 'POST') {
             const { currentPassword, newPassword } = body;
             const user = await User.findById(authUser.userId);
@@ -717,7 +667,6 @@ export default async function handler(req, res) {
             return res.json({ success: true, message: 'Password changed successfully' });
         }
 
-        // DELETE /auth/account
         if (action === 'account' && req.method === 'DELETE') {
             const { password } = body;
             const user = await User.findById(authUser.userId);
@@ -737,7 +686,6 @@ export default async function handler(req, res) {
                 }
             }
 
-            // Soft delete
             user.isActive = false;
             user.email = `deleted_${user._id}_${user.email}`;
             await user.save();
@@ -745,7 +693,6 @@ export default async function handler(req, res) {
             return res.json({ success: true, message: 'Account deleted successfully' });
         }
 
-        // Unknown action
         return res.status(404).json({ success: false, error: 'Auth endpoint not found' });
 
     } catch (err) {
