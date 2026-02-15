@@ -2,13 +2,14 @@
 const getApiUrl = () => {
     const url = import.meta.env.VITE_API_URL;
 
-    // If we're on Vercel/Production and VITE_API_URL is missing, use relative /api
-    if (!url && typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
-        console.log("🚀 [API] Using same-domain /api for production");
-        return "/api";
+    // If VITE_API_URL is explicitly set, use it
+    if (url) {
+        return url;
     }
 
-    return url || "http://localhost:5000";
+    // Otherwise, use relative /api path (works for both localhost and production with Vercel rewrites)
+    console.log("🚀 [API] Using same-domain /api");
+    return "/api";
 };
 
 const rawApiUrl = getApiUrl();
