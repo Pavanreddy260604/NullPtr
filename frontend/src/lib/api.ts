@@ -189,3 +189,300 @@ export async function getFillBlanksByUnit(unitId: string): Promise<FillBlank[]> 
 export async function getDescriptivesByUnit(unitId: string): Promise<Descriptive[]> {
     return fetchApi<Descriptive[]>(`/descriptive/unit/${unitId}`);
 }
+
+/* -------------------------------------------------------------------------- */
+/* 🔐 AUTH API (Serverless)                                                    */
+/* -------------------------------------------------------------------------- */
+
+export interface User {
+    id: string;
+    email: string;
+    name: string;
+    role: 'student' | 'admin';
+    avatar?: string;
+    preferences?: {
+        theme?: 'light' | 'dark' | 'system';
+        aiProvider?: string;
+        aiModel?: string;
+        notifications?: {
+            reviewReminders?: boolean;
+            streakReminders?: boolean;
+        };
+    };
+    stats?: {
+        totalQuestions?: number;
+        streakDays?: number;
+        longestStreak?: number;
+        lastActiveDate?: string;
+    };
+    createdAt?: string;
+    lastLogin?: string;
+}
+
+export interface AuthResponse {
+    success: boolean;
+    data?: {
+        user: User;
+        token: string;
+        refreshToken: string;
+    };
+    error?: string;
+    message?: string;
+    requireVerification?: boolean;
+    email?: string;
+}
+
+export interface RefreshResponse {
+    success: boolean;
+    data?: {
+        token: string;
+        refreshToken: string;
+    };
+    error?: string;
+}
+
+// Helper to get stored tokens
+const getStoredTokens = () => ({
+    token: safeStorage.getItem('auth_token'),
+    refreshToken: safeStorage.getItem('refresh_token'),
+});
+
+// Helper to store tokens
+const storeTokens = (token: string, refreshToken: string) => {
+    safeStorage.setItem('auth_token', token);
+    safeStorage.setItem('refresh_token', refreshToken);
+};
+
+// Helper to clear tokens
+export const clearAuthTokens = () => {
+    safeStorage.removeItem('auth_token');
+    safeStorage.removeItem('refresh_token');
+    safeStorage.removeItem('user');
+};
+
+// Auth API object
+export const authApi = {
+    // Register new user
+    register: async (email: string, password: string, name: string): Promise<AuthResponse> => {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, name }),
+        });
+        return response.json();
+    },
+
+    // Verify email with OTP
+    verifyEmail: async (email: string, otp: string): Promise<AuthResponse> => {
+        const response = await fetch(`${API_BASE_URL}/auth/verify-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, otp }),
+        });
+        const data = await response.json();
+        if (data.success && data.data) {
+            storeTokens(data.data.token, data.data.refreshToken);
+            safeStorage.setItem('user', JSON.stringify(data.data.user));
+        }
+        return data;
+    },
+
+    // Login
+    login: async (email: string, password: string): Promise<AuthResponse> => {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        });
+        const data = await response.json();
+        if (data.success && data.data) {
+            storeTokens(data.data.token, data.data.refreshToken);
+            safeStorage.setItem('user', JSON.stringify(data.data.user));
+        }
+        return data;
+    },
+
+    // Google OAuth login
+    googleLogin: async (credential: string): Promise<AuthResponse> => {
+        const response = await fetch(`${API_BASE_URL}/auth/google-login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ credential }),
+        });
+        const data = await response.json();
+        if (data.success && data.data) {
+            storeTokens(data.data.token, data.data.refreshToken);
+            safeStorage.setItem('user', JSON.stringify(data.data.user));
+        }
+        return data;
+    },
+
+    // Forgot password
+    forgotPassword: async (email: string): Promise<{ success: boolean; message?: string; error?: string }> => {
+        const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+        });
+        return response.json();
+    },
+
+    // Reset password
+    resetPassword: async (email: string, token: string, newPassword: string): Promise<{ success: boolean; message?: string; error?: string }> => {
+        const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, token, newPassword }),
+        });
+        return response.json();
+    },
+
+    // Refresh token
+    refreshToken: async (): Promise<RefreshResponse> => {
+        const { refreshToken } = getStoredTokens();
+        if (!refreshToken) {
+            return { success: false, error: 'No refresh token' };
+        }
+        const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken }),
+        });
+        const data = await response.json();
+        if (data.success && data.data) {
+            storeTokens(data.data.token, data.data.refreshToken);
+        }
+        return data;
+    },
+
+    // Logout
+    logout: async (): Promise<void> => {
+        const { token } = getStoredTokens();
+        if (token) {
+            await fetch(`${API_BASE_URL}/auth/logout`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+        }
+        clearAuthTokens();
+    },
+
+    // Get profile
+    getProfile: async (): Promise<{ success: boolean; data?: { user: User }; error?: string }> => {
+        const { token } = getStoredTokens();
+        if (!token) {
+            return { success: false, error: 'Not authenticated' };
+        }
+        const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+        });
+        const data = await response.json();
+        if (data.success && data.data) {
+            safeStorage.setItem('user', JSON.stringify(data.data.user));
+        }
+        return data;
+    },
+
+    // Update profile
+    updateProfile: async (updates: { name?: string; avatar?: string }): Promise<{ success: boolean; data?: { user: User }; error?: string }> => {
+        const { token } = getStoredTokens();
+        if (!token) {
+            return { success: false, error: 'Not authenticated' };
+        }
+        const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(updates),
+        });
+        return response.json();
+    },
+
+    // Update preferences
+    updatePreferences: async (preferences: {
+        theme?: 'light' | 'dark' | 'system';
+        aiProvider?: string;
+        aiApiKey?: string;
+        aiModel?: string;
+        notifications?: { reviewReminders?: boolean; streakReminders?: boolean };
+    }): Promise<{ success: boolean; data?: { preferences: User['preferences'] }; error?: string }> => {
+        const { token } = getStoredTokens();
+        if (!token) {
+            return { success: false, error: 'Not authenticated' };
+        }
+        const response = await fetch(`${API_BASE_URL}/auth/preferences`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(preferences),
+        });
+        return response.json();
+    },
+
+    // Change password
+    changePassword: async (currentPassword: string, newPassword: string): Promise<{ success: boolean; message?: string; error?: string }> => {
+        const { token } = getStoredTokens();
+        if (!token) {
+            return { success: false, error: 'Not authenticated' };
+        }
+        const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ currentPassword, newPassword }),
+        });
+        return response.json();
+    },
+
+    // Delete account
+    deleteAccount: async (password?: string): Promise<{ success: boolean; message?: string; error?: string }> => {
+        const { token } = getStoredTokens();
+        if (!token) {
+            return { success: false, error: 'Not authenticated' };
+        }
+        const response = await fetch(`${API_BASE_URL}/auth/account`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ password }),
+        });
+        if (response.ok) {
+            clearAuthTokens();
+        }
+        return response.json();
+    },
+
+    // Get stored user (synchronous)
+    getStoredUser: (): User | null => {
+        const userStr = safeStorage.getItem('user');
+        if (userStr) {
+            try {
+                return JSON.parse(userStr);
+            } catch {
+                return null;
+            }
+        }
+        return null;
+    },
+
+    // Get stored token (synchronous)
+    getStoredToken: (): string | null => {
+        return safeStorage.getItem('auth_token');
+    },
+
+    // Check if authenticated
+    isAuthenticated: (): boolean => {
+        return !!safeStorage.getItem('auth_token');
+    },
+};

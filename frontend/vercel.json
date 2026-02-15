@@ -1,6 +1,10 @@
 {
     "rewrites": [
         {
+            "source": "/api/auth/:match*",
+            "destination": "/api/auth.js"
+        },
+        {
             "source": "/api/:match*",
             "destination": "/api/index.js"
         },
