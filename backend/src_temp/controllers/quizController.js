@@ -13,10 +13,31 @@ export const startQuiz = async (req, res) => {
         const { subjectId, unitIds, questionTypes, totalQuestions, timeLimit, difficulty, shuffle } = req.body;
         const userId = req.user.userId;
 
+        const buildIdCandidates = (value) => {
+            const normalized = value === null || value === undefined ? '' : String(value).trim();
+            if (!normalized) return [];
+            const candidates = [normalized];
+            if (mongoose.Types.ObjectId.isValid(normalized)) {
+                candidates.push(new mongoose.Types.ObjectId(normalized));
+            }
+            return candidates;
+        };
+
         // Build query for questions
         const query = {};
-        if (subjectId) query.subjectId = subjectId;
-        if (unitIds && unitIds.length > 0) query.unitId = { $in: unitIds };
+        const subjectCandidates = buildIdCandidates(subjectId);
+        if (subjectCandidates.length === 1) {
+            query.subjectId = subjectCandidates[0];
+        } else if (subjectCandidates.length > 1) {
+            query.subjectId = { $in: subjectCandidates };
+        }
+
+        if (unitIds && unitIds.length > 0) {
+            const unitCandidates = unitIds.flatMap((id) => buildIdCandidates(id));
+            if (unitCandidates.length > 0) {
+                query.unitId = { $in: unitCandidates };
+            }
+        }
         // Note: difficulty filtering depends on model support. Check if field exists.
 
         // Fetch questions from different collections

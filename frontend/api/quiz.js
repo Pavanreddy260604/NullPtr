@@ -198,6 +198,17 @@ const authenticate = (req) => {
 
 const asSafeArray = (value) => (Array.isArray(value) ? value : []);
 
+const buildIdCandidates = (value) => {
+    const normalized = value === null || value === undefined ? "" : String(value).trim();
+    if (!normalized) return [];
+
+    const candidates = [normalized];
+    if (mongoose.Types.ObjectId.isValid(normalized)) {
+        candidates.push(new mongoose.Types.ObjectId(normalized));
+    }
+    return candidates;
+};
+
 const stringifyBlocks = (blocks) => {
     if (!Array.isArray(blocks) || blocks.length === 0) return "No model answer available";
 
@@ -272,11 +283,19 @@ export default async function handler(req, res) {
             const selectedTypes = sanitizeQuestionTypes(questionTypes);
 
             const query = {};
-            if (subjectId) query.subjectId = subjectId;
+            const subjectCandidates = buildIdCandidates(subjectId);
+            if (subjectCandidates.length === 1) {
+                query.subjectId = subjectCandidates[0];
+            } else if (subjectCandidates.length > 1) {
+                query.subjectId = { $in: subjectCandidates };
+            }
 
             const safeUnitIds = asSafeArray(unitIds).map((id) => String(id)).filter(Boolean);
             if (safeUnitIds.length > 0) {
-                query.unitId = { $in: safeUnitIds };
+                const unitCandidates = safeUnitIds.flatMap((id) => buildIdCandidates(id));
+                if (unitCandidates.length > 0) {
+                    query.unitId = { $in: unitCandidates };
+                }
             }
 
             let questions = [];
