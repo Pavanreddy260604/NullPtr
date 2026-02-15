@@ -129,12 +129,12 @@ export interface Descriptive {
 /* 📚 SUBJECT API                                                             */
 /* -------------------------------------------------------------------------- */
 export const subjectApi = {
-  getAll: () => api.get<Subject[]>("/subject"),
-  getById: (id: string) => api.get<Subject>(`/subject/${id}`),
-  create: (data: Omit<Subject, "_id">) => api.post<Subject>("/subject", data),
+  getAll: () => api.get<Subject[]>("/subjects"),
+  getById: (id: string) => api.get<Subject>(`/subjects/${id}`),
+  create: (data: Omit<Subject, "_id">) => api.post<Subject>("/subjects", data),
   update: (id: string, data: Partial<Subject>) =>
-    api.put<Subject>(`/subject/${id}`, data),
-  delete: (id: string) => api.delete(`/subject/${id}`),
+    api.put<Subject>(`/subjects/${id}`, data),
+  delete: (id: string) => api.delete(`/subjects/${id}`),
 };
 
 /* -------------------------------------------------------------------------- */
@@ -142,12 +142,12 @@ export const subjectApi = {
 /* -------------------------------------------------------------------------- */
 export const unitApi = {
   getBySubject: (subjectId: string) =>
-    api.get<Unit[]>(`/unit/subject/${subjectId}`),
-  getById: (id: string) => api.get<Unit>(`/unit/${id}`),
-  create: (data: Omit<Unit, "_id">) => api.post<Unit>("/unit", data),
+    api.get<Unit[]>(`/units/subject/${subjectId}`),
+  getById: (id: string) => api.get<Unit>(`/units/${id}`),
+  create: (data: Omit<Unit, "_id">) => api.post<Unit>("/units", data),
   update: (id: string, data: Partial<Unit>) =>
-    api.put<Unit>(`/unit/${id}`, data),
-  delete: (id: string) => api.delete(`/unit/${id}`),
+    api.put<Unit>(`/units/${id}`, data),
+  delete: (id: string) => api.delete(`/units/${id}`),
 };
 
 /* -------------------------------------------------------------------------- */
@@ -155,27 +155,26 @@ export const unitApi = {
 /* -------------------------------------------------------------------------- */
 export const mcqApi = {
   getByUnit: (unitId: string): Promise<MCQ[]> =>
-    api.get(`/question/mcq/unit/${unitId}`).then(r => r.data.data ?? []),
+    api.get(`/mcq/unit/${unitId}`).then(r => r.data.data ?? []),
 
   create: (data: Omit<MCQ, "_id">) =>
-    api.post<MCQ>("/question/mcq", data),
+    api.post<MCQ>("/mcq", data),
 
   update: (id: string, data: Partial<MCQ>) =>
-    api.put<MCQ>(`/question/mcq/${id}`, data),
+    api.put<MCQ>(`/mcq/${id}`, data),
 
   delete: (id: string) =>
-    api.delete(`/question/mcq/${id}`),
+    api.delete(`/mcq/${id}`),
 
   bulkCreate: (data: MCQ[], unitId: string, subjectId: string) =>
-    api.post(`/question/mcq/bulk`, {
+    api.post(`/mcq/bulk`, {
       unitId,
       subjectId,
       mcqs: data,
     }),
 
-  // ✅ ADD THIS
   bulkDelete: (ids: string[]) =>
-    api.delete(`/question/mcq/bulk`, {
+    api.delete(`/mcq/bulk`, {
       data: { ids },
     }),
 };
@@ -186,27 +185,26 @@ export const mcqApi = {
 /* -------------------------------------------------------------------------- */
 export const fillBlankApi = {
   getByUnit: (unitId: string): Promise<FillBlank[]> =>
-    api.get(`/question/fillblank/unit/${unitId}`).then(r => r.data.data ?? []),
+    api.get(`/fillblank/unit/${unitId}`).then(r => r.data.data ?? []),
 
   create: (data: Omit<FillBlank, "_id">) =>
-    api.post("/question/fillblank", data),
+    api.post("/fillblank", data),
 
   update: (id: string, data: Partial<FillBlank>) =>
-    api.put(`/question/fillblank/${id}`, data),
+    api.put(`/fillblank/${id}`, data),
 
   delete: (id: string) =>
-    api.delete(`/question/fillblank/${id}`),
+    api.delete(`/fillblank/${id}`),
 
   bulkCreate: (data: FillBlank[], unitId: string, subjectId: string) =>
-    api.post(`/question/fillblank/bulk`, {
+    api.post(`/fillblank/bulk`, {
       unitId,
       subjectId,
       fillBlanks: data,
     }),
 
-  // ✅ ADD THIS
   bulkDelete: (ids: string[]) =>
-    api.delete(`/question/fillblank/bulk`, {
+    api.delete(`/fillblank/bulk`, {
       data: { ids },
     }),
 };
@@ -216,28 +214,27 @@ export const fillBlankApi = {
 /* -------------------------------------------------------------------------- */
 export const descriptiveApi = {
   getByUnit: (unitId: string): Promise<Descriptive[]> =>
-    api.get(`/question/descriptive/unit/${unitId}`).then(r => r.data.data ?? []),
+    api.get(`/descriptive/unit/${unitId}`).then(r => r.data.data ?? []),
 
   create: (data: Omit<Descriptive, "_id">) =>
-    api.post("/question/descriptive", data),
+    api.post("/descriptive", data),
 
   update: (id: string, data: Partial<Descriptive>) =>
-    api.put(`/question/descriptive/${id}`, data),
+    api.put(`/descriptive/${id}`, data),
 
   delete: (id: string) =>
-    api.delete(`/question/descriptive/${id}`),
+    api.delete(`/descriptive/${id}`),
 
   bulkCreate: (descriptives, unitId, subjectId, refImages = {}) =>
-    api.post(`/question/descriptive/bulk`, {
+    api.post(`/descriptive/bulk`, {
       unitId,
       subjectId,
       descriptives,
       refImages,
     }),
 
-  // ✅ ADD THIS
   bulkDelete: (ids: string[]) =>
-    api.delete(`/question/descriptive/bulk`, {
+    api.delete(`/descriptive/bulk`, {
       data: { ids },
     }),
 };

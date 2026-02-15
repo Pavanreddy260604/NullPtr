@@ -14,6 +14,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import Subjects from "./pages/admin/Subjects";
 import Units from "./pages/admin/Units";
 import Questions from "./pages/admin/Questions";
+import SMTPConfig from "./pages/admin/SMTPConfig";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,9 @@ const App = () => (
                 {/* Questions */}
                 <Route path="/questions" element={<Questions />} />
                 <Route path="/questions/:unitId" element={<Questions />} />
+
+                {/* Settings */}
+                <Route path="/settings/smtp" element={<SMTPConfig />} />
               </Route>
 
               {/* Fallback 404 */}
