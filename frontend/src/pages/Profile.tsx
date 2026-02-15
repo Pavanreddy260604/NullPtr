@@ -62,15 +62,16 @@ export default function Profile() {
         <div className="min-h-screen p-4 md:p-8 bg-slate-50 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 transition-colors">
             <div className="max-w-2xl mx-auto space-y-6">
                 {/* Header */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-3">
                     <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Profile</h1>
-                    <div className="flex items-center gap-4">
+                    <div className="-mr-0.5 ml-auto flex items-center gap-2 sm:mr-0 sm:gap-4">
                         <ThemeToggle />
                         <button
                             onClick={() => navigate("/")}
-                            className="text-sm text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                            className="text-xs sm:text-sm text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                         >
-                            ← Back
+                            <span className="sm:hidden">Back</span>
+                            <span className="hidden sm:inline">Back</span>
                         </button>
                     </div>
                 </div>
@@ -170,3 +171,4 @@ export default function Profile() {
         </div>
     );
 }
+

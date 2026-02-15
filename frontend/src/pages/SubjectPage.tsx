@@ -164,15 +164,15 @@ const SubjectPage = () => {
 
             <div className="relative z-10">
                 {/* Header */}
-                <header className="sticky top-0 z-20 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10">
-                    <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+                <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/80">
+                    <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between px-3 py-4 sm:px-4">
                         <Link to="/">
                             <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10">
                                 <ArrowLeft className="w-4 h-4 mr-2" />
                                 Back
                             </Button>
                         </Link>
-                        <div className="flex items-center gap-2 md:gap-4">
+                        <div className="flex flex-1 items-center justify-end gap-2 md:gap-4">
                             <div className="hidden md:flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                                     <BookOpen className="w-4 h-4 text-white" />
@@ -207,7 +207,7 @@ const SubjectPage = () => {
                                 <Share2 className="w-5 h-5" />
                             </Button>
 
-                            <div className="flex items-center gap-2 pl-2 md:pl-4 border-l border-slate-200 dark:border-white/10 ml-2">
+                            <div className="-mr-0.5 ml-1 flex items-center gap-2 border-l border-slate-200 pl-2 dark:border-white/10 sm:mr-0 md:ml-2 md:pl-4">
                                 <ThemeToggle />
                                 <UserMenu />
                             </div>

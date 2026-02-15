@@ -219,15 +219,15 @@ const UnitPage = () => {
 
             <div className="relative z-10">
                 {/* Header */}
-                <header className="sticky top-0 z-20 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10">
-                    <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+                <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/80">
+                    <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between px-3 py-4 sm:px-4">
                         <Link to={`/subjects/${unit?.subjectId}`}>
                             <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10">
                                 <ArrowLeft className="w-4 h-4 md:mr-2" />
                                 <span className="hidden md:inline">Back</span>
                             </Button>
                         </Link>
-                        <div className="flex items-center gap-2 md:gap-4">
+                        <div className="flex flex-1 items-center justify-end gap-2 md:gap-4">
                             <div className="text-right hidden md:block">
                                 <div className="text-xs text-slate-500">Unit {unit?.unit}</div>
                                 <div className="font-semibold text-sm">{unit?.title}</div>
@@ -253,7 +253,7 @@ const UnitPage = () => {
                                 <Share2 className="w-5 h-5" />
                             </Button>
 
-                            <div className="flex items-center gap-2 pl-2 md:pl-4 border-l border-slate-200 dark:border-white/10 ml-2">
+                            <div className="-mr-0.5 ml-1 flex items-center gap-2 border-l border-slate-200 pl-2 dark:border-white/10 sm:mr-0 md:ml-2 md:pl-4">
                                 <ThemeToggle />
                                 <UserMenu />
                             </div>
