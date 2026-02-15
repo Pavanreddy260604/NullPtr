@@ -8,6 +8,10 @@ export function RegisterForm() {
     const { register, googleLogin } = useAuth();
     const navigate = useNavigate();
     const { toast } = useToast();
+    const googleEnabled = Boolean(
+        (import.meta.env.VITE_GOOGLE_CLIENT_ID || "").trim() &&
+        (import.meta.env.VITE_GOOGLE_CLIENT_ID || "").trim() !== "YOUR_CLIENT_ID"
+    );
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -45,8 +49,14 @@ export function RegisterForm() {
     };
 
     const handleGoogleSuccess = async (credentialResponse: any) => {
+        const credential = credentialResponse?.credential;
+        if (!credential) {
+            toast({ title: "Google Sign-Up failed", description: "No Google credential received", variant: "destructive" });
+            return;
+        }
+
         try {
-            await googleLogin(credentialResponse.credential);
+            await googleLogin(credential);
             toast({ title: "Welcome!", description: "Signed up with Google" });
             navigate("/");
         } catch (error) {
@@ -140,25 +150,28 @@ export function RegisterForm() {
                 </button>
             </form>
 
-            <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-slate-200 dark:border-white/10" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-white dark:bg-slate-950 px-2 text-slate-500 dark:text-slate-400">Or sign up with</span>
-                </div>
-            </div>
+            {googleEnabled && (
+                <>
+                    <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t border-slate-200 dark:border-white/10" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-white dark:bg-slate-950 px-2 text-slate-500 dark:text-slate-400">Or sign up with</span>
+                        </div>
+                    </div>
 
-            <div className="flex justify-center">
-                <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={() => toast({ title: "Google Sign-Up Failed", variant: "destructive" })}
-                    useOneTap
-                    theme="filled_black"
-                    shape="pill"
-                    text="signup_with"
-                />
-            </div>
+                    <div className="flex justify-center">
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onError={() => toast({ title: "Google Sign-Up Failed", variant: "destructive" })}
+                            theme="filled_black"
+                            shape="pill"
+                            text="signup_with"
+                        />
+                    </div>
+                </>
+            )}
         </div>
     );
 }

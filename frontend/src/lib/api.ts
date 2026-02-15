@@ -4,12 +4,39 @@ const normalizeBaseUrl = (baseUrl?: string | null): string | null => {
     return value.endsWith("/") ? value.slice(0, -1) : value;
 };
 
+const isAbsoluteHttpUrl = (value: string): boolean => /^https?:\/\//i.test(value);
+
+const toServerlessApiBase = (baseUrl?: string | null): string | null => {
+    const normalized = normalizeBaseUrl(baseUrl);
+    if (!normalized || !isAbsoluteHttpUrl(normalized)) return null;
+
+    try {
+        const url = new URL(normalized);
+        const path = url.pathname.replace(/\/+$/, "");
+
+        if (!path || path === "/") {
+            url.pathname = "/api";
+            return normalizeBaseUrl(url.toString());
+        }
+
+        if (path === "/api") {
+            return normalizeBaseUrl(url.toString());
+        }
+
+        return null;
+    } catch {
+        return null;
+    }
+};
+
 const unique = <T,>(values: T[]): T[] => Array.from(new Set(values));
 
 const getApiBaseUrls = (): string[] => {
     const fromEnv = normalizeBaseUrl(import.meta.env.VITE_API_URL);
+    const fromEnvServerless = toServerlessApiBase(fromEnv);
     const localDefault = "/api";
     const fallbackFromEnv = normalizeBaseUrl(import.meta.env.VITE_STUDENT_API_FALLBACK_URL);
+    const fallbackFromEnvServerless = toServerlessApiBase(fallbackFromEnv);
     const fallbackLocalDefault = normalizeBaseUrl(
         typeof window !== "undefined" && window.location.hostname === "localhost"
             ? "https://study-8c4d.vercel.app/api"
@@ -17,7 +44,14 @@ const getApiBaseUrls = (): string[] => {
     );
 
     return unique(
-        [fromEnv, localDefault, fallbackFromEnv, fallbackLocalDefault].filter(Boolean) as string[]
+        [
+            fromEnvServerless,
+            fromEnv,
+            localDefault,
+            fallbackFromEnvServerless,
+            fallbackFromEnv,
+            fallbackLocalDefault
+        ].filter(Boolean) as string[]
     );
 };
 

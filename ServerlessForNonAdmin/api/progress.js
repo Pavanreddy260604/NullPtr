@@ -231,7 +231,12 @@ const authenticate = (req) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET || "your-super-secret-jwt-key");
-        return { authenticated: true, user: decoded };
+        const userId = decoded?.userId || decoded?.id || decoded?.sub;
+        if (!userId || !mongoose.Types.ObjectId.isValid(String(userId))) {
+            return { authenticated: false, error: "Invalid token payload", code: "INVALID_TOKEN_PAYLOAD" };
+        }
+
+        return { authenticated: true, user: { ...decoded, userId: String(userId) } };
     } catch (error) {
         if (error?.name === "TokenExpiredError") {
             return { authenticated: false, error: "Token expired", code: "TOKEN_EXPIRED" };

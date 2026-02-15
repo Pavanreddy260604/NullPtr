@@ -45,7 +45,7 @@ export default async function handler(req, res) {
     // CORS Headers for cross-origin requests
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-second-space-secret");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-second-space-secret");
 
     // Handle preflight
     if (req.method === "OPTIONS") {
