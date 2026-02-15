@@ -16,8 +16,26 @@ export default defineConfig({
         navigateFallbackAllowlist: [/^(?!\/__).*/], // Allow all routes except internal ones
         runtimeCaching: [
           {
-            // Cache API responses - Support Vercel, Render, Local, and direct routes
-            urlPattern: /^(https:\/\/study-.*\.vercel\.app|https:\/\/study-g3xc\.onrender\.com|http:\/\/localhost:5000)\/.*|.*\/api\/.*|\/(subjects|units|mcq|fillblank|descriptive)\/.*/i,
+            // Cache API responses for same-origin serverless routes and approved remote backends.
+            urlPattern: ({ url, sameOrigin }) => {
+              const isApprovedRemoteHost =
+                /^study-[a-z0-9-]+\.vercel\.app$/i.test(url.hostname) ||
+                /^study-g3xc\.onrender\.com$/i.test(url.hostname) ||
+                (url.hostname === "localhost" && url.port === "5000");
+
+              const isApiPath = url.pathname.startsWith("/api/");
+              const isLegacyBackendPath = /^\/(subjects|units|mcq|fillblank|descriptive)(\/|$)/i.test(url.pathname);
+
+              if (sameOrigin) {
+                return isApiPath;
+              }
+
+              if (!isApprovedRemoteHost) {
+                return false;
+              }
+
+              return isApiPath || isLegacyBackendPath;
+            },
             handler: "StaleWhileRevalidate",
             options: {
               cacheName: "api-cache",

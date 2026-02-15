@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { SkipLink } from "@/components/SkipLink";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ThemeProvider } from "next-themes";
 import { get, set, del } from 'idb-keyval';
 import Index from "./pages/Index";
@@ -12,8 +14,22 @@ import SubjectPage from "./pages/SubjectPage";
 import UnitPage from "./pages/UnitPage";
 import DevTest from "./pages/DevTest";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import OTPVerification from "./pages/OTPVerification";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Quiz from "./pages/Quiz";
+import QuizResults from "./pages/QuizResults";
+import Review from "./pages/Review";
 import { InstallPWA } from "@/components/InstallPWA";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthGuard } from "@/components/AuthGuard";
+import { UserMenu } from "@/components/UserMenu";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 // ✅ 1. Absolute Top: Global Error Suppression
 if (typeof window !== 'undefined') {
@@ -130,13 +146,26 @@ const AppContent = () => (
     <InstallPWA />
     <OfflineIndicator />
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/subjects/:subjectId" element={<SubjectPage />} />
-        <Route path="/units/:unitId" element={<UnitPage />} />
-        <Route path="/dev/test-pdf" element={<DevTest />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <SkipLink />
+      <main id="main-content">
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/subjects/:subjectId" element={<AuthGuard><SubjectPage /></AuthGuard>} />
+          <Route path="/units/:unitId" element={<AuthGuard><UnitPage /></AuthGuard>} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/otp" element={<OTPVerification />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
+          <Route path="/settings" element={<AuthGuard><Settings /></AuthGuard>} />
+          <Route path="/quiz/:quizId" element={<AuthGuard><Quiz /></AuthGuard>} />
+          <Route path="/quiz/:quizId/results" element={<AuthGuard><QuizResults /></AuthGuard>} />
+          <Route path="/review" element={<AuthGuard><Review /></AuthGuard>} />
+          <Route path="/dev/test-pdf" element={<DevTest />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
     </BrowserRouter>
   </TooltipProvider>
 );
@@ -157,25 +186,29 @@ const App = () => {
   if (!storageReady) return null;
 
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem={true}
-      storageKey="theme"
-    >
-      {storageAllowed ? (
-        <PersistQueryClientProvider
-          client={queryClient}
-          persistOptions={{ persister, maxAge: 1000 * 60 * 60 * 24 * 30 }}
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || "YOUR_CLIENT_ID"}>
+      <AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem={true}
+          storageKey="theme"
         >
-          <AppContent />
-        </PersistQueryClientProvider>
-      ) : (
-        <QueryClientProvider client={queryClient}>
-          <AppContent />
-        </QueryClientProvider>
-      )}
-    </ThemeProvider>
+          {storageAllowed ? (
+            <PersistQueryClientProvider
+              client={queryClient}
+              persistOptions={{ persister, maxAge: 1000 * 60 * 60 * 24 * 30 }}
+            >
+              <AppContent />
+            </PersistQueryClientProvider>
+          ) : (
+            <QueryClientProvider client={queryClient}>
+              <AppContent />
+            </QueryClientProvider>
+          )}
+        </ThemeProvider>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 };
 

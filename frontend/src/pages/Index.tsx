@@ -4,12 +4,15 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, ArrowRight, Sparkles, GraduationCap, Trophy, Zap, Terminal, Github, Lock, CloudDownload } from "lucide-react";
+import { motion } from "framer-motion";
+import { BookOpen, ArrowRight, Sparkles, GraduationCap, Trophy, Zap, Terminal, Github, Lock, CloudDownload, Brain } from "lucide-react";
 import { getSubjects, getSubject, getUnitsBySubject, Subject, safeStorage } from "@/lib/api";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SecondSpaceDialog } from "@/components/SecondSpaceDialog";
 import { syncAll } from "@/lib/sync";
 import { SyncIndicator } from "@/components/SyncIndicator";
+import { UserMenu } from "@/components/UserMenu";
+import { getProgressSummary } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 // Typing animation hook
@@ -49,6 +52,11 @@ const Index = () => {
         queryKey: ['subjects'],
         queryFn: getSubjects,
         staleTime: 0, // Always check for metadata changes (visibility/updates)
+    });
+
+    const { data: progressSummary } = useQuery({
+        queryKey: ['progress-summary'],
+        queryFn: () => getProgressSummary(),
     });
 
     const error = (queryError as Error)?.message || null;
@@ -254,10 +262,7 @@ const Index = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-white overflow-hidden transition-colors">
-            {/* Theme Toggle */}
-            <div className="fixed top-4 right-4 z-50">
-                <ThemeToggle />
-            </div>
+
 
             {/* Second Space Dialog */}
             <SecondSpaceDialog open={showSecretDialog} onOpenChange={setShowSecretDialog} />
@@ -287,8 +292,18 @@ const Index = () => {
 
             {/* Content */}
             <div className="relative z-10">
+                {/* Header for Global Controls */}
+                <header className="absolute top-0 w-full z-50 p-4">
+                    <div className="container mx-auto flex items-center justify-end">
+                        <div className="flex items-center gap-4">
+                            <ThemeToggle />
+                            <UserMenu />
+                        </div>
+                    </div>
+                </header>
+
                 {/* Hero Section */}
-                <section className="container mx-auto px-4 py-12 md:py-32">
+                <section className="container mx-auto px-4 pt-32 pb-12 md:py-32">
                     <div className="max-w-4xl mx-auto text-center space-y-8">
                         {/* Terminal Badge */}
                         <div className="flex flex-col items-center gap-4">
@@ -316,6 +331,31 @@ const Index = () => {
                                     <Zap className="w-3 h-3" />
                                     <span>OFFLINE READY</span>
                                 </div>
+                            )}
+
+                            {progressSummary && progressSummary.dueCards > 0 && (
+                                <Link to="/review">
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        whileHover={{ scale: 1.05 }}
+                                        className="inline-flex items-center gap-4 px-6 py-4 rounded-3xl bg-gradient-to-br from-violet-600/10 via-purple-600/10 to-indigo-600/10 border border-violet-500/20 dark:border-white/10 text-violet-600 dark:text-violet-400 group transition-all shadow-[0_10px_30px_-10px_rgba(124,58,237,0.2)] dark:shadow-[0_10px_30px_-10px_rgba(124,58,237,0.3)] backdrop-blur-md"
+                                    >
+                                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:scale-110 transition-transform duration-500">
+                                            <Brain className="w-5 h-5 text-white animate-pulse" />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="text-[10px] font-black uppercase tracking-widest leading-none mb-1 text-slate-500 dark:text-slate-400">Cognitive Maintenance</div>
+                                            <div className="text-sm font-black flex items-center gap-2">
+                                                {progressSummary.dueCards} concepts due
+                                                <div className="flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-500 ml-1">
+                                                    Review
+                                                    <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                </Link>
                             )}
                         </div>
 

@@ -9,6 +9,7 @@ import { ArrowLeft, Search, FileQuestion, PenLine, MessageSquare, Sparkles, Shar
 import { MCQCard } from "@/components/MCQCard";
 import { FillBlankCard } from "@/components/FillBlankCard";
 import { DescriptiveCard } from "@/components/DescriptiveCard";
+import { UserMenu } from "@/components/UserMenu";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { toast } from "sonner";
 import {
@@ -31,12 +32,14 @@ import {
     safeStorage,
 } from "@/lib/api";
 import { generateUnitPDF } from "@/lib/pdfGen";
-import { FileDown } from "lucide-react";
+import { FileDown, Brain } from "lucide-react";
+import { QuizSetupDialog } from "@/components/QuizSetupDialog";
 
 const UnitPage = () => {
     const { unitId } = useParams<{ unitId: string }>();
     const queryClient = useQueryClient();
     const [searchQuery, setSearchQuery] = useState("");
+    const [isQuizDialogOpen, setIsQuizDialogOpen] = useState(false);
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['unitData', unitId],
@@ -220,8 +223,8 @@ const UnitPage = () => {
                     <div className="container mx-auto px-4 py-4 flex items-center justify-between">
                         <Link to={`/subjects/${unit?.subjectId}`}>
                             <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10">
-                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                Back
+                                <ArrowLeft className="w-4 h-4 md:mr-2" />
+                                <span className="hidden md:inline">Back</span>
                             </Button>
                         </Link>
                         <div className="flex items-center gap-2 md:gap-4">
@@ -236,11 +239,24 @@ const UnitPage = () => {
                                 unitTitle={unit?.title}
                             />
 
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setIsQuizDialogOpen(true)}
+                                className="rounded-full text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                                title="Take Quiz"
+                            >
+                                <Brain className="w-5 h-5" />
+                            </Button>
+
                             <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-full">
                                 <Share2 className="w-5 h-5" />
                             </Button>
 
-                            <ThemeToggle />
+                            <div className="flex items-center gap-2 pl-2 md:pl-4 border-l border-slate-200 dark:border-white/10 ml-2">
+                                <ThemeToggle />
+                                <UserMenu />
+                            </div>
                         </div>
                     </div>
                 </header>
@@ -334,6 +350,8 @@ const UnitPage = () => {
                                             key={desc._id}
                                             question={desc}
                                             index={index}
+                                            subjectId={unit?.subjectId}
+                                            unitId={unit?._id}
                                         />
                                     ))
                                 )}
@@ -352,6 +370,8 @@ const UnitPage = () => {
                                             key={mcq._id}
                                             question={mcq}
                                             index={index}
+                                            subjectId={unit?.subjectId}
+                                            unitId={unit?._id}
                                         />
                                     ))
                                 )}
@@ -370,6 +390,8 @@ const UnitPage = () => {
                                             key={fb._id}
                                             question={fb}
                                             index={index}
+                                            subjectId={unit?.subjectId}
+                                            unitId={unit?._id}
                                         />
                                     ))
                                 )}
@@ -389,6 +411,14 @@ const UnitPage = () => {
                     </div>
                 </section>
             </div>
+
+            <QuizSetupDialog
+                open={isQuizDialogOpen}
+                onOpenChange={setIsQuizDialogOpen}
+                subjectId={subjectId}
+                unitId={unitId}
+                title={unit?.title || "Unit"}
+            />
         </div>
     );
 };

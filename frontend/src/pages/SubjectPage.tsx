@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, BookOpen, Loader2, Play, FileQuestion, PenLine, MessageSquare, Share2, Zap } from "lucide-react";
+import { ArrowLeft, BookOpen, Loader2, Play, FileQuestion, PenLine, MessageSquare, Share2, Zap, Brain } from "lucide-react";
 import {
     getSubject,
     getUnitsBySubject,
@@ -18,15 +18,19 @@ import {
     API_BASE_URL
 } from "@/lib/api";
 import { syncSubject } from "@/lib/sync";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { RefreshCw, CloudDownload } from "lucide-react";
+import { ProgressSummary } from "@/components/ProgressSummary";
+import { UserMenu } from "@/components/UserMenu";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { QuizSetupDialog } from "@/components/QuizSetupDialog";
 
 const SubjectPage = () => {
     const { subjectId } = useParams<{ subjectId: string }>();
     const queryClient = useQueryClient();
     const [isSyncing, setIsSyncing] = useState(false);
+    const [isQuizDialogOpen, setIsQuizDialogOpen] = useState(false);
 
     // Fetch Subject Details
     const { data: subject, isLoading: subjectLoading, error: subjectError } = useQuery({
@@ -173,7 +177,7 @@ const SubjectPage = () => {
                                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                                     <BookOpen className="w-4 h-4 text-white" />
                                 </div>
-                                <span className="font-semibold">{subject?.name}</span>
+                                <span className="font-semibold hidden lg:inline">{subject?.name}</span>
                             </div>
 
                             <Button
@@ -203,7 +207,10 @@ const SubjectPage = () => {
                                 <Share2 className="w-5 h-5" />
                             </Button>
 
-                            <ThemeToggle />
+                            <div className="flex items-center gap-2 pl-2 md:pl-4 border-l border-slate-200 dark:border-white/10 ml-2">
+                                <ThemeToggle />
+                                <UserMenu />
+                            </div>
                         </div>
                     </div>
                 </header>
@@ -211,17 +218,30 @@ const SubjectPage = () => {
                 {/* Hero */}
                 <section className="py-8 md:py-16 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
                     <div className="container mx-auto px-4">
-                        <div className="max-w-3xl">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 text-sm mb-4">
-                                <BookOpen className="w-4 h-4" />
-                                <span>{units.length} Units Available</span>
+                        <div className="grid lg:grid-cols-3 gap-8 items-start">
+                            <div className="lg:col-span-2">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 text-sm mb-4">
+                                    <BookOpen className="w-4 h-4" />
+                                    <span>{units.length} Units Available</span>
+                                </div>
+                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-slate-900 dark:text-transparent dark:bg-gradient-to-r dark:from-white dark:to-slate-400 dark:bg-clip-text">
+                                    {subject?.name}
+                                </h1>
+                                {subject?.description && (
+                                    <p className="text-base md:text-lg text-slate-600 dark:text-slate-400 mb-6">{subject.description}</p>
+                                )}
+                                <Button
+                                    onClick={() => setIsQuizDialogOpen(true)}
+                                    className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg shadow-purple-500/20 gap-2"
+                                >
+                                    <Brain className="w-4 h-4" />
+                                    Take a Quiz
+                                </Button>
                             </div>
-                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-slate-900 dark:text-transparent dark:bg-gradient-to-r dark:from-white dark:to-slate-400 dark:bg-clip-text">
-                                {subject?.name}
-                            </h1>
-                            {subject?.description && (
-                                <p className="text-base md:text-lg text-slate-600 dark:text-slate-400">{subject.description}</p>
-                            )}
+
+                            <div className="lg:col-span-1 w-full">
+                                <ProgressSummary subjectId={subjectId} />
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -318,6 +338,13 @@ const SubjectPage = () => {
                     )}
                 </section>
             </div>
+
+            <QuizSetupDialog
+                open={isQuizDialogOpen}
+                onOpenChange={setIsQuizDialogOpen}
+                subjectId={subjectId}
+                title={subject?.name || "Subject"}
+            />
         </div>
     );
 };

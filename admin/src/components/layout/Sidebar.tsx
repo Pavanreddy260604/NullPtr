@@ -12,7 +12,8 @@ import {
   X,
   Sun,
   Moon,
-  Palette
+  Palette,
+  Settings
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,7 @@ const navItems = [
   { icon: BookOpen, label: "Subjects", path: "/subjects" },
   { icon: Layers, label: "Units", path: "/units" },
   { icon: HelpCircle, label: "Questions", path: "/questions" },
+  { icon: Settings, label: "Email Settings", path: "/settings/smtp" },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {

@@ -198,7 +198,8 @@ export function getRecommendedCSP(): string {
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "font-src 'self' https://fonts.gstatic.com",
         "img-src 'self' data: blob: https://*.cloudinary.com",
-        "connect-src 'self' https://*.cloudinary.com https://api.cloudinary.com https://cloudflareinsights.com https://study-g3xc.onrender.com https://study-8c4d.vercel.app",
+        "connect-src 'self' https://*.cloudinary.com https://api.cloudinary.com https://cloudflareinsights.com https://*.onrender.com https://*.vercel.app",
+        "worker-src 'self'",
         "base-uri 'self'",
         "form-action 'self'",
     ].join('; ');

@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CheckCircle2, XCircle, RotateCcw, Eye, EyeOff, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { recordAttempt } from "@/lib/progress";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface FillBlankQuestion {
   _id: string;
@@ -11,22 +13,68 @@ interface FillBlankQuestion {
   correctAnswer: string;
   explanation?: string;
   topic?: string;
+  subjectId?: string;
+  unitId?: string;
 }
 
 interface FillBlankCardProps {
   question: FillBlankQuestion;
   index: number;
+  subjectId?: string;
+  unitId?: string;
+  onAnswer?: (isCorrect: boolean) => void;
 }
 
-export const FillBlankCard = ({ question, index }: FillBlankCardProps) => {
+export const FillBlankCard = ({ question, index, subjectId, unitId, onAnswer }: FillBlankCardProps) => {
+  const { isAuthenticated } = useAuth();
   const [userAnswer, setUserAnswer] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
   const [hasAnswered, setHasAnswered] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const startTimeRef = useRef<number>(Date.now());
 
-  const handleShowAnswer = () => {
-    setShowAnswer(!showAnswer);
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+    setHasAnswered(false);
+    setUserAnswer("");
+    setShowAnswer(false);
+    setIsSubmitting(false);
+  }, [question._id]);
+
+  const handleShowAnswer = async () => {
+    if (showAnswer || isSubmitting) return; // Prevent double submission/toggle
+
+    const timeSpent = Date.now() - startTimeRef.current;
+
+    // Check answer before showing result
+    // Simple case-insensitive comparison
+    const normalizedUser = normalizeAnswer(userAnswer);
+    const normalizedCorrect = normalizeAnswer(question.correctAnswer);
+    const isCorrect = userAnswer.trim() !== "" && normalizedUser === normalizedCorrect;
+
+    setShowAnswer(true);
     if (!hasAnswered) {
       setHasAnswered(true);
+      onAnswer?.(isCorrect);
+
+      if (isAuthenticated) {
+        setIsSubmitting(true);
+        try {
+          await recordAttempt({
+            questionId: question._id,
+            questionType: 'fillblank',
+            subjectId: subjectId || question.subjectId || '',
+            unitId: unitId || question.unitId || '',
+            isCorrect,
+            timeSpent,
+            userAnswer: userAnswer.trim()
+          });
+        } catch (error) {
+          console.error("Failed to record progress:", error);
+        } finally {
+          setIsSubmitting(false);
+        }
+      }
     }
   };
 
@@ -34,6 +82,7 @@ export const FillBlankCard = ({ question, index }: FillBlankCardProps) => {
     setUserAnswer("");
     setShowAnswer(false);
     setHasAnswered(false);
+    startTimeRef.current = Date.now();
   };
 
   const normalizeAnswer = (answer: string) => {
@@ -57,18 +106,21 @@ export const FillBlankCard = ({ question, index }: FillBlankCardProps) => {
   return (
     <Card className="flex flex-col overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300">
       {/* Question Header */}
-      <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/5">
+      <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/5">
         <div className="flex items-start gap-4">
-          <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white text-sm font-bold shadow-lg">
+          <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 text-white text-sm font-bold shadow-lg">
             {index + 1}
           </div>
           <div className="flex-1 space-y-2">
             {question.topic && (
-              <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 text-xs font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30">
+              <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-cyan-100 dark:bg-cyan-500/20 text-xs font-medium text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/30">
                 {question.topic}
               </span>
             )}
-            <h3 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white leading-snug">
+            <h3
+              id={`fillblank-${index}-title`}
+              className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white leading-snug"
+            >
               {question.question}
             </h3>
           </div>
@@ -76,34 +128,39 @@ export const FillBlankCard = ({ question, index }: FillBlankCardProps) => {
       </div>
 
       {/* Interactive Body */}
-      <div className="flex-1 bg-white dark:bg-slate-900/50 p-5 sm:p-6 space-y-6">
+      <div className="flex-1 bg-white dark:bg-slate-900/50 p-4 sm:p-6 space-y-4 sm:space-y-6">
 
         {/* Input Section */}
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row gap-3">
-            <Input
-              type="text"
-              placeholder="Type your answer..."
-              value={userAnswer}
-              onChange={(e) => setUserAnswer(e.target.value)}
-              disabled={showAnswer}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleShowAnswer();
-              }}
-              className={cn(
-                "flex-1 h-12 text-base bg-slate-50 dark:bg-slate-800/50 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-500 focus:ring-emerald-500/20",
-                hasAnswered && isCorrect && "border-green-500 ring-1 ring-green-500/30",
-                hasAnswered && !isCorrect && userAnswer.trim() !== "" && "border-red-500 ring-1 ring-red-500/30",
-                hasAnswered && isClose && "border-orange-500 ring-1 ring-orange-500/30"
-              )}
-            />
+            <div className="flex-1 space-y-1">
+              <label htmlFor={`input-${index}`} className="sr-only">Your Answer</label>
+              <Input
+                id={`input-${index}`}
+                type="text"
+                placeholder="Type your answer..."
+                value={userAnswer}
+                onChange={(e) => setUserAnswer(e.target.value)}
+                disabled={showAnswer}
+                aria-describedby={hasAnswered ? `feedback-${index}` : undefined}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleShowAnswer();
+                }}
+                className={cn(
+                  "w-full h-12 text-base bg-slate-50 dark:bg-slate-800/50 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-cyan-500 focus:ring-cyan-500/20",
+                  hasAnswered && isCorrect && "border-green-500 ring-1 ring-green-500/30",
+                  hasAnswered && !isCorrect && userAnswer.trim() !== "" && "border-red-500 ring-1 ring-red-500/30",
+                  hasAnswered && isClose && "border-orange-500 ring-1 ring-orange-500/30"
+                )}
+              />
+            </div>
             <Button
               onClick={handleShowAnswer}
               className={cn(
-                "h-12 px-6 font-medium min-w-[140px] transition-all",
+                "h-12 px-6 font-medium sm:min-w-[140px] transition-all",
                 showAnswer
                   ? "bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600"
-                  : "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg"
+                  : "bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-lg"
               )}
             >
               {showAnswer ? (
@@ -122,12 +179,16 @@ export const FillBlankCard = ({ question, index }: FillBlankCardProps) => {
 
           {/* Status/Feedback Message */}
           {hasAnswered && userAnswer.trim() !== "" && !showAnswer && (
-            <div className={cn(
-              "flex items-center gap-2 text-sm font-medium animate-in fade-in slide-in-from-top-1",
-              isCorrect ? "text-green-600 dark:text-green-400" :
-                isClose ? "text-orange-600 dark:text-orange-400" :
-                  "text-red-600 dark:text-red-400"
-            )}>
+            <div
+              id={`feedback-${index}`}
+              role="status"
+              className={cn(
+                "flex items-center gap-2 text-sm font-medium animate-in fade-in slide-in-from-top-1",
+                isCorrect ? "text-green-600 dark:text-green-400" :
+                  isClose ? "text-orange-600 dark:text-orange-400" :
+                    "text-red-600 dark:text-red-400"
+              )}
+            >
               {isCorrect ? (
                 <><CheckCircle2 className="w-4 h-4" /> 🎉 Correct! Well done.</>
               ) : isClose ? (
@@ -141,17 +202,17 @@ export const FillBlankCard = ({ question, index }: FillBlankCardProps) => {
 
         {/* Revealed Answer Section */}
         {showAnswer && (
-          <div className="rounded-xl border border-emerald-200 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10 overflow-hidden animate-in fade-in slide-in-from-top-2">
+          <div className="rounded-xl border border-cyan-200 dark:border-cyan-500/30 bg-cyan-50 dark:bg-cyan-500/10 overflow-hidden animate-in fade-in slide-in-from-top-2">
             {/* Toolbar Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-emerald-100 dark:border-emerald-500/20 bg-emerald-100 dark:bg-emerald-500/10">
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-cyan-100 dark:border-cyan-500/20 bg-cyan-100 dark:bg-cyan-500/10">
+              <span className="text-xs font-bold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">
                 ✓ Correct Answer
               </span>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleReset}
-                className="h-7 px-3 text-xs text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-500/20"
+                className="h-7 px-3 text-xs text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 hover:bg-cyan-200 dark:hover:bg-cyan-500/20"
               >
                 <RotateCcw className="w-3 h-3 mr-1.5" />
                 Reset
@@ -164,10 +225,10 @@ export const FillBlankCard = ({ question, index }: FillBlankCardProps) => {
                 {question.correctAnswer}
               </p>
               {question.explanation && (
-                <div className="flex gap-3 text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/50 p-3 rounded-lg border border-emerald-100 dark:border-emerald-500/20">
-                  <HelpCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <div className="flex gap-3 text-sm text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800/50 p-3 rounded-lg border border-cyan-100 dark:border-cyan-500/20">
+                  <HelpCircle className="w-5 h-5 text-cyan-600 dark:text-cyan-400 shrink-0" />
                   <p className="leading-relaxed">
-                    <span className="font-semibold text-emerald-700 dark:text-emerald-300">Explanation: </span>
+                    <span className="font-semibold text-cyan-700 dark:text-cyan-300">Explanation: </span>
                     {question.explanation}
                   </p>
                 </div>
