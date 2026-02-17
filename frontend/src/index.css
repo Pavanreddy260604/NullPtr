@@ -170,8 +170,6 @@ All colors MUST be HSL.
     min-height: 100dvh;
     /* Dynamic viewport height for mobile */
     -webkit-tap-highlight-color: transparent;
-    /* Prevent pull-to-refresh on mobile */
-    overscroll-behavior-y: contain;
   }
 
   /* Enhanced touch targets on mobile - minimum 44px */
@@ -203,6 +201,7 @@ All colors MUST be HSL.
   }
 
   @media (min-width: 640px) {
+
     input,
     select,
     textarea {
