@@ -151,9 +151,362 @@ All colors MUST be HSL.
 @layer base {
   * {
     @apply border-border;
+    /* Prevent text selection issues on mobile */
+    -webkit-touch-callout: none;
+  }
+
+  html {
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    /* Prevent zoom on input focus on iOS */
+    font-size: 16px;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+    overflow-x: hidden;
+    min-height: 100vh;
+    min-height: 100dvh;
+    /* Dynamic viewport height for mobile */
+    -webkit-tap-highlight-color: transparent;
+    /* Prevent pull-to-refresh on mobile */
+    overscroll-behavior-y: contain;
+  }
+
+  /* Enhanced touch targets on mobile - minimum 44px */
+  button,
+  a,
+  [role="button"] {
+    @apply touch-manipulation;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Allow smaller buttons when explicitly sized */
+  button.h-8,
+  button.h-7,
+  button.w-8,
+  button.w-7,
+  [role="button"].h-8,
+  [role="button"].h-7 {
+    min-height: auto;
+    min-width: auto;
+  }
+
+  input,
+  select,
+  textarea {
+    @apply touch-manipulation;
+    /* Prevent zoom on focus on iOS by using 16px font */
+    font-size: 16px !important;
+  }
+
+  @media (min-width: 640px) {
+    input,
+    select,
+    textarea {
+      font-size: 14px !important;
+    }
+  }
+}
+
+@layer components {
+  /* ============================================ */
+  /* MOBILE-FIRST LAYOUT UTILITIES               */
+  /* ============================================ */
+
+  .mobile-container {
+    @apply px-3 sm:px-4 md:px-6 lg:px-8;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .mobile-stack {
+    @apply flex flex-col gap-3 sm:gap-4;
+  }
+
+  .mobile-grid {
+    @apply grid grid-cols-1 gap-3;
+  }
+
+  @media (min-width: 480px) {
+    .mobile-grid {
+      @apply grid-cols-2 gap-4;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .mobile-grid {
+      @apply grid-cols-3;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .mobile-grid {
+      @apply grid-cols-4 gap-6;
+    }
+  }
+
+  /* ============================================ */
+  /* TOUCH-FRIENDLY CARD STYLES                  */
+  /* ============================================ */
+
+  .touch-card {
+    @apply bg-card border border-border/60 rounded-xl p-4;
+    @apply active:scale-[0.98] transition-transform duration-150;
+  }
+
+  @media (hover: hover) {
+    .touch-card:hover {
+      @apply border-primary/40 shadow-md;
+    }
+  }
+
+  /* ============================================ */
+  /* MOBILE-OPTIMIZED BUTTONS                    */
+  /* ============================================ */
+
+  .mobile-btn {
+    @apply h-11 sm:h-10 px-4 sm:px-6 text-sm font-medium;
+    @apply rounded-lg transition-all duration-200;
+    @apply active:scale-95;
+  }
+
+  .mobile-btn-primary {
+    @apply mobile-btn bg-primary text-primary-foreground;
+    @apply hover:bg-primary/90 active:bg-primary/80;
+  }
+
+  .mobile-btn-outline {
+    @apply mobile-btn border border-input bg-background;
+    @apply hover:bg-muted active:bg-muted/80;
+  }
+
+  /* Icon-only buttons with proper touch targets */
+  .mobile-icon-btn {
+    @apply h-11 w-11 sm:h-10 sm:w-10 p-0;
+    @apply flex items-center justify-center;
+    @apply rounded-lg transition-all duration-200;
+    @apply active:scale-90;
+  }
+
+  /* ============================================ */
+  /* MOBILE-OPTIMIZED FORM CONTROLS              */
+  /* ============================================ */
+
+  .mobile-input {
+    @apply h-12 sm:h-10 px-4 text-base sm:text-sm;
+    @apply rounded-lg border border-input bg-background;
+    @apply focus:ring-2 focus:ring-primary/20 focus:border-primary;
+    @apply transition-all duration-200;
+  }
+
+  .mobile-textarea {
+    @apply min-h-[100px] p-4 text-base sm:text-sm;
+    @apply rounded-lg border border-input bg-background;
+    @apply focus:ring-2 focus:ring-primary/20 focus:border-primary;
+    @apply resize-none transition-all duration-200;
+  }
+
+  .mobile-select {
+    @apply h-12 sm:h-10 px-4 text-base sm:text-sm;
+    @apply rounded-lg border border-input bg-background;
+    @apply focus:ring-2 focus:ring-primary/20 focus:border-primary;
+  }
+
+  .mobile-label {
+    @apply text-sm font-medium text-foreground mb-2 block;
+  }
+
+  /* ============================================ */
+  /* MOBILE BOTTOM SHEET / FLOATING ACTIONS      */
+  /* ============================================ */
+
+  .mobile-fab {
+    @apply fixed bottom-6 right-4 z-50;
+    @apply h-14 w-14 rounded-full shadow-xl;
+    @apply bg-primary text-primary-foreground;
+    @apply flex items-center justify-center;
+    @apply active:scale-90 transition-transform;
+    /* Safe area for iPhone notch */
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .mobile-bottom-bar {
+    @apply fixed bottom-0 left-0 right-0 z-40;
+    @apply bg-background/95 backdrop-blur-lg border-t;
+    @apply px-4 py-3;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* ============================================ */
+  /* SCROLLBAR STYLES                            */
+  /* ============================================ */
+
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 9999px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* Hide scrollbar on touch devices for native feel */
+  @media (pointer: coarse) {
+    .custom-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .custom-scrollbar {
+      scrollbar-width: none;
+    }
+  }
+
+  /* ============================================ */
+  /* RESPONSIVE TEXT UTILITIES                   */
+  /* ============================================ */
+
+  .text-responsive-sm {
+    @apply text-xs sm:text-sm;
+  }
+
+  .text-responsive-base {
+    @apply text-sm sm:text-base;
+  }
+
+  .text-responsive-lg {
+    @apply text-base sm:text-lg md:text-xl;
+  }
+
+  .text-responsive-xl {
+    @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
+  }
+
+  /* ============================================ */
+  /* SAFE AREA UTILITIES                         */
+  /* ============================================ */
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 0);
+  }
+
+  .safe-left {
+    padding-left: env(safe-area-inset-left, 0);
+  }
+
+  .safe-right {
+    padding-right: env(safe-area-inset-right, 0);
+  }
+
+  .safe-all {
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+  }
+
+  /* ============================================ */
+  /* MOBILE MODAL / SHEET STYLES                 */
+  /* ============================================ */
+
+  .mobile-modal-overlay {
+    @apply fixed inset-0 bg-black/60 backdrop-blur-sm z-50;
+  }
+
+  .mobile-modal-content {
+    @apply fixed z-50 bg-background rounded-t-2xl;
+    @apply bottom-0 left-0 right-0 max-h-[90vh];
+    @apply overflow-y-auto overscroll-contain;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+
+  @media (min-width: 640px) {
+    .mobile-modal-content {
+      @apply rounded-2xl top-1/2 left-1/2 bottom-auto;
+      @apply transform -translate-x-1/2 -translate-y-1/2;
+      @apply max-w-lg w-[calc(100%-32px)] max-h-[85vh];
+    }
+  }
+
+  .mobile-sheet-handle {
+    @apply w-10 h-1 bg-muted-foreground/30 rounded-full mx-auto mt-3 mb-2;
+  }
+
+  /* ============================================ */
+  /* UTILITY CLASSES FOR MOBILE                  */
+  /* ============================================ */
+
+  /* Hide on mobile, show on desktop */
+  .desktop-only {
+    @apply hidden;
+  }
+
+  @screen lg {
+    .desktop-only {
+      @apply flex;
+    }
+  }
+
+  /* Show on mobile, hide on desktop */
+  .mobile-only {
+    @apply flex;
+  }
+
+  @screen lg {
+    .mobile-only {
+      @apply hidden;
+    }
+  }
+
+  /* Prevent text wrapping on mobile */
+  .mobile-nowrap {
+    @apply whitespace-nowrap overflow-hidden text-ellipsis;
+  }
+
+  /* Full-width on mobile, auto on desktop */
+  .mobile-full {
+    @apply w-full;
+  }
+
+  @screen sm {
+    .mobile-full {
+      @apply w-auto;
+    }
+  }
+
+  /* Stack on mobile, row on desktop */
+  .mobile-stack-row {
+    @apply flex flex-col gap-3;
+  }
+
+  @screen sm {
+    .mobile-stack-row {
+      @apply flex-row gap-4;
+    }
+  }
+
+  /* Larger touch targets on mobile */
+  @media (pointer: coarse) {
+    .touch-target {
+      min-height: 48px;
+      min-width: 48px;
+    }
   }
 }

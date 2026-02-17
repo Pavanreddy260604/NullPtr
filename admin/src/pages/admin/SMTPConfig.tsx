@@ -84,18 +84,18 @@ const SMTPConfig: React.FC = () => {
     };
 
     return (
-        <div className="space-y-6 max-w-4xl mx-auto p-6">
-            <div className="flex items-center gap-3">
+        <div className="space-y-6 max-w-4xl mx-auto p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                     <Mail className="h-6 w-6" />
                 </div>
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Email Settings</h1>
-                    <p className="text-muted-foreground">Configure SMTP for system emails (OTP, Resets)</p>
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">Email Settings</h1>
+                    <p className="text-muted-foreground text-sm sm:text-base">Configure SMTP for system emails (OTP, Resets)</p>
                 </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}

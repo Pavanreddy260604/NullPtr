@@ -220,14 +220,14 @@ const UnitPage = () => {
             <div className="relative z-10">
                 {/* Header */}
                 <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/80">
-                    <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between px-3 py-4 sm:px-4">
+                    <div className="mx-auto flex w-full max-w-[1400px] items-center justify-between px-2 sm:px-3 py-3 sm:py-4">
                         <Link to={`/subjects/${unit?.subjectId}`}>
-                            <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10">
-                                <ArrowLeft className="w-4 h-4 md:mr-2" />
-                                <span className="hidden md:inline">Back</span>
+                            <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10 h-9 w-9 sm:h-10 sm:w-auto p-0 sm:px-3">
+                                <ArrowLeft className="w-4 h-4 sm:mr-1.5" />
+                                <span className="hidden sm:inline">Back</span>
                             </Button>
                         </Link>
-                        <div className="flex flex-1 items-center justify-end gap-2 md:gap-4">
+                        <div className="flex flex-1 items-center justify-end gap-1 sm:gap-2 md:gap-4">
                             <div className="text-right hidden md:block">
                                 <div className="text-xs text-slate-500">Unit {unit?.unit}</div>
                                 <div className="font-semibold text-sm">{unit?.title}</div>
@@ -243,17 +243,17 @@ const UnitPage = () => {
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => setIsQuizDialogOpen(true)}
-                                className="rounded-full text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                                className="rounded-full text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 h-9 w-9 sm:h-10 sm:w-10"
                                 title="Take Quiz"
                             >
-                                <Brain className="w-5 h-5" />
+                                <Brain className="w-4 h-4 sm:w-5 sm:h-5" />
                             </Button>
 
-                            <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-full">
-                                <Share2 className="w-5 h-5" />
+                            <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-full h-9 w-9 sm:h-10 sm:w-10">
+                                <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
                             </Button>
 
-                            <div className="-mr-0.5 ml-1 flex items-center gap-2 border-l border-slate-200 pl-2 dark:border-white/10 sm:mr-0 md:ml-2 md:pl-4">
+                            <div className="-mr-0.5 ml-0.5 sm:ml-1 flex items-center gap-1.5 sm:gap-2 border-l border-slate-200 pl-1.5 sm:pl-2 dark:border-white/10 sm:mr-0 md:ml-2 md:pl-4">
                                 <ThemeToggle />
                                 <UserMenu />
                             </div>
@@ -262,78 +262,78 @@ const UnitPage = () => {
                 </header>
 
                 {/* Hero */}
-                <section className="py-8 md:py-12 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
-                    <div className="container mx-auto px-4">
+                <section className="py-4 sm:py-6 md:py-8 lg:py-12 border-b border-slate-200 dark:border-white/10 bg-white dark:bg-transparent">
+                    <div className="container mx-auto px-3 sm:px-4">
                         <div className="max-w-7xl mx-auto text-center">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 text-sm mb-4">
-                                <Sparkles className="w-4 h-4" />
+                            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 text-xs sm:text-sm mb-3 sm:mb-4">
+                                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                 <span>{totalQuestions} Questions</span>
                             </div>
-                            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-slate-900 dark:bg-gradient-to-r dark:from-white dark:to-slate-400 dark:bg-clip-text dark:text-transparent">
+                            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1.5 sm:mb-2 text-slate-900 dark:bg-gradient-to-r dark:from-white dark:to-slate-400 dark:bg-clip-text dark:text-transparent px-2">
                                 Unit {unit?.unit}: {unit?.title}
                             </h1>
                             {unit?.subtitle && (
-                                <p className="text-sm md:text-base text-slate-600 dark:text-slate-400">{unit.subtitle}</p>
+                                <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-400">{unit.subtitle}</p>
                             )}
                         </div>
                     </div>
                 </section>
 
                 {/* Main Content */}
-                <section className="container mx-auto px-0 sm:px-4 py-8">
+                <section className="container mx-auto px-2 sm:px-0 sm:px-4 py-4 sm:py-6 md:py-8">
                     <div className="max-w-7xl mx-auto">
                         {/* Search */}
-                        <div className="mb-8">
+                        <div className="mb-4 sm:mb-6 md:mb-8 px-1 sm:px-0">
                             <div className="relative">
-                                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
                                 <Input
                                     type="text"
                                     placeholder="Search questions..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="pl-12 h-12 bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-purple-500 focus:ring-purple-500/20"
+                                    className="pl-10 sm:pl-12 h-10 sm:h-12 text-sm sm:text-base bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-purple-500 focus:ring-purple-500/20"
                                 />
                             </div>
                         </div>
 
                         {/* Tabs - Improved Visibility */}
-                        <Tabs defaultValue="descriptive" className="space-y-8">
-                            <TabsList className="w-full h-auto p-1.5 bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl grid grid-cols-3 gap-1 shadow-sm">
+                        <Tabs defaultValue="descriptive" className="space-y-4 sm:space-y-6 md:space-y-8">
+                            <TabsList className="w-full h-auto p-1 sm:p-1.5 bg-white dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-lg sm:rounded-xl grid grid-cols-3 gap-0.5 sm:gap-1 shadow-sm">
                                 <TabsTrigger
                                     value="descriptive"
-                                    className="flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-medium transition-all
+                                    className="flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-3 px-2 sm:px-4 rounded-md sm:rounded-lg font-medium transition-all text-xs sm:text-sm
                                         text-slate-600 dark:text-slate-400
                                         hover:bg-slate-100 dark:hover:bg-slate-700
                                         data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 
                                         data-[state=active]:text-white data-[state=active]:shadow-lg"
                                 >
-                                    <MessageSquare className="w-4 h-4" />
+                                    <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                     <span className="hidden sm:inline">Q&A</span>
-                                    <span className="bg-white/20 dark:bg-black/20 px-2 py-0.5 rounded-full text-xs">{filteredDescriptives.length}</span>
+                                    <span className="bg-white/20 dark:bg-black/20 px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs">{filteredDescriptives.length}</span>
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="mcqs"
-                                    className="flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-medium transition-all
+                                    className="flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-3 px-2 sm:px-4 rounded-md sm:rounded-lg font-medium transition-all text-xs sm:text-sm
                                         text-slate-600 dark:text-slate-400
                                         hover:bg-slate-100 dark:hover:bg-slate-700
                                         data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-cyan-500 
                                         data-[state=active]:text-white data-[state=active]:shadow-lg"
                                 >
-                                    <FileQuestion className="w-4 h-4" />
+                                    <FileQuestion className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                     <span className="hidden sm:inline">MCQs</span>
-                                    <span className="bg-white/20 dark:bg-black/20 px-2 py-0.5 rounded-full text-xs">{filteredMCQs.length}</span>
+                                    <span className="bg-white/20 dark:bg-black/20 px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs">{filteredMCQs.length}</span>
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="fillblanks"
-                                    className="flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-medium transition-all
+                                    className="flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-3 px-2 sm:px-4 rounded-md sm:rounded-lg font-medium transition-all text-xs sm:text-sm
                                         text-slate-600 dark:text-slate-400
                                         hover:bg-slate-100 dark:hover:bg-slate-700
                                         data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-500 
                                         data-[state=active]:text-white data-[state=active]:shadow-lg"
                                 >
-                                    <PenLine className="w-4 h-4" />
+                                    <PenLine className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                     <span className="hidden sm:inline">Fill Blanks</span>
-                                    <span className="bg-white/20 dark:bg-black/20 px-2 py-0.5 rounded-full text-xs">{filteredFillBlanks.length}</span>
+                                    <span className="bg-white/20 dark:bg-black/20 px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs">{filteredFillBlanks.length}</span>
                                 </TabsTrigger>
                             </TabsList>
 

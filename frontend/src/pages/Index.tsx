@@ -192,7 +192,7 @@ const Index = () => {
     ];
 
     const SubjectGrid = ({ items, isPrivate = false }: { items: Subject[], isPrivate?: boolean }) => (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {items.map((subject, index) => (
                 <Link
                     key={subject._id}
@@ -210,7 +210,7 @@ const Index = () => {
                         });
                     }}
                 >
-                    <Card className={`relative h-full overflow-hidden bg-white dark:bg-white/5 backdrop-blur-md border-slate-200 dark:border-white/10 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl dark:hover:shadow-purple-500/20 hover:-translate-y-2 active:scale-95 ${isPrivate ? 'border-red-500/20 dark:border-red-500/20' : ''}`}>
+                    <Card className={`relative h-full overflow-hidden bg-white dark:bg-white/5 backdrop-blur-md border-slate-200 dark:border-white/10 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl dark:hover:shadow-purple-500/20 hover:-translate-y-1 sm:hover:-translate-y-2 active:scale-[0.98] ${isPrivate ? 'border-red-500/20 dark:border-red-500/20' : ''}`}>
                         {/* Gradient Overlay */}
                         <div className={`absolute inset-0 bg-gradient-to-br ${gradients[index % gradients.length]} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
 
@@ -220,37 +220,37 @@ const Index = () => {
                             </div>
                         )}
 
-                        <div className="relative p-6 space-y-4">
+                        <div className="relative p-4 sm:p-6 space-y-3 sm:space-y-4">
                             {/* Icon */}
                             {subject.thumbnail ? (
                                 <img
                                     src={subject.thumbnail}
                                     alt={subject.name}
-                                    className="w-16 h-16 rounded-2xl object-cover ring-2 ring-slate-200 dark:ring-white/20"
+                                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl object-cover ring-2 ring-slate-200 dark:ring-white/20"
                                 />
                             ) : (
-                                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${gradients[index % gradients.length]} flex items-center justify-center shadow-lg`}>
-                                    <BookOpen className="w-8 h-8 text-white" />
+                                <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br ${gradients[index % gradients.length]} flex items-center justify-center shadow-lg`}>
+                                    <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
                             )}
 
                             {/* Content */}
                             <div>
-                                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
+                                <h3 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white mb-1 sm:mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors line-clamp-1">
                                     {subject.name}
                                 </h3>
                                 {subject.description && (
-                                    <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">
+                                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 line-clamp-2">
                                         {subject.description}
                                     </p>
                                 )}
                             </div>
 
                             {/* CTA */}
-                            <div className="pt-2">
-                                <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 font-medium">
+                            <div className="pt-1 sm:pt-2">
+                                <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 font-medium text-sm sm:text-base">
                                     <span>Start Learning</span>
-                                    <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform duration-300" />
+                                    <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 sm:group-hover:translate-x-2 transition-transform duration-300" />
                                 </div>
                             </div>
                         </div>
@@ -303,15 +303,15 @@ const Index = () => {
                 </header>
 
                 {/* Hero Section */}
-                <section className="container mx-auto px-4 pt-32 pb-12 md:py-32">
-                    <div className="max-w-4xl mx-auto text-center space-y-8">
+                <section className="container mx-auto px-3 sm:px-4 pt-24 sm:pt-32 pb-8 sm:pb-12 md:py-32">
+                    <div className="max-w-4xl mx-auto text-center space-y-6 sm:space-y-8">
                         {/* Terminal Badge */}
-                        <div className="flex flex-col items-center gap-4">
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 dark:bg-black/50 backdrop-blur-sm border border-slate-700 dark:border-white/20 text-sm font-mono">
-                                <Terminal className="w-4 h-4 text-green-500" />
+                        <div className="flex flex-col items-center gap-3 sm:gap-4">
+                            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-slate-900 dark:bg-black/50 backdrop-blur-sm border border-slate-700 dark:border-white/20 text-xs sm:text-sm font-mono">
+                                <Terminal className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500" />
                                 <span className="text-green-500">$</span>
                                 <span className="text-slate-300">./study --mode=engineer</span>
-                                <span className="w-2 h-4 bg-green-500 animate-pulse ml-1"></span>
+                                <span className="w-1.5 h-3 sm:w-2 sm:h-4 bg-green-500 animate-pulse ml-0.5 sm:ml-1"></span>
                             </div>
 
                             {/* Sync All Button / Success Badge */}
@@ -319,15 +319,15 @@ const Index = () => {
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="h-9 px-4 rounded-full bg-white/5 border-slate-200 dark:border-white/10 hover:bg-white/10 text-slate-600 dark:text-slate-400 gap-2 transition-all group"
+                                    className="h-9 sm:h-9 px-3 sm:px-4 rounded-full bg-white/5 border-slate-200 dark:border-white/10 hover:bg-white/10 text-slate-600 dark:text-slate-400 gap-1.5 sm:gap-2 transition-all group text-xs sm:text-sm"
                                     onClick={handleSync}
                                     disabled={syncState.isSyncing || loading}
                                 >
-                                    <CloudDownload className={cn("w-4 h-4", syncState.isSyncing && "animate-bounce")} />
+                                    <CloudDownload className={cn("w-3.5 h-3.5 sm:w-4 sm:h-4", syncState.isSyncing && "animate-bounce")} />
                                     <span>{syncState.isSyncing ? "Downloading..." : "Download for Offline"}</span>
                                 </Button>
                             ) : (
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-xs font-mono text-green-500">
+                                <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-[10px] sm:text-xs font-mono text-green-500">
                                     <Zap className="w-3 h-3" />
                                     <span>OFFLINE READY</span>
                                 </div>
@@ -338,19 +338,20 @@ const Index = () => {
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.9 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        whileHover={{ scale: 1.05 }}
-                                        className="inline-flex items-center gap-4 px-6 py-4 rounded-3xl bg-gradient-to-br from-violet-600/10 via-purple-600/10 to-indigo-600/10 border border-violet-500/20 dark:border-white/10 text-violet-600 dark:text-violet-400 group transition-all shadow-[0_10px_30px_-10px_rgba(124,58,237,0.2)] dark:shadow-[0_10px_30px_-10px_rgba(124,58,237,0.3)] backdrop-blur-md"
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        className="inline-flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-violet-600/10 via-purple-600/10 to-indigo-600/10 border border-violet-500/20 dark:border-white/10 text-violet-600 dark:text-violet-400 group transition-all shadow-[0_10px_30px_-10px_rgba(124,58,237,0.2)] dark:shadow-[0_10px_30px_-10px_rgba(124,58,237,0.3)] backdrop-blur-md"
                                     >
-                                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:scale-110 transition-transform duration-500">
-                                            <Brain className="w-5 h-5 text-white animate-pulse" />
+                                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:scale-110 transition-transform duration-500">
+                                            <Brain className="w-4 h-4 sm:w-5 sm:h-5 text-white animate-pulse" />
                                         </div>
                                         <div className="text-left">
-                                            <div className="text-[10px] font-black uppercase tracking-widest leading-none mb-1 text-slate-500 dark:text-slate-400">Cognitive Maintenance</div>
-                                            <div className="text-sm font-black flex items-center gap-2">
+                                            <div className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest leading-none mb-0.5 sm:mb-1 text-slate-500 dark:text-slate-400">Cognitive Maintenance</div>
+                                            <div className="text-xs sm:text-sm font-black flex items-center gap-1.5 sm:gap-2">
                                                 {progressSummary.dueCards} concepts due
-                                                <div className="flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-500 ml-1">
+                                                <div className="flex items-center gap-1 text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-500 ml-0.5 sm:ml-1">
                                                     Review
-                                                    <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                                                    <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 group-hover:translate-x-0.5 transition-transform" />
                                                 </div>
                                             </div>
                                         </div>
@@ -361,7 +362,7 @@ const Index = () => {
 
                         {/* Animated Title */}
                         <div className="relative">
-                            <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl font-bold leading-tight font-mono tracking-tighter">
+                            <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight font-mono tracking-tighter">
                                 <span className="text-purple-500 dark:text-purple-400">&lt;</span>
                                 <span className="text-transparent bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-500 dark:from-purple-400 dark:via-pink-400 dark:to-cyan-400 bg-clip-text">
                                     {nullText}
@@ -370,21 +371,21 @@ const Index = () => {
                                     {ptrText}
                                 </span>
                                 <span className="text-purple-500 dark:text-purple-400">/&gt;</span>
-                                <span className="inline-block w-1 h-8 xs:h-10 sm:h-12 md:h-16 bg-purple-500 dark:bg-purple-400 animate-blink ml-2 align-middle"></span>
+                                <span className="inline-block w-0.5 sm:w-1 h-6 xs:h-8 sm:h-10 md:h-12 lg:h-16 bg-purple-500 dark:bg-purple-400 animate-blink ml-1 sm:ml-2 align-middle"></span>
                             </h1>
 
                             {/* Decorative asterisk */}
-                            <div className="absolute -top-4 -right-4 md:-top-8 md:-right-8 text-6xl md:text-8xl font-bold text-purple-500/20 dark:text-purple-400/20 animate-spin-slow">
+                            <div className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 md:-top-8 md:-right-8 text-4xl sm:text-6xl md:text-8xl font-bold text-purple-500/20 dark:text-purple-400/20 animate-spin-slow">
                                 *
                             </div>
                         </div>
 
                         {/* Subtitle with code style */}
-                        <div className="space-y-2">
-                            <p className="text-2xl md:text-3xl font-semibold text-slate-800 dark:text-white">
+                        <div className="space-y-1.5 sm:space-y-2">
+                            <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-800 dark:text-white">
                                 Master Your Engineering Subjects
                             </p>
-                            <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-mono">
+                            <p className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-mono text-xs sm:text-sm md:text-base">
                                 <span className="text-green-600 dark:text-green-400">// </span>
                                 MCQs • Fill Blanks • Q&A
                                 <span className="text-purple-600 dark:text-purple-400"> | </span>
@@ -393,33 +394,33 @@ const Index = () => {
                         </div>
 
                         {/* Code Block Style CTA */}
-                        <div className="inline-block bg-slate-900 dark:bg-black/50 rounded-lg border border-slate-700 dark:border-white/10 p-4 text-left font-mono text-sm">
-                            <div className="flex items-center gap-2 mb-2">
-                                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                <span className="text-slate-500 text-xs ml-2">main.cpp</span>
+                        <div className="inline-block bg-slate-900 dark:bg-black/50 rounded-lg border border-slate-700 dark:border-white/10 p-3 sm:p-4 text-left font-mono text-xs sm:text-sm">
+                            <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500"></div>
+                                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-500"></div>
+                                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500"></div>
+                                <span className="text-slate-500 text-[10px] sm:text-xs ml-1.5 sm:ml-2">main.cpp</span>
                             </div>
                             <code>
                                 <span className="text-purple-400">class</span>{" "}
                                 <span className="text-cyan-400">Engineer</span>{" "}
                                 <span className="text-slate-400">{"{"}</span>
                                 <br />
-                                <span className="text-slate-500 ml-4">// Built by engineers, for engineers</span>
+                                <span className="text-slate-500 ml-2 sm:ml-4 text-[10px] sm:text-xs">// Built by engineers, for engineers</span>
                                 <br />
-                                <span className="text-slate-400 ml-4">{"}"}</span>
+                                <span className="text-slate-400 ml-2 sm:ml-4">{"}"}</span>
                                 <span className="text-purple-400">;</span>
                             </code>
                         </div>
 
                         {/* Stats */}
-                        <div className="flex flex-wrap justify-center gap-4 md:gap-8 pt-8">
+                        <div className="flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-8 pt-4 sm:pt-6 md:pt-8">
                             {stats.map((stat, i) => (
-                                <div key={i} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10 shadow-sm">
-                                    <stat.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                                <div key={i} className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl bg-white dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10 shadow-sm">
+                                    <stat.icon className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 dark:text-purple-400" />
                                     <div className="text-left">
-                                        <div className="text-xl font-bold text-slate-900 dark:text-white">{stat.value}</div>
-                                        <div className="text-xs text-slate-500">{stat.label}</div>
+                                        <div className="text-base sm:text-lg md:text-xl font-bold text-slate-900 dark:text-white">{stat.value}</div>
+                                        <div className="text-[10px] sm:text-xs text-slate-500">{stat.label}</div>
                                     </div>
                                 </div>
                             ))}

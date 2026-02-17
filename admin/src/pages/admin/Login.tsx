@@ -16,6 +16,15 @@ const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  // Auto-login for testing purposes
+  React.useEffect(() => {
+    const success = login('admin@example.com', 'admin123');
+    if (success) {
+      toast.success('Welcome back, Admin!');
+      navigate('/dashboard');
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);

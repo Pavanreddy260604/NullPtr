@@ -456,9 +456,9 @@ const MCQForm = memo<{ formData: MCQFormData; setFormData: React.Dispatch<React.
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="space-y-2">
-        <Label>Question Text</Label>
+        <Label className="text-xs sm:text-sm">Question Text</Label>
         <Textarea
           value={formData.question || ""}
           onChange={(e) =>
@@ -467,36 +467,47 @@ const MCQForm = memo<{ formData: MCQFormData; setFormData: React.Dispatch<React.
           placeholder="e.g., What is powerhouse of cell?"
           rows={3}
           required
+          className="text-sm sm:text-base"
         />
       </div>
-      <div className="space-y-3">
-        <div className="flex justify-between items-center">
-          <Label>Options</Label>
-          <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">Click circle to select correct answer</span>
+      <div className="space-y-2 sm:space-y-3">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
+          <Label className="text-xs sm:text-sm">Options</Label>
+          <span className="text-[9px] sm:text-xs text-muted-foreground bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">Click circle to select correct answer</span>
         </div>
         {options.map((o, i) => (
           <div
             key={i}
-            className={`group flex items-center gap-3 p-2 rounded-lg border-2 transition-all ${correctAnswer === o && o
+            className={`group flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg border-2 transition-all ${correctAnswer === o && o
               ? "border-green-500 bg-green-50/50"
               : "border-transparent bg-muted/30 focus-within:border-primary/50 hover:bg-muted/50"
               }`}
           >
             <button type="button" onClick={() => handleSelect(o)} className="shrink-0">
               {correctAnswer === o && o ? (
-                <CheckCircle2 className="w-6 h-6 text-green-600 fill-green-100" />
+                <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 fill-green-100" />
               ) : (
-                <Circle className="w-6 h-6 text-muted-foreground group-hover:text-primary/50" />
+                <Circle className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground group-hover:text-primary/50" />
               )}
             </button>
             <Input
               value={o}
               onChange={(e) => updateOption(i, sanitizeInput(e.target.value))}
-              className="border-0 shadow-none h-auto py-2 bg-transparent focus-visible:ring-0 text-base"
+              className="border-0 shadow-none h-auto py-1.5 sm:py-2 bg-transparent focus-visible:ring-0 text-sm sm:text-base"
               placeholder={`Option ${i + 1}`}
             />
           </div>
         ))}
+      </div>
+      <div className="space-y-2">
+        <Label className="text-xs sm:text-sm">Explanation (Optional)</Label>
+        <Textarea
+          value={formData.explanation || ""}
+          onChange={(e) => setFormData(prev => ({ ...prev, explanation: sanitizeInput(e.target.value) }))}
+          placeholder="Explain why the answer is correct..."
+          rows={2}
+          className="text-sm sm:text-base"
+        />
       </div>
     </div>
   );
@@ -529,49 +540,59 @@ const FillBlankForm = memo<{ formData: FillBlankFormData; setFormData: React.Dis
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Question Statement</Label>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label className="text-xs sm:text-sm">Question Statement</Label>
             <Textarea
               value={formData.question || ""}
               onChange={(e) =>
                 setFormData(prev => ({ ...prev, question: sanitizeInput(e.target.value) }))
               }
               placeholder="Type your sentence here..."
-              className="min-h-[120px] resize-none text-base"
+              className="min-h-[100px] sm:min-h-[120px] resize-none text-sm sm:text-base"
               required
             />
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded font-mono text-[10px] border border-primary/20">
+            <p className="text-[10px] sm:text-xs text-muted-foreground flex items-center gap-1">
+              <span className="bg-primary/10 text-primary px-1 sm:px-1.5 py-0.5 rounded font-mono text-[9px] sm:text-[10px] border border-primary/20">
                 ___
               </span>
               Type 3 underscores to create a blank.
             </p>
           </div>
-          <div className="space-y-2">
-            <Label>Correct Answer</Label>
+          <div className="space-y-1.5 sm:space-y-2">
+            <Label className="text-xs sm:text-sm">Correct Answer</Label>
             <div className="relative">
-              <CheckCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-green-600" />
+              <CheckCircle2 className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600" />
               <Input
                 value={formData.correctAnswer || ""}
                 onChange={(e) =>
                   setFormData(prev => ({ ...prev, correctAnswer: sanitizeInput(e.target.value) }))
                 }
                 placeholder="Exact word match (e.g., Paris)"
-                className="pl-9 font-medium"
+                className="pl-8 sm:pl-9 font-medium text-sm sm:text-base"
                 required
               />
             </div>
           </div>
         </div>
-        <div className="space-y-2">
-          <Label className="text-muted-foreground">Student Preview</Label>
-          <div className="h-full min-h-[120px] bg-muted/30 rounded-xl border border-dashed border-primary/20 p-6 flex items-center justify-center text-center">
+        <div className="space-y-1.5 sm:space-y-2">
+          <Label className="text-muted-foreground text-xs sm:text-sm">Student Preview</Label>
+          <div className="h-full min-h-[100px] sm:min-h-[120px] bg-muted/30 rounded-lg sm:rounded-xl border border-dashed border-primary/20 p-4 sm:p-6 flex items-center justify-center text-center">
             {getPreview()}
           </div>
         </div>
+      </div>
+      <div className="space-y-1.5 sm:space-y-2">
+        <Label className="text-xs sm:text-sm">Explanation (Optional)</Label>
+        <Textarea
+          value={formData.explanation || ""}
+          onChange={(e) => setFormData(prev => ({ ...prev, explanation: sanitizeInput(e.target.value) }))}
+          placeholder="Explain why the answer is correct..."
+          rows={2}
+          className="text-sm sm:text-base"
+        />
       </div>
     </div>
   );
@@ -692,29 +713,29 @@ const DescriptiveForm = memo<{
   };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <Label>Question Title</Label>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="space-y-1.5 sm:space-y-2">
+        <Label className="text-xs sm:text-sm">Question Title</Label>
         <Textarea
           value={formData.question || ""}
           onChange={(e) => setFormData(prev => ({ ...prev, question: sanitizeInput(e.target.value) }))}
           placeholder="e.g., Explain the process of photosynthesis."
-          className="font-medium text-lg resize-none"
+          className="font-medium text-base sm:text-lg resize-none"
           rows={2}
           required
         />
       </div>
 
-      <div className="space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-2 py-2 border-b">
-          <Label className="shrink-0">Answer Blocks</Label>
-          <div className="flex flex-wrap gap-1 bg-muted/50 p-1 rounded-lg">
-            <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('text')} className="h-7 text-xs gap-1 hover:bg-background hover:shadow-sm"><Type className="w-3 h-3" /> Text</Button>
-            <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('heading')} className="h-7 text-xs gap-1 hover:bg-background hover:shadow-sm"><Heading className="w-3 h-3" /> Header</Button>
-            <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('subheading')} className="h-7 text-xs gap-1 hover:bg-background hover:shadow-sm"><Heading className="w-3 h-3" /> Sub</Button>
-            <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('list')} className="h-7 text-xs gap-1 hover:bg-background hover:shadow-sm"><Layers className="w-3 h-3" /> List</Button>
-            <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('code')} className="h-7 text-xs gap-1 hover:bg-background hover:shadow-sm"><Code className="w-3 h-3" /> Code</Button>
-            <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('diagram')} className="h-7 text-xs gap-1 hover:bg-background hover:shadow-sm text-blue-600"><ImageIcon className="w-3 h-3" /> Image</Button>
+      <div className="space-y-2 sm:space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 py-1.5 sm:py-2 border-b">
+          <Label className="shrink-0 text-xs sm:text-sm">Answer Blocks</Label>
+          <div className="flex flex-wrap gap-0.5 sm:gap-1 bg-muted/50 p-0.5 sm:p-1 rounded-md sm:rounded-lg">
+            <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('text')} className="h-6 sm:h-7 text-[10px] sm:text-xs gap-0.5 sm:gap-1 hover:bg-background hover:shadow-sm px-1.5 sm:px-2"><Type className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> Text</Button>
+            <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('heading')} className="h-6 sm:h-7 text-[10px] sm:text-xs gap-0.5 sm:gap-1 hover:bg-background hover:shadow-sm px-1.5 sm:px-2"><Heading className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> Header</Button>
+            <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('subheading')} className="h-6 sm:h-7 text-[10px] sm:text-xs gap-0.5 sm:gap-1 hover:bg-background hover:shadow-sm px-1.5 sm:px-2"><Heading className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> Sub</Button>
+            <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('list')} className="h-6 sm:h-7 text-[10px] sm:text-xs gap-0.5 sm:gap-1 hover:bg-background hover:shadow-sm px-1.5 sm:px-2"><Layers className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> List</Button>
+            <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('code')} className="h-6 sm:h-7 text-[10px] sm:text-xs gap-0.5 sm:gap-1 hover:bg-background hover:shadow-sm px-1.5 sm:px-2"><Code className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> Code</Button>
+            <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('diagram')} className="h-6 sm:h-7 text-[10px] sm:text-xs gap-0.5 sm:gap-1 hover:bg-background hover:shadow-sm px-1.5 sm:px-2 text-blue-600"><ImageIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> Image</Button>
           </div>
         </div>
 
@@ -726,28 +747,28 @@ const DescriptiveForm = memo<{
           onChange={handleFileChange}
         />
 
-        <ScrollArea className="h-[600px] border rounded-xl bg-muted/10 p-4 shadow-inner">
-          <div className="space-y-4">
+        <ScrollArea className="h-[400px] sm:h-[500px] md:h-[600px] border rounded-lg sm:rounded-xl bg-muted/10 p-2 sm:p-3 md:p-4 shadow-inner">
+          <div className="space-y-3 sm:space-y-4">
             {blocks.map((block, i) => (
               <div key={i} className="bg-card border rounded-lg shadow-sm overflow-hidden">
                 {/* Block Header with Type Badge and Actions */}
-                <div className="bg-muted/30 px-4 py-2 border-b flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-[10px] uppercase tracking-wider text-muted-foreground h-5">
+                <div className="bg-muted/30 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 border-b flex items-center justify-between">
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    <Badge variant="outline" className="text-[8px] sm:text-[10px] uppercase tracking-wider text-muted-foreground h-4 sm:h-5">
                       {block.type}
                     </Badge>
-                    <span className="text-xs text-muted-foreground">Block {i + 1}</span>
+                    <span className="text-[10px] sm:text-xs text-muted-foreground">Block {i + 1}</span>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-0.5 sm:gap-1">
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
                       onClick={() => moveBlock(i, 'up')}
                       disabled={i === 0}
-                      className="h-7 w-7 p-0"
+                      className="h-6 w-6 sm:h-7 sm:w-7 p-0"
                     >
-                      <ArrowUp className="w-3 h-3" />
+                      <ArrowUp className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                     </Button>
                     <Button
                       type="button"
@@ -755,9 +776,9 @@ const DescriptiveForm = memo<{
                       size="sm"
                       onClick={() => moveBlock(i, 'down')}
                       disabled={i === blocks.length - 1}
-                      className="h-7 w-7 p-0"
+                      className="h-6 w-6 sm:h-7 sm:w-7 p-0"
                     >
-                      <ArrowDown className="w-3 h-3" />
+                      <ArrowDown className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                     </Button>
                     <Button
                       type="button"
@@ -765,38 +786,38 @@ const DescriptiveForm = memo<{
                       size="sm"
                       onClick={() => removeBlock(i)}
                       disabled={blocks.length <= 1}
-                      className="h-7 w-7 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
+                      className="h-6 w-6 sm:h-7 sm:w-7 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
                     >
-                      <Trash2 className="w-3 h-3" />
+                      <Trash2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                     </Button>
                   </div>
                 </div>
 
                 {/* Block Content */}
-                <div className="p-4">
+                <div className="p-2 sm:p-3 md:p-4">
                   {block.type === 'diagram' ? (
                     <div
-                      className={`relative border-2 border-dashed rounded-lg transition-colors ${!block.content ? 'border-blue-200 bg-blue-50/50 hover:bg-blue-50 cursor-pointer h-40 flex flex-col items-center justify-center' : 'border-border bg-muted/10'}`}
+                      className={`relative border-2 border-dashed rounded-lg transition-colors ${!block.content ? 'border-blue-200 bg-blue-50/50 hover:bg-blue-50 cursor-pointer h-28 sm:h-32 md:h-40 flex flex-col items-center justify-center' : 'border-border bg-muted/10'}`}
                       onClick={() => !block.content && triggerUpload(i)}
                     >
                       {block.content ? (
-                        <div className="space-y-3">
-                          <img src={block.content} alt="Block" className="max-h-60 rounded mx-auto object-contain" />
+                        <div className="space-y-2 sm:space-y-3">
+                          <img src={block.content} alt="Block" className="max-h-40 sm:max-h-52 md:max-h-60 rounded mx-auto object-contain" />
                           <Button
                             type="button"
                             variant="outline"
                             size="sm"
                             onClick={(e) => { e.stopPropagation(); triggerUpload(i); }}
-                            className="w-full"
+                            className="w-full h-8 sm:h-9 text-xs sm:text-sm"
                           >
-                            <Upload className="w-3 h-3 mr-1" /> Change Image
+                            <Upload className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1" /> Change Image
                           </Button>
                         </div>
                       ) : (
                         <>
-                          <Upload className="w-10 h-10 text-blue-400 mb-2" />
-                          <span className="text-sm text-blue-600 font-medium">Click to Upload Image</span>
-                          <span className="text-xs text-muted-foreground mt-1">PNG, JPG up to 5MB</span>
+                          <Upload className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-blue-400 mb-1 sm:mb-2" />
+                          <span className="text-xs sm:text-sm text-blue-600 font-medium">Click to Upload Image</span>
+                          <span className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">PNG, JPG up to 5MB</span>
                         </>
                       )}
                     </div>
@@ -804,17 +825,17 @@ const DescriptiveForm = memo<{
                     <Textarea
                       value={block.content || ""}
                       onChange={e => updateContent(i, e.target.value, true)} // Don't sanitize code blocks
-                      className="font-mono text-sm bg-slate-950 text-slate-50 border-0 resize-none"
+                      className="font-mono text-[10px] sm:text-xs md:text-sm bg-slate-950 text-slate-50 border-0 resize-none"
                       placeholder="// Paste code here..."
-                      rows={6}
+                      rows={4}
                     />
                   ) : block.type === 'list' ? (
-                    <div className="space-y-3">
-                      <div className="space-y-2">
+                    <div className="space-y-2 sm:space-y-3">
+                      <div className="space-y-1.5 sm:space-y-2">
                         {(block.items || []).map((item, itemIdx) => (
-                          <div key={itemIdx} className="flex gap-2 items-center">
-                            <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                              <div className="w-2 h-2 rounded-full bg-primary/60"></div>
+                          <div key={itemIdx} className="flex gap-1.5 sm:gap-2 items-center">
+                            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary/60"></div>
                             </div>
                             <Input
                               value={item}
@@ -824,7 +845,7 @@ const DescriptiveForm = memo<{
                                 newBlocks[i].items![itemIdx] = e.target.value;
                                 updateBlocks(newBlocks);
                               }}
-                              className="flex-1"
+                              className="flex-1 h-8 sm:h-9 text-xs sm:text-sm"
                               placeholder={`Point ${itemIdx + 1}`}
                             />
                             <Button
@@ -836,9 +857,9 @@ const DescriptiveForm = memo<{
                                 newBlocks[i].items = newBlocks[i].items?.filter((_, idx) => idx !== itemIdx);
                                 updateBlocks(newBlocks);
                               }}
-                              className="h-8 w-8 p-0 text-muted-foreground hover:text-red-500"
+                              className="h-7 w-7 sm:h-8 sm:w-8 p-0 text-muted-foreground hover:text-red-500"
                             >
-                              <X className="w-3 h-3" />
+                              <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             </Button>
                           </div>
                         ))}
@@ -853,18 +874,18 @@ const DescriptiveForm = memo<{
                           newBlocks[i].items!.push("");
                           updateBlocks(newBlocks);
                         }}
-                        className="w-full"
+                        className="w-full h-8 sm:h-9 text-xs sm:text-sm"
                       >
-                        <Plus className="w-3 h-3 mr-1" /> Add Point
+                        <Plus className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1" /> Add Point
                       </Button>
                     </div>
                   ) : (
                     <Textarea
                       value={block.content || ""}
                       onChange={e => updateContent(i, e.target.value)}
-                      className={`border-0 shadow-none px-0 focus-visible:ring-0 resize-none ${block.type === 'heading' ? 'text-xl font-bold' : block.type === 'subheading' ? 'text-lg font-semibold text-muted-foreground' : 'text-base'}`}
+                      className={`border-0 shadow-none px-0 focus-visible:ring-0 resize-none text-sm sm:text-base ${block.type === 'heading' ? 'text-base sm:text-lg md:text-xl font-bold' : block.type === 'subheading' ? 'text-sm sm:text-base md:text-lg font-semibold text-muted-foreground' : 'text-xs sm:text-sm md:text-base'}`}
                       placeholder={block.type === 'heading' ? "Enter Heading..." : block.type === 'subheading' ? "Enter Subheading..." : "Enter paragraph text..."}
-                      rows={block.type === 'heading' || block.type === 'subheading' ? 2 : 4}
+                      rows={block.type === 'heading' || block.type === 'subheading' ? 2 : 3}
                     />
                   )}
                 </div>
@@ -873,22 +894,22 @@ const DescriptiveForm = memo<{
           </div>
 
           {/* Add Block Section */}
-          <div className="pt-4 mt-4 border-t">
+          <div className="pt-3 sm:pt-4 mt-3 sm:mt-4 border-t">
             <div className="text-center">
-              <p className="text-xs text-muted-foreground mb-3">Add more content blocks</p>
-              <div className="inline-flex flex-wrap justify-center gap-2 bg-background border rounded-lg p-1">
-                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('text')} className="h-8 px-3 text-xs gap-1 hover:bg-primary hover:text-primary-foreground"><Type className="w-3 h-3" /> Text</Button>
-                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('heading')} className="h-8 px-3 text-xs gap-1 hover:bg-primary hover:text-primary-foreground"><Heading className="w-3 h-3" /> Heading</Button>
-                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('subheading')} className="h-8 px-3 text-xs gap-1 hover:bg-primary hover:text-primary-foreground"><Heading className="w-3 h-3" /> Sub</Button>
-                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('list')} className="h-8 px-3 text-xs gap-1 hover:bg-primary hover:text-primary-foreground"><Layers className="w-3 h-3" /> List</Button>
-                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('code')} className="h-8 px-3 text-xs gap-1 hover:bg-primary hover:text-primary-foreground"><Code className="w-3 h-3" /> Code</Button>
-                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('diagram')} className="h-8 px-3 text-xs gap-1 hover:bg-blue-600 hover:text-white text-blue-600"><ImageIcon className="w-3 h-3" /> Image</Button>
+              <p className="text-[10px] sm:text-xs text-muted-foreground mb-2 sm:mb-3">Add more content blocks</p>
+              <div className="inline-flex flex-wrap justify-center gap-1 sm:gap-2 bg-background border rounded-lg p-0.5 sm:p-1">
+                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('text')} className="h-7 sm:h-8 px-2 sm:px-3 text-[10px] sm:text-xs gap-0.5 sm:gap-1 hover:bg-primary hover:text-primary-foreground"><Type className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> Text</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('heading')} className="h-7 sm:h-8 px-2 sm:px-3 text-[10px] sm:text-xs gap-0.5 sm:gap-1 hover:bg-primary hover:text-primary-foreground"><Heading className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> Heading</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('subheading')} className="h-7 sm:h-8 px-2 sm:px-3 text-[10px] sm:text-xs gap-0.5 sm:gap-1 hover:bg-primary hover:text-primary-foreground"><Heading className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> Sub</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('list')} className="h-7 sm:h-8 px-2 sm:px-3 text-[10px] sm:text-xs gap-0.5 sm:gap-1 hover:bg-primary hover:text-primary-foreground"><Layers className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> List</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('code')} className="h-7 sm:h-8 px-2 sm:px-3 text-[10px] sm:text-xs gap-0.5 sm:gap-1 hover:bg-primary hover:text-primary-foreground"><Code className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> Code</Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => addBlock('diagram')} className="h-7 sm:h-8 px-2 sm:px-3 text-[10px] sm:text-xs gap-0.5 sm:gap-1 hover:bg-blue-600 hover:text-white text-blue-600"><ImageIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> Image</Button>
               </div>
             </div>
           </div>
 
           {blocks.length === 0 && (
-            <div className="text-center py-12 text-muted-foreground">
+            <div className="text-center py-8 sm:py-10 md:py-12 text-muted-foreground text-xs sm:text-sm">
               Start by adding content blocks above or using the toolbar.
             </div>
           )}
@@ -1237,32 +1258,32 @@ const Questions: React.FC = () => {
   return (
     <div className="space-y-4 sm:space-y-6 max-w-7xl mx-auto">
       {/* --- 1. PAGE HEADER --- */}
-      <div className="flex flex-col gap-4 sm:gap-5 border-b pb-4 sm:pb-6">
+      <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 border-b pb-3 sm:pb-4 md:pb-6">
         {/* Title Row */}
         <div className="flex items-center gap-2 sm:gap-3">
           <Button variant="outline" size="icon" onClick={() => navigate(-1)} className="h-9 w-9 sm:h-10 sm:w-10 rounded-full shrink-0">
             <ArrowLeft className="w-4 h-4 text-muted-foreground" />
           </Button>
-          <div className="min-w-0">
-            <h1 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight truncate">Question Manager</h1>
-            <p className="text-[10px] sm:text-xs text-muted-foreground truncate">Select Subject & Unit to manage content.</p>
+          <div className="min-w-0 flex-1">
+            <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold tracking-tight truncate">Question Manager</h1>
+            <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground truncate">Select Subject & Unit to manage content.</p>
           </div>
         </div>
 
         {/* Subject & Unit Selectors - Full width stack on mobile */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
           <div>
-            <Label className="text-[10px] uppercase font-bold text-muted-foreground mb-1.5 block">1. Subject</Label>
+            <Label className="text-[9px] sm:text-[10px] uppercase font-bold text-muted-foreground mb-1 sm:mb-1.5 block">1. Subject</Label>
             <Select value={selectedSubjectId} onValueChange={(v) => setSelectedSubjectId(v)}>
-              <SelectTrigger className="h-11 sm:h-10 bg-background text-base sm:text-sm">
+              <SelectTrigger className="h-10 sm:h-10 bg-background text-sm sm:text-base">
                 <div className="flex gap-2 items-center">
-                  <BookOpen className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
                   <SelectValue placeholder="Select Subject..." />
                 </div>
               </SelectTrigger>
               <SelectContent>
                 {allSubjects?.map((s: any) => (
-                  <SelectItem key={s._id} value={s._id} className="py-3 sm:py-2">
+                  <SelectItem key={s._id} value={s._id} className="py-2.5 sm:py-2 text-sm">
                     {s.name}
                   </SelectItem>
                 ))}
@@ -1270,21 +1291,21 @@ const Questions: React.FC = () => {
             </Select>
           </div>
           <div>
-            <Label className="text-[10px] uppercase font-bold text-muted-foreground mb-1.5 block">2. Unit</Label>
+            <Label className="text-[9px] sm:text-[10px] uppercase font-bold text-muted-foreground mb-1 sm:mb-1.5 block">2. Unit</Label>
             <Select
               value={unitId || ""}
               onValueChange={(v) => navigate(`/questions/${v}`)}
               disabled={!selectedSubjectId}
             >
-              <SelectTrigger className="h-11 sm:h-10 bg-background text-base sm:text-sm">
+              <SelectTrigger className="h-10 sm:h-10 bg-background text-sm sm:text-base">
                 <div className="flex gap-2 items-center">
-                  <Layers className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
                   <SelectValue placeholder={!selectedSubjectId ? "Select Subject First" : "Select Unit..."} />
                 </div>
               </SelectTrigger>
               <SelectContent>
                 {availableUnits?.map((u: any) => (
-                  <SelectItem key={u._id} value={u._id} className="py-3 sm:py-2">
+                  <SelectItem key={u._id} value={u._id} className="py-2.5 sm:py-2 text-sm">
                     <span className="text-muted-foreground mr-2">#{u.unit}</span>
                     {u.title}
                   </SelectItem>
@@ -1305,62 +1326,62 @@ const Questions: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center py-12 sm:py-20 border-2 border-dashed rounded-xl bg-muted/5 px-4"
+          className="flex flex-col items-center justify-center py-10 sm:py-12 md:py-20 border-2 border-dashed rounded-xl bg-muted/5 px-4"
         >
-          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primary/10 rounded-full flex items-center justify-center mb-3 sm:mb-4">
-            <MousePointerClick className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-primary/10 rounded-full flex items-center justify-center mb-2 sm:mb-3 md:mb-4">
+            <MousePointerClick className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-primary" />
           </div>
-          <h2 className="text-base sm:text-xl font-semibold text-center">Ready to Edit</h2>
-          <p className="text-muted-foreground text-xs sm:text-sm text-center mt-2 max-w-md">
+          <h2 className="text-sm sm:text-base md:text-xl font-semibold text-center">Ready to Edit</h2>
+          <p className="text-muted-foreground text-[10px] sm:text-xs md:text-sm text-center mt-1.5 sm:mt-2 max-w-md px-2">
             Please use dropdowns above to select a <strong>Subject</strong> and a
             <strong> Unit</strong>. The questions list will appear here.
           </p>
         </motion.div>
       ) : (
-        <div className="space-y-4 sm:space-y-6">
+        <div className="space-y-3 sm:space-y-4 md:space-y-6">
           {/* Toolbar - Stacks on mobile */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2 sm:gap-3">
             {/* Tabs Row */}
             <Tabs
               value={activeTab}
               onValueChange={(v: TabType) => setActiveTab(v)}
               className="w-full"
             >
-              <TabsList className="h-10 sm:h-9 w-full grid grid-cols-3">
-                <TabsTrigger value="mcq" className="text-xs sm:text-sm">
+              <TabsList className="h-9 sm:h-10 w-full grid grid-cols-3">
+                <TabsTrigger value="mcq" className="text-[10px] sm:text-xs">
                   MCQ <span className="hidden sm:inline ml-1">({Array.isArray(mcqs) ? mcqs.length : 0})</span>
                 </TabsTrigger>
-                <TabsTrigger value="fillblank" className="text-xs sm:text-sm">
+                <TabsTrigger value="fillblank" className="text-[10px] sm:text-xs">
                   Fill <span className="hidden sm:inline ml-1">({Array.isArray(fill) ? fill.length : 0})</span>
                 </TabsTrigger>
-                <TabsTrigger value="descriptive" className="text-xs sm:text-sm">
+                <TabsTrigger value="descriptive" className="text-[10px] sm:text-xs">
                   Desc <span className="hidden sm:inline ml-1">({Array.isArray(desc) ? desc.length : 0})</span>
                 </TabsTrigger>
               </TabsList>
             </Tabs>
 
             {/* Search + Actions Row */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" />
                 <Input
                   placeholder="Search..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 h-11 sm:h-10 text-base sm:text-sm bg-background/50"
+                  className="pl-8 sm:pl-9 h-10 sm:h-10 text-sm sm:text-base bg-background/50"
                 />
               </div>
-              <Button onClick={openCreate} className="h-11 sm:h-10 px-3 sm:px-4 shrink-0" disabled={isAnyLoading}>
-                <Plus className="w-4 h-4 sm:mr-1.5" />
+              <Button onClick={openCreate} className="h-10 sm:h-10 px-2.5 sm:px-3 md:px-4 shrink-0" disabled={isAnyLoading}>
+                <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1.5" />
                 <span className="hidden sm:inline">Add</span>
               </Button>
               <Button
                 variant="secondary"
-                className="h-11 sm:h-10 px-3 sm:px-4 shrink-0"
+                className="h-10 sm:h-10 px-2.5 sm:px-3 md:px-4 shrink-0"
                 onClick={() => setIsBulkModalOpen(true)}
                 disabled={isAnyLoading}
               >
-                <Upload className="w-4 h-4 sm:mr-1.5" />
+                <Upload className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-1.5" />
                 <span className="hidden sm:inline">Import</span>
               </Button>
             </div>
@@ -1369,26 +1390,26 @@ const Questions: React.FC = () => {
           {isLoading ? (
             <LoadingSpinner />
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {/* Select All Header */}
               {filtered.length > 0 && (
-                <div className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-2.5 sm:py-2 bg-muted/30 rounded-lg border border-transparent hover:border-border transition-colors">
+                <div className="flex items-center gap-2 sm:gap-3 md:gap-4 px-2.5 sm:px-3 md:px-4 py-2 sm:py-2.5 bg-muted/30 rounded-lg border border-transparent hover:border-border transition-colors">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 sm:w-4 sm:h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    className="w-4 h-4 sm:w-4 sm:h-4 rounded border-gray-300 text-primary focus:ring-primary"
                     checked={filtered.length > 0 && selectedIds.size === filtered.length}
                     onChange={(e) => handleSelectAll(e.target.checked)}
                   />
-                  <span className="text-xs sm:text-sm font-medium text-muted-foreground">Select All</span>
+                  <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">Select All</span>
                   {selectedIds.size > 0 && (
                     <Button
                       variant="destructive"
                       size="sm"
                       onClick={handleBulkDelete}
                       disabled={isAnyLoading}
-                      className="h-8 sm:h-9 text-xs sm:text-sm animate-in fade-in slide-in-from-right-5"
+                      className="h-7 sm:h-8 md:h-9 text-[10px] sm:text-xs animate-in fade-in slide-in-from-right-5"
                     >
-                      {isBulkDeleting ? <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin mr-1.5" /> : <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5" />}
+                      {isBulkDeleting ? <Loader2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 animate-spin mr-1 sm:mr-1.5" /> : <Trash2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 mr-1 sm:mr-1.5" />}
                       Delete ({selectedIds.size})
                     </Button>
                   )}
@@ -1403,33 +1424,33 @@ const Questions: React.FC = () => {
                   transition={{ delay: i * 0.05 }}
                 >
                   <Card className={`hover:border-primary/50 transition-colors ${selectedIds.has(q._id) ? 'border-primary bg-primary/5' : ''}`}>
-                    <CardContent className="p-3 sm:p-4 flex gap-2 sm:gap-4">
+                    <CardContent className="p-2.5 sm:p-3 md:p-4 flex gap-2 sm:gap-3 md:gap-4">
                       {/* 🚀 NEW: Row Checkbox */}
-                      <div className="pt-1">
+                      <div className="pt-0.5 sm:pt-1">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                          className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded border-gray-300 text-primary focus:ring-primary"
                           checked={selectedIds.has(q._id)}
                           onChange={() => handleSelect(q._id)}
                         />
                       </div>
 
                       <div
-                        className={`w-10 h-10 rounded flex items-center justify-center bg-muted shrink-0`}
+                        className={`w-8 h-8 sm:w-10 sm:h-10 rounded flex items-center justify-center bg-muted shrink-0`}
                       >
                         {activeTab === "mcq" ? (
-                          <CheckCircle2 className="w-5 h-5 text-blue-500" />
+                          <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
                         ) : activeTab === "fillblank" ? (
-                          <Type className="w-5 h-5 text-amber-500" />
+                          <Type className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
                         ) : (
-                          <FileText className="w-5 h-5 text-purple-500" />
+                          <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-base truncate">
+                        <h3 className="font-medium text-xs sm:text-sm md:text-base truncate">
                           {q.question}
                         </h3>
-                        <div className="text-xs text-muted-foreground mt-1 truncate">
+                        <div className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1 truncate">
                           {activeTab === "mcq" && (q as MCQ).options && (q as MCQ).options.join(", ")}
                           {activeTab === "fillblank" && (
                             <span>
@@ -1444,15 +1465,16 @@ const Questions: React.FC = () => {
                           )}
                         </div>
                       </div>
-                      <div className="flex gap-1 shrink-0">
+                      <div className="flex gap-0.5 sm:gap-1 shrink-0">
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => openEdit(q)}
                           aria-label={`Edit question: ${q.question}`}
                           disabled={isAnyLoading}
+                          className="h-8 w-8 sm:h-9 sm:w-9"
                         >
-                          <Edit className="w-4 h-4 text-muted-foreground" />
+                          <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -1463,8 +1485,9 @@ const Questions: React.FC = () => {
                           }}
                           aria-label={`Delete question: ${q.question}`}
                           disabled={isAnyLoading}
+                          className="h-8 w-8 sm:h-9 sm:w-9"
                         >
-                          <Trash2 className="w-4 h-4 text-red-400" />
+                          <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-400" />
                         </Button>
                       </div>
                     </CardContent>
@@ -1473,7 +1496,7 @@ const Questions: React.FC = () => {
               ))}
               {/* FIX #12: Show appropriate message when no questions found */}
               {filtered?.length === 0 && (
-                <div className="text-center py-12 text-muted-foreground">
+                <div className="text-center py-8 sm:py-10 md:py-12 text-muted-foreground text-xs sm:text-sm">
                   {isLoading ? "Loading questions..." : "No questions found in this unit."}
                 </div>
               )}

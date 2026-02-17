@@ -37,7 +37,7 @@ const App = () => (
 
               {/* Protected Admin Layout */}
               <Route element={<AdminLayout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/dashboard" element={<SMTPConfig />} />
 
                 {/* Subjects */}
                 <Route path="/subjects" element={<Subjects />} />
