@@ -45,6 +45,7 @@ const useTypingEffect = (text: string, speed: number = 100, delay: number = 0) =
 };
 
 const Index = () => {
+    const { isAuthenticated, user } = useAuth();
     const queryClient = useQueryClient();
 
     // Fetch Subjects with persistence
@@ -60,6 +61,29 @@ const Index = () => {
     });
 
     const error = (queryError as Error)?.message || null;
+
+    // If not authenticated, show sign-in prompt
+    if (!isAuthenticated) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-950">
+                <div className="text-center space-y-8">
+                    <div className="space-y-4">
+                        <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+                            NullPtr
+                        </h1>
+                        <p className="text-lg text-slate-600 dark:text-slate-400">
+                            Master your engineering subjects with interactive quizzes and flashcards
+                        </p>
+                    </div>
+                    <Link to="/login">
+                        <Button className="h-14 px-10 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-bold shadow-xl shadow-violet-500/25 transition-all hover:scale-105 active:scale-95">
+                            Sign In to Get Started
+                        </Button>
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     // Second Space Logic
     const [isUnlocked, setIsUnlocked] = useState(() => !!safeStorage.getItem("second_space_secret"));
