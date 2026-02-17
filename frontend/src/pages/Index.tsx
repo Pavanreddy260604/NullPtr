@@ -14,6 +14,7 @@ import { SyncIndicator } from "@/components/SyncIndicator";
 import { UserMenu } from "@/components/UserMenu";
 import { getProgressSummary } from "@/lib/progress";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Typing animation hook
 const useTypingEffect = (text: string, speed: number = 100, delay: number = 0) => {
@@ -47,6 +48,22 @@ const useTypingEffect = (text: string, speed: number = 100, delay: number = 0) =
 const Index = () => {
     const { isAuthenticated, user } = useAuth();
     const queryClient = useQueryClient();
+
+    // Second Space Logic
+    const [isUnlocked, setIsUnlocked] = useState(() => !!safeStorage.getItem("second_space_secret"));
+    const [secretClicks, setSecretClicks] = useState(0);
+    const [showSecretDialog, setShowSecretDialog] = useState(false);
+
+    // --- Sync State ---
+    const [syncState, setSyncState] = useState({
+        isSyncing: false,
+        progress: 0,
+        status: "Idle",
+        isComplete: false,
+        isError: false
+    });
+    const [isSynced, setIsSynced] = useState(() => !!safeStorage.getItem("full_sync_completed"));
+    const autoSyncTriggered = useRef(false);
 
     // Fetch Subjects with persistence
     const { data: subjects = [], isLoading: loading, error: queryError } = useQuery({
@@ -84,22 +101,6 @@ const Index = () => {
             </div>
         );
     }
-
-    // Second Space Logic
-    const [isUnlocked, setIsUnlocked] = useState(() => !!safeStorage.getItem("second_space_secret"));
-    const [secretClicks, setSecretClicks] = useState(0);
-    const [showSecretDialog, setShowSecretDialog] = useState(false);
-
-    // --- Sync State ---
-    const [syncState, setSyncState] = useState({
-        isSyncing: false,
-        progress: 0,
-        status: "Idle",
-        isComplete: false,
-        isError: false
-    });
-    const [isSynced, setIsSynced] = useState(() => !!safeStorage.getItem("full_sync_completed"));
-    const autoSyncTriggered = useRef(false);
 
     // ✅ Automatic Background Sync on first visit
     // Warms the cache so offline mode works without manual action
