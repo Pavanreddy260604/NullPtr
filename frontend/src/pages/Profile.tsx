@@ -77,7 +77,7 @@ export default function Profile() {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 p-4 text-center shadow-sm">
                         <div className="text-2xl font-bold text-violet-600 dark:text-violet-400">{user.stats.totalQuestions}</div>
                         <div className="text-xs text-slate-500 dark:text-gray-400 mt-1">Questions</div>

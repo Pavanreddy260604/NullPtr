@@ -78,13 +78,13 @@ export default function Settings() {
     };
 
     return (
-        <div className="container max-w-4xl py-10 px-4 space-y-8 pb-20">
+        <div className="container mx-auto py-6 sm:py-10 px-4 sm:px-6 space-y-6 sm:space-y-8 pb-12 sm:pb-20">
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-2"
             >
-                <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Settings</h1>
                 <p className="text-muted-foreground">Manage your account settings and preferences.</p>
             </motion.div>
 
