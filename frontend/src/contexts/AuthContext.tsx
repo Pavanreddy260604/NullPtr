@@ -35,31 +35,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Load profile on mount if token exists
     useEffect(() => {
-        // Temporarily set a mock user for testing
-        const mockUser: AuthUser = {
-            id: '1',
-            email: 'test@example.com',
-            name: 'Test User',
-            role: 'user',
-            avatar: null,
-            preferences: {
-                theme: 'light',
-                aiProvider: null,
-                aiModel: null,
-                notifications: {
-                    reviewReminders: true,
-                    streakReminders: true
+        const initAuth = async () => {
+            try {
+                if (getToken()) {
+                    const profileData = await getProfile();
+                    setUser(profileData.user);
                 }
-            },
-            stats: {
-                totalQuestions: 0,
-                streakDays: 0,
-                longestStreak: 0,
-                lastActiveDate: null
+            } catch (error) {
+                console.error('Failed to load profile:', error);
+                clearTokens();
+            } finally {
+                setIsLoading(false);
             }
         };
-        setUser(mockUser);
-        setIsLoading(false);
+
+        initAuth();
     }, []);
 
     const login = useCallback(async (email: string, password: string) => {
